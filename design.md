@@ -799,3 +799,278 @@ mirage/src/search/yica/
 ```
 
 这是第一个功能的完整设计规范，接下来将进入开发阶段。
+
+# YICA 优化策略库设计规范
+
+## 功能概述
+YICA优化策略库是Yirage优化器的第二个核心组件，提供针对YICA存算一体架构的专门优化策略集合。
+
+## 核心设计理念
+- **架构特化**：每种策略都深度适配YICA架构特性
+- **可组合性**：策略可以组合使用，产生更好的效果
+- **自适应性**：根据工作负载特征自动选择最佳策略
+- **可扩展性**：支持新策略的动态添加
+
+## 模块设计
+
+### 1. OptimizationStrategy 基类设计
+
+```cpp
+class OptimizationStrategy {
+public:
+    enum StrategyType {
+        CIM_DATA_REUSE,           // CIM数据重用优化
+        SPM_ALLOCATION,           // SPM分配优化
+        CROSS_CIM_COMMUNICATION,  // 跨CIM通信优化
+        MEMORY_ACCESS_PATTERN,    // 内存访问模式优化
+        OPERATOR_FUSION,          // 算子融合优化
+        PARALLELIZATION          // 并行化优化
+    };
+    
+    struct OptimizationResult {
+        bool success;
+        float improvement_score;      // 改进评分 [0-1]
+        std::string description;      // 优化描述
+        std::map<std::string, float> metrics;  // 具体指标改进
+    };
+    
+    virtual ~OptimizationStrategy() = default;
+    virtual bool is_applicable(const AnalysisResult& analysis) const = 0;
+    virtual OptimizationResult apply(kernel::Graph& graph, const YICAConfig& config) = 0;
+    virtual StrategyType get_type() const = 0;
+    virtual std::string get_name() const = 0;
+};
+```
+
+### 2. CIMDataReuseStrategy 类设计
+
+```cpp
+class CIMDataReuseStrategy : public OptimizationStrategy {
+public:
+    struct ReusePattern {
+        std::vector<kernel::DTensor*> reusable_tensors;
+        float reuse_factor;           // 重用因子
+        size_t memory_saving;         // 内存节省量（字节）
+    };
+    
+    CIMDataReuseStrategy();
+    bool is_applicable(const AnalysisResult& analysis) const override;
+    OptimizationResult apply(kernel::Graph& graph, const YICAConfig& config) override;
+    StrategyType get_type() const override { return CIM_DATA_REUSE; }
+    std::string get_name() const override { return "CIM Data Reuse Optimization"; }
+
+private:
+    std::vector<ReusePattern> identify_reuse_opportunities(const kernel::Graph& graph);
+    void implement_data_reuse(kernel::Graph& graph, const ReusePattern& pattern);
+};
+```
+
+### 3. SPMAllocationStrategy 类设计
+
+```cpp
+class SPMAllocationStrategy : public OptimizationStrategy {
+public:
+    struct AllocationPlan {
+        std::map<kernel::DTensor*, size_t> tensor_allocation;  // 张量->SPM位置映射
+        float spm_utilization;        // SPM利用率
+        float access_efficiency;      // 访问效率提升
+    };
+    
+    SPMAllocationStrategy();
+    bool is_applicable(const AnalysisResult& analysis) const override;
+    OptimizationResult apply(kernel::Graph& graph, const YICAConfig& config) override;
+    StrategyType get_type() const override { return SPM_ALLOCATION; }
+    std::string get_name() const override { return "SPM Allocation Optimization"; }
+
+private:
+    AllocationPlan generate_allocation_plan(const kernel::Graph& graph, const YICAConfig& config);
+    void implement_spm_allocation(kernel::Graph& graph, const AllocationPlan& plan);
+};
+```
+
+### 4. OperatorFusionStrategy 类设计
+
+```cpp
+class OperatorFusionStrategy : public OptimizationStrategy {
+public:
+    struct FusionGroup {
+        std::vector<kernel::KNOperator*> operators;
+        float fusion_benefit;         // 融合收益评分
+        std::string fusion_type;      // 融合类型描述
+    };
+    
+    OperatorFusionStrategy();
+    bool is_applicable(const AnalysisResult& analysis) const override;
+    OptimizationResult apply(kernel::Graph& graph, const YICAConfig& config) override;
+    StrategyType get_type() const override { return OPERATOR_FUSION; }
+    std::string get_name() const override { return "Operator Fusion Optimization"; }
+
+private:
+    std::vector<FusionGroup> identify_fusion_opportunities(const kernel::Graph& graph);
+    void implement_operator_fusion(kernel::Graph& graph, const FusionGroup& group);
+};
+```
+
+### 5. YICAOptimizationStrategyLibrary 主类设计
+
+```cpp
+class YICAOptimizationStrategyLibrary {
+public:
+    using StrategyPtr = std::unique_ptr<OptimizationStrategy>;
+    
+    struct StrategySelection {
+        std::vector<StrategyPtr> selected_strategies;
+        float expected_improvement;   // 预期改进程度
+        std::string selection_rationale;  // 选择理由
+    };
+    
+    YICAOptimizationStrategyLibrary();
+    ~YICAOptimizationStrategyLibrary();
+    
+    // 策略管理
+    void register_strategy(StrategyPtr strategy);
+    void unregister_strategy(OptimizationStrategy::StrategyType type);
+    std::vector<OptimizationStrategy*> get_all_strategies() const;
+    
+    // 策略选择
+    StrategySelection select_strategies(const AnalysisResult& analysis) const;
+    std::vector<OptimizationStrategy*> get_applicable_strategies(const AnalysisResult& analysis) const;
+    
+    // 策略应用
+    std::vector<OptimizationStrategy::OptimizationResult> 
+        apply_strategies(kernel::Graph& graph, 
+                        const YICAConfig& config,
+                        const std::vector<OptimizationStrategy*>& strategies) const;
+    
+    // 策略组合优化
+    StrategySelection optimize_strategy_combination(const AnalysisResult& analysis) const;
+
+private:
+    std::map<OptimizationStrategy::StrategyType, StrategyPtr> strategies_;
+    
+    // 策略评估和选择算法
+    float evaluate_strategy_combination(const std::vector<OptimizationStrategy*>& strategies,
+                                       const AnalysisResult& analysis) const;
+    bool are_strategies_compatible(OptimizationStrategy* s1, OptimizationStrategy* s2) const;
+};
+```
+
+## 算法设计
+
+### 1. 策略选择算法
+
+```cpp
+// 基于贪心算法的策略选择
+std::vector<OptimizationStrategy*> select_greedy_strategies(const AnalysisResult& analysis) {
+    std::vector<OptimizationStrategy*> selected;
+    std::vector<OptimizationStrategy*> candidates = get_applicable_strategies(analysis);
+    
+    // 按预期收益排序
+    std::sort(candidates.begin(), candidates.end(), 
+              [&](auto* a, auto* b) {
+                  return estimate_benefit(a, analysis) > estimate_benefit(b, analysis);
+              });
+    
+    // 贪心选择兼容的策略
+    for (auto* strategy : candidates) {
+        if (is_compatible_with_selected(strategy, selected)) {
+            selected.push_back(strategy);
+        }
+    }
+    
+    return selected;
+}
+```
+
+### 2. 数据重用优化算法
+
+```cpp
+// 基于生命周期分析的数据重用优化
+std::vector<ReusePattern> analyze_data_reuse(const kernel::Graph& graph) {
+    std::vector<ReusePattern> patterns;
+    
+    // 构建张量生命周期图
+    auto lifetime_graph = build_tensor_lifetime_graph(graph);
+    
+    // 识别重用机会
+    for (auto& tensor : graph.get_all_tensors()) {
+        auto reuse_ops = find_reuse_operations(tensor, lifetime_graph);
+        if (reuse_ops.size() > 1) {
+            ReusePattern pattern;
+            pattern.reusable_tensors = {tensor};
+            pattern.reuse_factor = static_cast<float>(reuse_ops.size());
+            patterns.push_back(pattern);
+        }
+    }
+    
+    return patterns;
+}
+```
+
+### 3. SPM分配优化算法
+
+```cpp
+// 基于最优装箱问题的SPM分配算法
+AllocationPlan optimize_spm_allocation(const kernel::Graph& graph, const YICAConfig& config) {
+    AllocationPlan plan;
+    
+    // 获取所有需要分配的张量
+    auto tensors = get_allocatable_tensors(graph);
+    
+    // 按访问频率和大小排序
+    std::sort(tensors.begin(), tensors.end(), 
+              [](const auto& a, const auto& b) {
+                  float score_a = a.access_frequency / a.size;
+                  float score_b = b.access_frequency / b.size;
+                  return score_a > score_b;
+              });
+    
+    // 贪心分配到SPM
+    size_t spm_used = 0;
+    for (auto& tensor : tensors) {
+        if (smp_used + tensor.size <= config.spm_size_per_die) {
+            plan.tensor_allocation[tensor.ptr] = spm_used;
+            spm_used += tensor.size;
+        }
+    }
+    
+    plan.smp_utilization = static_cast<float>(smp_used) / config.spm_size_per_die;
+    return plan;
+}
+```
+
+## 性能目标
+
+- **策略选择延迟**: < 50ms
+- **策略应用延迟**: < 200ms  
+- **内存占用**: < 50MB
+- **策略有效性**: > 80%的情况下产生性能改进
+- **策略组合效果**: 多策略组合比单策略效果提升 > 20%
+
+## 扩展性设计
+
+### 1. 插件机制
+```cpp
+// 支持动态加载新的优化策略
+class StrategyPlugin {
+public:
+    virtual StrategyPtr create_strategy() = 0;
+    virtual std::string get_strategy_name() const = 0;
+};
+
+void YICAOptimizationStrategyLibrary::load_plugin(const std::string& plugin_path) {
+    // 动态加载策略插件
+}
+```
+
+### 2. 配置驱动
+```cpp
+// 支持通过配置文件定制策略行为
+struct StrategyConfig {
+    std::map<std::string, float> parameters;
+    std::vector<std::string> enabled_strategies;
+    std::map<std::string, std::string> strategy_options;
+};
+```
+
+**下一步**: 等待设计确认，然后开始实现 YICAOptimizationStrategyLibrary 的核心功能。

@@ -4,6 +4,7 @@
 set(YICA_TEST_SOURCES
     test_yica_analyzer.cc
     test_strategy_library.cc
+    test_code_generator.cc
 )
 
 # 包含头文件目录
