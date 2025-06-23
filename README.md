@@ -1,8 +1,8 @@
-# YZ-optimzier-bin: 下一代AI内核超优化器
+# YZ-optimizer-bin: 下一代AI内核超优化器
 
 <div align="center">
 
-![YZ-optimzier-bin Logo](https://img.shields.io/badge/YZ--optimzier-YICA%20Architecture-blue)
+![YZ-optimizer-bin Logo](https://img.shields.io/badge/YZ--optimizer-YICA%20Architecture-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 ![Status](https://img.shields.io/badge/status-Development-yellow)
 
@@ -14,7 +14,7 @@
 
 ## 🎯 项目概述
 
-YZ-optimzier-bin是一款针对亿铸科技YICA存算一体AI大算力芯片架构优化的下一代内核超优化器。通过融合Mirage多级超优化技术和YICA架构感知能力，实现从通用GPU优化到存算一体专用优化的革命性突破。
+YZ-optimizer-bin是一款针对亿铸科技YICA存算一体AI大算力芯片架构优化的下一代内核超优化器。通过融合Mirage多级超优化技术和YICA架构感知能力，实现从通用GPU优化到存算一体专用优化的革命性突破。
 
 ### 核心优势
 
@@ -26,7 +26,7 @@ YZ-optimzier-bin是一款针对亿铸科技YICA存算一体AI大算力芯片架�
 ## 📋 目录结构
 
 ```
-YZ-optimzier-bin/
+YZ-optimizer-bin/
 ├── design.md                     # 核心设计文档
 ├── Yirage.md                     # Yirage产品规划
 ├── YICA_ARCH.md                  # YICA架构分析
