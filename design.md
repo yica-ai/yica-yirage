@@ -611,3 +611,191 @@ class YICALlamaOptimizer:
 4. **LLM专用优化** - 针对大语言模型的关键算子深度优化
 
 该方案将Mirage的超优化能力与YICA的存算一体优势相结合，为AI模型在YICA架构上的高效执行提供强有力的编译器支持。
+
+# YICA 架构感知分析器设计规范
+
+## 功能概述
+YICA架构感知分析器是YICA优化器的第一个核心组件，负责分析计算图对YICA存算一体架构的适配性。
+
+## 模块设计
+
+### 1. YICAArchitectureAnalyzer 类设计
+
+```cpp
+class YICAArchitectureAnalyzer {
+public:
+    struct YICAConfig {
+        size_t cim_array_rows = 256;
+        size_t cim_array_cols = 256;
+        size_t spm_size_per_die = 2 * 1024 * 1024;  // 2MB
+        size_t dram_bandwidth = 1024;  // GB/s
+        size_t num_cim_dies = 16;
+        float cim_frequency = 1000.0f;  // MHz
+    };
+    
+    struct AnalysisResult {
+        float cim_friendliness_score;      // CIM操作友好度 [0-1]
+        float memory_locality_score;      // 内存局部性评分 [0-1]
+        float parallelization_potential;  // 并行化潜力 [0-1]
+        std::vector<std::string> bottlenecks;  // 性能瓶颈列表
+        std::map<std::string, float> optimization_suggestions;  // 优化建议
+    };
+    
+    YICAArchitectureAnalyzer(const YICAConfig& config);
+    
+    // 分析kernel graph的YICA适配性
+    AnalysisResult analyze_computation_pattern(const kernel::Graph& graph);
+    
+    // 识别CIM友好的操作
+    std::vector<kernel::DTensor*> identify_cim_operations(const kernel::Graph& graph);
+    
+    // 分析内存访问模式
+    float analyze_memory_access_pattern(const kernel::Graph& graph);
+    
+    // 发现并行化机会
+    std::vector<ParallelizationOpportunity> find_parallel_patterns(const kernel::Graph& graph);
+    
+private:
+    YICAConfig config_;
+    
+    // 计算操作的CIM友好度
+    float calculate_cim_friendliness(const kernel::DTensor* op);
+    
+    // 估计内存访问成本
+    float estimate_memory_cost(const kernel::DTensor* tensor);
+};
+```
+
+### 2. 数据结构定义
+
+```cpp
+struct ParallelizationOpportunity {
+    enum Type {
+        DATA_PARALLEL,     // 数据并行
+        MODEL_PARALLEL,    // 模型并行
+        PIPELINE_PARALLEL  // 流水线并行
+    };
+    
+    Type type;
+    std::vector<kernel::DTensor*> involved_tensors;
+    float efficiency_score;  // 并行效率评分
+    size_t recommended_parallelism;  // 推荐并行度
+};
+```
+
+### 3. 实现算法规范
+
+#### 3.1 CIM友好度计算算法
+```
+算法：calculate_cim_friendliness
+输入：kernel::DTensor* op
+输出：float (0-1之间的分数)
+
+步骤：
+1. 判断操作类型：
+   - MATMUL -> 基础分数0.9 (CIM阵列优化)
+   - ELEMENTWISE -> 基础分数0.7 (SPM向量单元优化)
+   - REDUCTION -> 基础分数0.6 (部分CIM支持)
+   - 其他 -> 基础分数0.3
+
+2. 考虑数据规模：
+   - 如果输入张量大小 <= SPM容量 -> 分数 * 1.2
+   - 如果输入张量大小 > DRAM容量 -> 分数 * 0.8
+
+3. 考虑数据类型：
+   - FP16/BF16 -> 分数 * 1.1 (CIM阵列优化)
+   - INT8/INT4 -> 分数 * 1.2 (量化计算优化)
+   - FP32 -> 分数 * 0.9
+
+返回：min(1.0, 调整后分数)
+```
+
+#### 3.2 内存访问模式分析算法
+```
+算法：analyze_memory_access_pattern
+输入：kernel::Graph& graph
+输出：float (内存局部性评分 0-1)
+
+步骤：
+1. 遍历所有tensor操作
+2. 对每个tensor计算：
+   - 重用距离 (reuse_distance)
+   - 访问顺序 (access_pattern)
+   - 数据生命周期 (lifetime)
+
+3. 计算SPM适配性：
+   spm_score = (适合SPM的数据量) / (总数据量)
+
+4. 计算访问局部性：
+   locality_score = (连续访问的数据量) / (总访问量)
+
+5. 综合评分：
+   return 0.6 * spm_score + 0.4 * locality_score
+```
+
+## 测试计划
+
+### 单元测试用例
+1. **test_cim_friendliness_calculation**
+   - 测试不同操作类型的CIM友好度计算
+   - 验证数据规模和类型对评分的影响
+
+2. **test_memory_pattern_analysis**
+   - 测试内存访问模式的正确识别
+   - 验证SPM适配性评估的准确性
+
+3. **test_parallelization_opportunities**
+   - 测试并行化机会的发现算法
+   - 验证并行效率评分的合理性
+
+### 集成测试用例
+1. **test_typical_transformer_block**
+   - 使用典型的Transformer块测试完整分析流程
+   - 验证分析结果的合理性和一致性
+
+2. **test_conv_network_analysis**
+   - 使用卷积网络测试YICA适配性分析
+   - 验证CIM友好操作的正确识别
+
+## 性能指标
+- 分析延迟：< 100ms (对于包含50个操作的图)
+- 内存占用：< 10MB
+- 分析准确性：与手工分析的一致性 > 90%
+
+## 接口设计
+
+### C++接口
+```cpp
+namespace mirage {
+namespace search {
+namespace yica {
+
+class YICAArchitectureAnalyzer; // 主分析器类
+
+} // namespace yica
+} // namespace search  
+} // namespace mirage
+```
+
+### Python接口
+```python
+class YICAAnalyzer:
+    def __init__(self, arch_config: dict)
+    def analyze_graph(self, graph) -> dict
+    def get_optimization_suggestions(self, analysis_result: dict) -> list
+```
+
+## 文件组织
+```
+mirage/include/mirage/search/yica/
+├── yica_analyzer.h          # 主分析器头文件
+├── yica_config.h           # YICA配置定义
+└── yica_types.h            # YICA相关数据类型
+
+mirage/src/search/yica/
+├── yica_analyzer.cc        # 主分析器实现
+├── cim_analysis.cc         # CIM友好度分析
+└── memory_analysis.cc      # 内存模式分析
+```
+
+这是第一个功能的完整设计规范，接下来将进入开发阶段。
