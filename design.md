@@ -1074,3 +1074,413 @@ struct StrategyConfig {
 ```
 
 **下一步**: 等待设计确认，然后开始实现 YICAOptimizationStrategyLibrary 的核心功能。
+
+# Yirage AI内核优化器 - 详细设计文档
+
+## 项目概述
+Yirage是一个结合YICA存算一体架构和Mirage优化框架的AI内核优化器，通过深度架构感知和智能代码生成技术，实现对深度学习工作负载的极致优化。
+
+## 核心功能模块
+
+### 功能1: YICA架构感知分析器 ✅
+**目标**: 分析计算图对YICA架构的适配性和优化潜力
+
+#### 核心组件
+- **YICAArchitectureAnalyzer类**: 主要分析引擎
+- **AnalysisResult结构**: 存储分析结果  
+- **YICAConfig结构**: YICA架构配置
+
+#### 核心算法
+- **CIM友好度评估**: 基于操作类型、数据局部性和并行度的综合评分算法
+- **内存访问模式分析**: 识别SPM利用机会和内存瓶颈
+- **并行化机会发现**: 分析CIM阵列级并行化潜力
+- **性能瓶颈识别**: 定位计算和内存访问瓶颈
+
+#### 性能目标
+- 分析延迟: < 100ms (1000个操作的图)
+- 准确度: CIM友好度预测误差 < 10%
+- 内存占用: < 50MB
+- 并发支持: 支持多线程并行分析
+
+### 功能2: YICA优化策略库 ✅
+**目标**: 提供针对YICA架构的优化策略集合
+
+#### 核心组件
+- **OptimizationStrategy基类**: 策略接口定义
+- **CIMDataReuseStrategy**: CIM数据重用优化
+- **SPMAllocationStrategy**: SPM分配优化  
+- **OperatorFusionStrategy**: 算子融合优化
+- **YICAOptimizationStrategyLibrary**: 策略库主类
+
+#### 核心算法  
+- **贪心策略选择**: 基于收益预估的策略选择算法
+- **基于生命周期分析的数据重用**: 通过数据依赖图分析优化数据重用
+- **基于最优装箱的SPM分配**: 使用动态规划优化SPM空间分配
+
+#### 性能目标
+- 策略选择: < 50ms
+- 策略应用: < 200ms  
+- 内存开销: < 50MB
+- 策略有效性: > 80%的情况下产生性能提升
+
+### 功能3: YICA代码生成器 ✅
+**目标**: 生成针对YICA架构优化的高性能代码
+
+#### 核心组件
+- **YICACodeGenerator主类**: 代码生成器核心
+- **CodeTemplateManager**: 模板管理系统
+- **CIMCodeGenAlgorithm**: CIM指令生成算法
+- **OperatorGenerator**: 操作生成器基类及具体实现
+
+#### 核心算法
+- **计算图到代码映射**: 将优化后的计算图转换为YICA原生代码
+- **CIM阵列代码生成**: 生成CIM阵列的并行计算代码
+- **SPM分配代码生成**: 生成SPM内存管理代码
+- **并行化代码生成**: 生成多CIM阵列协同工作代码
+
+#### 性能目标
+- 代码生成延迟: < 500ms
+- 生成代码性能提升: 15-30% vs 基准实现
+- SPM利用率: > 85%
+- 编译成功率: > 95%
+
+### 功能4: YICA运行时优化器 (新增设计)
+**目标**: 在运行时动态调整和优化YICA架构的执行策略
+
+#### 核心组件
+
+**4.1 运行时监控系统**
+- **PerformanceMonitor类**: 性能指标收集器
+  - CIM阵列利用率监控
+  - SPM命中率统计
+  - 内存带宽使用监控
+  - 计算吞吐量测量
+  - 功耗监控
+
+- **ProfilingManager类**: 性能剖析管理器
+  - 热点操作识别
+  - 数据流分析
+  - 瓶颈定位
+  - 性能基线建立
+
+**4.2 动态优化引擎**
+- **RuntimeOptimizer类**: 运行时优化核心
+  - 实时策略调整
+  - 负载均衡优化
+  - 资源重分配
+  - 执行路径优化
+
+- **AdaptiveScheduler类**: 自适应调度器
+  - 基于实时负载的CIM阵列调度
+  - SPM分配动态调整
+  - 操作融合实时决策
+  - 数据预取优化
+
+**4.3 机器学习辅助优化**
+- **MLOptimizer类**: 机器学习优化器
+  - 性能预测模型
+  - 策略推荐系统
+  - 参数自动调优
+  - 异常检测和处理
+
+- **OnlineLearning类**: 在线学习系统
+  - 实时模型更新
+  - 经验回放机制
+  - 多任务适应
+  - 个性化优化
+
+#### 核心算法
+
+**4.1 实时性能监控算法**
+```cpp
+class PerformanceMetrics {
+    float cim_utilization;           // CIM阵列利用率 [0,1]
+    float spm_hit_rate;             // SPM命中率 [0,1]
+    float memory_bandwidth_usage;    // 内存带宽使用率 [0,1]
+    float compute_throughput;        // 计算吞吐量 TOPS
+    float power_consumption;         // 功耗 W
+    float latency_ms;               // 延迟 ms
+    std::vector<float> per_array_util; // 每个CIM阵列利用率
+};
+
+// 滑动窗口性能监控
+class SlidingWindowMonitor {
+    void update_metrics(const PerformanceMetrics& metrics);
+    PerformanceMetrics get_average_metrics(int window_size_ms);
+    bool detect_performance_anomaly();
+    std::vector<std::string> identify_bottlenecks();
+};
+```
+
+**4.2 自适应优化决策算法**
+```cpp
+// 基于强化学习的优化决策
+class ReinforcementOptimizer {
+    // 状态空间: 当前性能指标 + 系统配置
+    struct State {
+        PerformanceMetrics current_metrics;
+        YICAConfig current_config;
+        WorkloadCharacteristics workload;
+    };
+    
+    // 动作空间: 可执行的优化动作
+    enum class OptimizationAction {
+        INCREASE_CIM_FREQUENCY,    // 提高CIM频率
+        DECREASE_CIM_FREQUENCY,    // 降低CIM频率
+        REDISTRIBUTE_SPM,          // 重新分配SPM
+        CHANGE_FUSION_STRATEGY,    // 改变融合策略
+        ADJUST_PARALLELISM,        // 调整并行度
+        ENABLE_PREFETCH,           // 启用预取
+        DISABLE_PREFETCH           // 禁用预取
+    };
+    
+    // Q-learning决策
+    OptimizationAction select_action(const State& state);
+    void update_q_value(const State& state, OptimizationAction action, float reward);
+};
+```
+
+**4.3 多目标优化算法**
+```cpp
+// 基于帕累托前沿的多目标优化
+class MultiObjectiveOptimizer {
+    struct OptimizationObjective {
+        float performance_weight = 0.6f;  // 性能权重
+        float energy_weight = 0.3f;      // 能效权重
+        float latency_weight = 0.1f;     // 延迟权重
+    };
+    
+    // 帕累托最优解集
+    std::vector<YICAConfig> pareto_front;
+    
+    // NSGA-II算法实现
+    std::vector<YICAConfig> evolve_solutions(
+        const std::vector<YICAConfig>& population,
+        const PerformanceMetrics& current_metrics);
+    
+    YICAConfig select_best_config(
+        const OptimizationObjective& objective,
+        const std::vector<YICAConfig>& candidates);
+};
+```
+
+**4.4 预测模型算法**
+```cpp
+// 基于LSTM的性能预测模型
+class PerformancePredictionModel {
+    // 时序特征提取
+    struct TimeSeriesFeatures {
+        std::vector<float> cim_utilization_history;
+        std::vector<float> memory_access_pattern;
+        std::vector<float> workload_characteristics;
+        int sequence_length = 50;  // 历史窗口长度
+    };
+    
+    // 预测未来性能
+    PerformanceMetrics predict_performance(
+        const TimeSeriesFeatures& features,
+        const YICAConfig& proposed_config);
+    
+    // 在线模型更新
+    void update_model(
+        const TimeSeriesFeatures& features,
+        const PerformanceMetrics& actual_performance);
+};
+```
+
+#### 数据结构设计
+
+**4.1 运行时状态管理**
+```cpp
+struct RuntimeState {
+    PerformanceMetrics current_metrics;     // 当前性能指标
+    YICAConfig active_config;              // 当前配置
+    std::vector<OptimizationAction> action_history;  // 动作历史
+    std::chrono::time_point<std::chrono::steady_clock> last_update; // 最后更新时间
+    
+    // 性能历史记录
+    std::deque<PerformanceMetrics> metrics_history;
+    static constexpr size_t MAX_HISTORY_SIZE = 1000;
+};
+
+struct WorkloadCharacteristics {
+    float compute_intensity;         // 计算密集度
+    float memory_intensity;          // 内存密集度
+    float data_reuse_factor;        // 数据重用因子
+    std::vector<float> op_distribution; // 操作分布
+    float batch_size_variability;   // 批大小变化
+};
+```
+
+**4.2 优化上下文**
+```cpp
+struct OptimizationContext {
+    RuntimeState runtime_state;             // 运行时状态
+    WorkloadCharacteristics workload;       // 工作负载特征
+    OptimizationObjective objective;        // 优化目标
+    std::vector<YICAConfig> candidate_configs; // 候选配置
+    float optimization_budget_ms;           // 优化时间预算
+    bool enable_ml_optimization;            // 是否启用ML优化
+};
+```
+
+#### 接口设计
+
+**4.1 主要接口**
+```cpp
+class YICARuntime {
+public:
+    // 初始化运行时系统
+    bool initialize(const YICAConfig& initial_config);
+    
+    // 启动性能监控
+    void start_monitoring();
+    void stop_monitoring();
+    
+    // 执行优化
+    OptimizationResult optimize(const OptimizationContext& context);
+    
+    // 应用配置更改
+    bool apply_configuration(const YICAConfig& new_config);
+    
+    // 获取当前状态
+    RuntimeState get_current_state() const;
+    PerformanceMetrics get_current_metrics() const;
+    
+    // 事件回调
+    void set_performance_callback(std::function<void(const PerformanceMetrics&)> callback);
+    void set_anomaly_callback(std::function<void(const std::string&)> callback);
+};
+```
+
+**4.2 配置管理接口**
+```cpp
+class RuntimeConfigManager {
+public:
+    // 配置验证
+    bool validate_config(const YICAConfig& config);
+    
+    // 配置转换
+    YICAConfig merge_configs(const YICAConfig& base, const YICAConfig& update);
+    
+    // 配置回滚
+    bool rollback_to_previous_config();
+    
+    // 配置历史管理
+    std::vector<YICAConfig> get_config_history(int max_count = 10);
+    void save_config_checkpoint(const std::string& name);
+    bool restore_config_checkpoint(const std::string& name);
+};
+```
+
+#### 性能目标
+
+**4.1 实时性要求**
+- 性能监控开销: < 2% 系统开销
+- 优化决策延迟: < 10ms (简单调整), < 100ms (复杂优化)
+- 配置切换延迟: < 5ms
+- 监控采样频率: 1000Hz
+
+**4.2 优化效果**
+- 性能提升: 5-15% vs 静态优化
+- 能效提升: 10-20% 在相同性能下
+- 适应时间: < 1000ms 适应新工作负载
+- 稳定性: > 99.9% 运行时间无异常
+
+**4.3 资源消耗**
+- 内存开销: < 100MB
+- CPU开销: < 5% 单核使用率
+- 存储开销: < 500MB (模型和历史数据)
+
+#### 实现架构
+
+**4.1 模块层次结构**
+```
+YICARuntime (顶层接口)
+├── PerformanceMonitor (性能监控)
+│   ├── MetricsCollector
+│   ├── SlidingWindowMonitor  
+│   └── AnomalyDetector
+├── RuntimeOptimizer (运行时优化)
+│   ├── ReinforcementOptimizer
+│   ├── MultiObjectiveOptimizer
+│   └── AdaptiveScheduler
+├── MLOptimizer (机器学习优化)
+│   ├── PerformancePredictionModel
+│   ├── OnlineLearning
+│   └── ParameterTuner
+└── RuntimeConfigManager (配置管理)
+    ├── ConfigValidator
+    ├── ConfigHistory
+    └── CheckpointManager
+```
+
+**4.2 数据流设计**
+```
+硬件性能计数器 → MetricsCollector → SlidingWindowMonitor 
+                                        ↓
+WorkloadProfiler → RuntimeOptimizer ← PerformanceMetrics
+       ↓                ↓
+MLOptimizer ← OptimizationContext → AdaptiveScheduler
+       ↓                              ↓
+ParameterTuner                   ConfigValidator
+       ↓                              ↓
+YICAConfig ← RuntimeConfigManager → HardwareController
+```
+
+#### 集成方案
+
+**4.1 与现有功能的集成**
+- **架构感知分析器**: 提供工作负载特征分析
+- **优化策略库**: 提供备选优化策略
+- **代码生成器**: 生成运行时可切换的代码变体
+
+**4.2 扩展接口**
+- 支持自定义性能指标
+- 支持用户定义的优化目标
+- 支持第三方优化插件
+- 支持分布式优化协调
+
+#### 错误处理和恢复
+
+**4.1 异常情况处理**
+- 性能监控失败: 使用备用监控机制
+- 优化失败: 回滚到已知良好配置
+- 硬件故障: 自动降级和资源重分配
+- 模型预测错误: 切换到启发式方法
+
+**4.2 容错机制**
+- 配置验证和安全检查
+- 渐进式配置更改
+- 性能回归检测和自动回滚
+- 关键路径保护
+
+#### 测试和验证
+
+**4.1 功能测试**
+- 单元测试: 每个组件的独立测试
+- 集成测试: 端到端优化流程测试
+- 性能测试: 优化效果验证
+- 压力测试: 高负载下的稳定性测试
+
+**4.2 验证基准**
+- 与静态优化的性能对比
+- 多种工作负载的适应性测试
+- 长时间运行的稳定性验证
+- 不同硬件配置的兼容性测试
+
+### 总体架构集成
+
+四个功能模块形成完整的优化管道:
+
+```
+输入计算图 → YICA架构感知分析器 → 优化策略库 → YICA代码生成器 
+                     ↓                ↓              ↓
+              分析结果缓存      策略选择历史    生成代码库
+                     ↓                ↓              ↓
+                 YICA运行时优化器 ← 性能反馈 ← 执行引擎
+                     ↓
+               动态配置调整 → 持续性能优化
+```
+
+这个设计确保了从静态分析到动态运行时优化的完整闭环，实现了真正的自适应AI内核优化系统。
