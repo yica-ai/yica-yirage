@@ -1,0 +1,204 @@
+version: '3.8'
+
+services:
+  yica-runtime-cpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-cpu
+    image: yica-optimizer:cpu-latest
+    container_name: yica-runtime-cpu
+    restart: unless-stopped
+    
+    # 环境变量
+    environment:
+      - YICA_MODE=runtime
+      - YICA_GPU_SIMULATION=true
+      - YICA_CPU_ONLY=true
+      - YICA_LOG_LEVEL=INFO
+      - YICA_MONITORING_ENABLED=true
+      - YICA_ML_OPTIMIZATION_ENABLED=true
+      - OMP_NUM_THREADS=8
+    
+    # 端口映射
+    ports:
+      - "8080:8080"  # YICA Runtime API
+      - "8081:8081"  # Performance Monitoring
+      - "8082:8082"  # ML Optimizer API
+    
+    # 数据卷
+    volumes:
+      - yica-cpu-configs:/workspace/yica-runtime/configs
+      - yica-cpu-logs:/workspace/yica-runtime/logs
+      - yica-cpu-checkpoints:/workspace/yica-runtime/checkpoints
+      - yica-cpu-models:/workspace/yica-runtime/models
+      - yica-cpu-simulation:/workspace/yica-runtime/simulation
+    
+    # 网络配置
+    networks:
+      - yica-cpu-network
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # 资源限制 (CPU优化)
+    mem_limit: 4g
+    memswap_limit: 4g
+    cpus: 8.0
+    
+    # CPU调度优化
+    cpu_shares: 1024
+    cpu_quota: 800000  # 80% CPU利用率上限
+    cpu_period: 100000
+    
+    # 安全配置
+    security_opt:
+      - no-new-privileges:true
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  yica-monitor-cpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-monitor-cpu
+    image: yica-monitor:cpu-latest
+    container_name: yica-monitor-cpu
+    restart: unless-stopped
+    
+    # 环境变量
+    environment:
+      - YICA_RUNTIME_HOST=yica-runtime-cpu
+      - YICA_RUNTIME_PORT=8080
+      - YICA_CPU_MODE=true
+      - GRAFANA_ADMIN_PASSWORD=yica2024
+    
+    # 端口映射
+    ports:
+      - "3000:3000"  # Grafana Dashboard
+      - "9090:9090"  # Prometheus
+    
+    # 数据卷
+    volumes:
+      - grafana-cpu-storage:/var/lib/grafana
+      - prometheus-cpu-storage:/prometheus
+      - ./monitoring/grafana-cpu:/etc/grafana/provisioning
+      - ./monitoring/prometheus-cpu:/etc/prometheus
+    
+    # 网络配置
+    networks:
+      - yica-cpu-network
+    
+    # 依赖关系
+    depends_on:
+      yica-runtime-cpu:
+        condition: service_healthy
+
+  yica-jupyter-cpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-jupyter-cpu
+    image: yica-jupyter:cpu-latest
+    container_name: yica-jupyter-cpu
+    restart: unless-stopped
+    
+    # 环境变量
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=yica2024
+      - YICA_RUNTIME_HOST=yica-runtime-cpu
+      - YICA_CPU_ONLY=true
+      - OMP_NUM_THREADS=4
+    
+    # 端口映射
+    ports:
+      - "8888:8888"  # Jupyter Lab
+    
+    # 数据卷
+    volumes:
+      - jupyter-cpu-notebooks:/home/jovyan/work
+      - yica-cpu-models:/home/jovyan/yica-models:ro
+      - yica-cpu-logs:/home/jovyan/yica-logs:ro
+      - yica-cpu-simulation:/home/jovyan/yica-simulation:ro
+    
+    # 网络配置
+    networks:
+      - yica-cpu-network
+    
+    # 资源限制
+    mem_limit: 2g
+    cpus: 4.0
+    
+    # 依赖关系
+    depends_on:
+      - yica-runtime-cpu
+
+  # CPU基准测试服务
+  yica-benchmark-cpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-cpu
+    image: yica-optimizer:cpu-latest
+    container_name: yica-benchmark-cpu
+    profiles:
+      - benchmark
+    
+    # 环境变量
+    environment:
+      - YICA_MODE=benchmark
+      - YICA_CPU_ONLY=true
+      - YICA_GPU_SIMULATION=false
+      - YICA_BENCHMARK_SUITE=cpu_performance
+    
+    # 数据卷
+    volumes:
+      - yica-cpu-benchmarks:/workspace/yica-runtime/benchmarks
+      - yica-cpu-logs:/workspace/yica-runtime/logs:ro
+    
+    # 网络配置
+    networks:
+      - yica-cpu-network
+    
+    # 资源限制
+    mem_limit: 2g
+    cpus: 4.0
+    
+    # 运行基准测试
+    command: ["--mode=benchmark", "--config=cpu", "--output-dir=/workspace/yica-runtime/benchmarks"]
+
+# 网络定义
+networks:
+  yica-cpu-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+# 数据卷定义
+volumes:
+  yica-cpu-configs:
+    driver: local
+  yica-cpu-logs:
+    driver: local
+  yica-cpu-checkpoints:
+    driver: local
+  yica-cpu-models:
+    driver: local
+  yica-cpu-simulation:
+    driver: local
+  yica-cpu-benchmarks:
+    driver: local
+  grafana-cpu-storage:
+    driver: local
+  prometheus-cpu-storage:
+    driver: local
+  jupyter-cpu-notebooks:
+    driver: local 
