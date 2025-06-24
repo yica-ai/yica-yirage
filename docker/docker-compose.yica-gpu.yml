@@ -1,0 +1,173 @@
+version: '3.8'
+
+services:
+  yica-runtime:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-gpu
+    image: yica-optimizer:gpu-latest
+    container_name: yica-runtime-gpu
+    restart: unless-stopped
+    
+    # GPU配置
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # 环境变量
+    environment:
+      - YICA_MODE=runtime
+      - YICA_GPU_ENABLED=true
+      - YICA_LOG_LEVEL=INFO
+      - YICA_MONITORING_ENABLED=true
+      - YICA_ML_OPTIMIZATION_ENABLED=true
+      - CUDA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    
+    # 端口映射
+    ports:
+      - "8080:8080"  # YICA Runtime API
+      - "8081:8081"  # Performance Monitoring
+      - "8082:8082"  # ML Optimizer API
+    
+    # 数据卷
+    volumes:
+      - yica-configs:/workspace/yica-runtime/configs
+      - yica-logs:/workspace/yica-runtime/logs
+      - yica-checkpoints:/workspace/yica-runtime/checkpoints
+      - yica-models:/workspace/yica-runtime/models
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 forwarding
+    
+    # 网络配置
+    networks:
+      - yica-network
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # 资源限制
+    mem_limit: 8g
+    memswap_limit: 8g
+    cpus: 4.0
+    
+    # 安全配置
+    security_opt:
+      - no-new-privileges:true
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  yica-monitor:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-monitor
+    image: yica-monitor:latest
+    container_name: yica-monitor
+    restart: unless-stopped
+    
+    # 环境变量
+    environment:
+      - YICA_RUNTIME_HOST=yica-runtime
+      - YICA_RUNTIME_PORT=8080
+      - GRAFANA_ADMIN_PASSWORD=yica2024
+    
+    # 端口映射
+    ports:
+      - "3000:3000"  # Grafana Dashboard
+      - "9090:9090"  # Prometheus
+    
+    # 数据卷
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - prometheus-storage:/prometheus
+      - ./monitoring/grafana:/etc/grafana/provisioning
+      - ./monitoring/prometheus:/etc/prometheus
+    
+    # 网络配置
+    networks:
+      - yica-network
+    
+    # 依赖关系
+    depends_on:
+      yica-runtime:
+        condition: service_healthy
+
+  yica-jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.yica-jupyter
+    image: yica-jupyter:gpu-latest
+    container_name: yica-jupyter-gpu
+    restart: unless-stopped
+    
+    # GPU配置
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # 环境变量
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=yica2024
+      - YICA_RUNTIME_HOST=yica-runtime
+      - CUDA_VISIBLE_DEVICES=all
+    
+    # 端口映射
+    ports:
+      - "8888:8888"  # Jupyter Lab
+    
+    # 数据卷
+    volumes:
+      - jupyter-notebooks:/home/jovyan/work
+      - yica-models:/home/jovyan/yica-models:ro
+      - yica-logs:/home/jovyan/yica-logs:ro
+    
+    # 网络配置
+    networks:
+      - yica-network
+    
+    # 依赖关系
+    depends_on:
+      - yica-runtime
+
+# 网络定义
+networks:
+  yica-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷定义
+volumes:
+  yica-configs:
+    driver: local
+  yica-logs:
+    driver: local
+  yica-checkpoints:
+    driver: local
+  yica-models:
+    driver: local
+  grafana-storage:
+    driver: local
+  prometheus-storage:
+    driver: local
+  jupyter-notebooks:
+    driver: local 
