@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-07-03 21:49:41",
+  "overall_success_rate": 1.0,
+  "successful_tests": 3,
+  "total_tests": 3,
+  "test_results": {
+    "文件结构完整性": {
+      "success": true,
+      "details": {
+        "total_files": 8,
+        "existing_files": 8,
+        "missing_files": [],
+        "file_sizes": {
+          "mirage/python/mirage/yica_optimizer.py": 16288,
+          "mirage/include/mirage/triton_transpiler/runtime/yica_runtime.py": 15917,
+          "mirage/cmake/yica.cmake": 4654,
+          "mirage/include/mirage/yica/config.h": 6054,
+          "mirage/include/mirage/yica/optimizer.h": 8115,
+          "YICA-MIRAGE-INTEGRATION-PLAN.md": 11397,
+          "demo_yica_optimization.py": 8931,
+          "demo_yica_standalone.py": 16607
+        }
+      }
+    },
+    "CMake集成": {
+      "success": true,
+      "details": {
+        "yica_integration": true,
+        "cmake_file_exists": true
+      }
+    },
+    "YICA演示程序": {
+      "success": true,
+      "details": {
+        "execution_time": 0.0417020320892334,
+        "generated_files": [
+          "yica_matmul_kernel.py (2709 bytes)",
+          "yica_attention_kernel.py (2292 bytes)"
+        ],
+        "output_length": 1717
+      }
+    }
+  }
+}

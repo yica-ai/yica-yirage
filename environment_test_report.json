@@ -1,0 +1,174 @@
+{
+  "timestamp": "Thu Jul  3 21:49:01 CST 2025",
+  "success_rate": 1.0,
+  "successful_tests": 30,
+  "total_tests": 30,
+  "categories": {
+    "Python环境": [
+      {
+        "name": "Python版本",
+        "success": true,
+        "details": "版本: 3.13.3\n路径: /opt/homebrew/opt/python@3.13/bin/python3.13"
+      }
+    ],
+    "核心依赖项": [
+      {
+        "name": "numpy模块",
+        "success": true,
+        "details": "数值计算库\n版本: 2.2.5"
+      },
+      {
+        "name": "z3模块",
+        "success": true,
+        "details": "Z3定理证明器\n版本: 4.15.0"
+      },
+      {
+        "name": "json模块",
+        "success": true,
+        "details": "JSON处理\n版本: 2.0.9"
+      },
+      {
+        "name": "typing模块",
+        "success": true,
+        "details": "类型注解\n版本: N/A"
+      },
+      {
+        "name": "subprocess模块",
+        "success": true,
+        "details": "进程管理\n版本: N/A"
+      },
+      {
+        "name": "ctypes模块",
+        "success": true,
+        "details": "动态库调用\n版本: 1.1.0"
+      },
+      {
+        "name": "time模块",
+        "success": true,
+        "details": "时间处理\n版本: N/A"
+      },
+      {
+        "name": "os模块",
+        "success": true,
+        "details": "操作系统接口\n版本: N/A"
+      },
+      {
+        "name": "sys模块",
+        "success": true,
+        "details": "系统接口\n版本: N/A"
+      }
+    ],
+    "Z3功能": [
+      {
+        "name": "Z3求解器功能",
+        "success": true,
+        "details": "Z3版本: 4.15.0\n求解器测试: 成功\n示例解: x = 1"
+      }
+    ],
+    "文件系统": [
+      {
+        "name": "mirage目录",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage\n文件数量: 30"
+      },
+      {
+        "name": "mirage/python目录",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/python\n文件数量: 2"
+      },
+      {
+        "name": "mirage/python/mirage目录",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/python/mirage\n文件数量: 13"
+      },
+      {
+        "name": "mirage/include目录",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/include\n文件数量: 1"
+      },
+      {
+        "name": "mirage/cmake目录",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/cmake\n文件数量: 2"
+      }
+    ],
+    "YICA组件": [
+      {
+        "name": "yica_optimizer.py",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/python/mirage/yica_optimizer.py\n文件大小: 16288 bytes"
+      },
+      {
+        "name": "yica_runtime.py",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/include/mirage/triton_transpiler/runtime/yica_runtime.py\n文件大小: 15917 bytes"
+      },
+      {
+        "name": "yica.cmake",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/cmake/yica.cmake\n文件大小: 4654 bytes"
+      },
+      {
+        "name": "config.h",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/include/mirage/yica/config.h\n文件大小: 6054 bytes"
+      },
+      {
+        "name": "optimizer.h",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/mirage/include/mirage/yica/optimizer.h\n文件大小: 8115 bytes"
+      },
+      {
+        "name": "YICA-MIRAGE-INTEGRATION-PLAN.md",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/YICA-MIRAGE-INTEGRATION-PLAN.md\n文件大小: 11397 bytes"
+      },
+      {
+        "name": "demo_yica_standalone.py",
+        "success": true,
+        "details": "路径: /Users/xingqiangchen/PAPER/YZ-optimzier-bin/demo_yica_standalone.py\n文件大小: 16607 bytes"
+      }
+    ],
+    "YICA演示程序": [
+      {
+        "name": "YICA演示程序执行",
+        "success": true,
+        "details": "执行成功\n输出行数: 69\n平均加速比: 5.5x\n检测到 2 个性能测试"
+      },
+      {
+        "name": "生成文件 yica_matmul_kernel.py",
+        "success": true,
+        "details": "文件大小: 2709 bytes"
+      },
+      {
+        "name": "生成文件 yica_attention_kernel.py",
+        "success": true,
+        "details": "文件大小: 2292 bytes"
+      }
+    ],
+    "CMake集成": [
+      {
+        "name": "主CMakeLists.txt",
+        "success": true,
+        "details": "文件大小: 14005 bytes\nYICA集成: 是"
+      },
+      {
+        "name": "YICA CMake配置",
+        "success": true,
+        "details": "文件大小: 4654 bytes\n配置选项: 完整"
+      }
+    ],
+    "构建工具": [
+      {
+        "name": "CMake",
+        "success": true,
+        "details": "版本信息: cmake version 4.0.2"
+      },
+      {
+        "name": "Make",
+        "success": true,
+        "details": "版本信息: GNU Make 3.81"
+      }
+    ]
+  }
+}

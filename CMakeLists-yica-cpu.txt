@@ -1,0 +1,189 @@
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(YICA_CPU LANGUAGES C CXX)
+
+message(STATUS "Building YICA without CUDA dependencies")
+message(STATUS "CMake Version: ${CMAKE_VERSION}")
+
+# 设置C++标准
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 包含目录
+include_directories("mirage/include")
+include_directories(".")
+
+# 编译选项
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Build in Debug mode")
+    set(CMAKE_CXX_FLAGS "-fopenmp -O0 -g -Wall -fPIC -DYICA_CPU_ONLY ${CMAKE_CXX_FLAGS}")
+else()
+    set(CMAKE_CXX_FLAGS "-fopenmp -O2 -Wall -fPIC -DYICA_CPU_ONLY ${CMAKE_CXX_FLAGS}")
+endif()
+
+# 定义宏，禁用CUDA功能
+add_compile_definitions(YICA_CPU_ONLY)
+add_compile_definitions(NO_CUDA)
+
+# YICA核心源文件 - 只选择CPU兼容的文件
+set(YICA_CORE_SRCS
+    # YICA类型定义（无CUDA依赖）
+    mirage/src/search/yica/yica_types.cc
+    
+    # YICA架构分析器（无CUDA依赖）
+    mirage/src/search/yica/yica_analyzer.cc
+    
+    # YICA优化策略（无CUDA依赖）
+    mirage/src/search/yica/optimization_strategy.cc
+    mirage/src/search/yica/strategy_library.cc
+    
+    # YICA运行时类型（无CUDA依赖）
+    mirage/src/search/yica/runtime_types.cc
+    
+    # Mirage基础组件（CPU兼容部分）
+    mirage/src/base/data_type.cc
+    mirage/src/base/layout.cc
+    mirage/src/layout.cc
+    mirage/src/profile_result.cc
+    
+    # 搜索相关组件（CPU兼容）
+    mirage/src/search/config.cc
+    mirage/src/search/dim_strategy.cc
+    mirage/src/search/op_utils.cc
+    
+    # 抽象表达式（CPU兼容）
+    mirage/src/search/abstract_expr/abstract_expr.cc
+    mirage/src/search/abstract_expr/abstract_expr_eval.cc
+    
+    # 范围传播（CPU兼容）
+    mirage/src/search/range_propagation/irange.cc
+    mirage/src/search/range_propagation/range.cc
+    mirage/src/search/range_propagation/tbrange.cc
+    
+    # 验证组件（CPU兼容）
+    mirage/src/search/verification/formal_verifier.cc
+    mirage/src/search/verification/output_match.cc
+    mirage/src/search/verification/probabilistic_verifier.cc
+    
+    # 工具类（CPU兼容）
+    mirage/src/utils/containers.cc
+    mirage/src/utils/json_utils.cc
+)
+
+# CPU替代的代码生成器
+set(YICA_CPU_SRCS
+    mirage/src/search/yica/cpu_code_generator.cc
+    mirage/src/search/yica/cpu_operator_generators.cc
+    mirage/src/search/yica/cpu_performance_monitor.cc
+    mirage/src/search/yica/cpu_runtime_optimizer.cc
+    mirage/src/search/yica/cpu_ml_optimizer.cc
+)
+
+# 查找必要的依赖
+find_package(PkgConfig REQUIRED)
+
+# 寻找OpenMP
+find_package(OpenMP REQUIRED)
+if(OpenMP_CXX_FOUND)
+    list(APPEND YICA_LINK_LIBS OpenMP::OpenMP_CXX)
+endif()
+
+# 寻找JSON库
+find_package(nlohmann_json QUIET)
+if(nlohmann_json_FOUND)
+    list(APPEND YICA_LINK_LIBS nlohmann_json::nlohmann_json)
+else()
+    # 使用内置JSON
+    add_subdirectory(mirage/deps/json EXCLUDE_FROM_ALL)
+    list(APPEND YICA_LINK_LIBS nlohmann_json::nlohmann_json)
+endif()
+
+# Z3依赖（如果可用）
+find_package(Z3 QUIET)
+if(Z3_FOUND)
+    message(STATUS "Found Z3 ${Z3_VERSION_STRING}")
+    include_directories(${Z3_CXX_INCLUDE_DIRS})
+    list(APPEND YICA_LINK_LIBS ${Z3_LIBRARIES})
+    add_compile_definitions(HAVE_Z3)
+else()
+    message(WARNING "Z3 not found, formal verification will be disabled")
+endif()
+
+# Rust依赖检查（如果可用）
+execute_process(COMMAND rustc --version
+    RESULT_VARIABLE RUST_COMMAND_RESULT
+    OUTPUT_QUIET ERROR_QUIET)
+
+if(RUST_COMMAND_RESULT EQUAL 0)
+    message(STATUS "Rust found, enabling advanced optimizations")
+    add_compile_definitions(HAVE_RUST)
+    
+    # 设置Rust库路径（如果存在）
+    if(ABSTRACT_SUBEXPR_LIB AND ABSTRACT_SUBEXPR_LIBRARIES)
+        include_directories(${ABSTRACT_SUBEXPR_LIB})
+        list(APPEND YICA_LINK_LIBS ${ABSTRACT_SUBEXPR_LIBRARIES})
+    endif()
+else()
+    message(WARNING "Rust not found, some optimizations will be disabled")
+endif()
+
+# 创建YICA CPU库
+add_library(yica_cpu ${YICA_CORE_SRCS} ${YICA_CPU_SRCS})
+
+# 设置目标属性
+set_target_properties(yica_cpu PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    POSITION_INDEPENDENT_CODE ON
+)
+
+# 链接库
+target_link_libraries(yica_cpu ${YICA_LINK_LIBS})
+
+# 设置包含目录
+target_include_directories(yica_cpu
+    PUBLIC ${PROJECT_SOURCE_DIR}/mirage/include
+    PUBLIC ${PROJECT_SOURCE_DIR}
+)
+
+# 安装配置
+install(TARGETS yica_cpu
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+
+install(DIRECTORY mirage/include/mirage/search/yica
+    DESTINATION include/mirage/search)
+
+# 可选：构建测试
+option(BUILD_YICA_TESTS "Build YICA tests" OFF)
+if(BUILD_YICA_TESTS)
+    enable_testing()
+    
+    # 测试可执行文件
+    set(YICA_TEST_SRCS
+        mirage/tests/yica/test_yica_analyzer.cc
+        mirage/tests/yica/test_strategy_library.cc
+        mirage/tests/yica/test_cpu_code_generator.cc
+        mirage/tests/yica/test_cpu_runtime_optimizer.cc
+    )
+    
+    add_executable(yica_tests ${YICA_TEST_SRCS})
+    target_link_libraries(yica_tests yica_cpu)
+    
+    add_test(NAME yica_unit_tests COMMAND yica_tests)
+endif()
+
+# 可选：构建示例
+option(BUILD_YICA_EXAMPLES "Build YICA examples" OFF)
+if(BUILD_YICA_EXAMPLES)
+    add_executable(yica_demo examples/yica_cpu_demo.cc)
+    target_link_libraries(yica_demo yica_cpu)
+endif()
+
+# 显示构建信息
+message(STATUS "YICA CPU build configuration:")
+message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "  OpenMP: ${OpenMP_CXX_FOUND}")
+message(STATUS "  Z3: ${Z3_FOUND}")
+message(STATUS "  Rust: ${RUST_COMMAND_RESULT}")
+message(STATUS "  Install Prefix: ${CMAKE_INSTALL_PREFIX}") 

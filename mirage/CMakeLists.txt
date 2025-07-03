@@ -18,6 +18,9 @@ include_directories("include")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
+# Include YICA support
+include(cmake/yica.cmake)
+
 #add_subdirectory(deps/cutlass)
 
 set(CMAKE_CUDA_ARCHITECTURES "70;75;80;86;89;90")
