@@ -1,0 +1,1 @@
+CMakeLists-self-contained.txt

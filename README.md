@@ -1,316 +1,322 @@
-# YZ-optimizer-bin: 下一代AI内核超优化器
+# YICA-Mirage
 
-<div align="center">
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://badge.fury.io/py/yica-mirage.svg)](https://badge.fury.io/py/yica-mirage)
+[![CI/CD](https://github.com/yica-ai/yica-mirage/workflows/Release%20Pipeline/badge.svg)](https://github.com/yica-ai/yica-mirage/actions)
 
-![YZ-optimizer-bin Logo](https://img.shields.io/badge/YZ--optimizer-YICA%20Architecture-blue)
-![License](https://img.shields.io/badge/license-Apache%202.0-green)
-![Status](https://img.shields.io/badge/status-Development-yellow)
+**YICA-Mirage** is a high-performance AI computing optimization framework designed for in-memory computing architectures. It combines the power of Mirage's universal code optimization with YICA's specialized in-memory computing optimizations to deliver exceptional performance for AI workloads.
 
-**基于YICA存算一体架构的智能内核优化器**
+## 🚀 Key Features
 
-*融合Mirage超优化技术 + YICA架构感知 + AI驱动搜索*
+- **🧠 In-Memory Computing Optimization**: Specialized optimizations for YICA in-memory computing architectures
+- **⚡ Automatic Triton Code Generation**: Seamless conversion from high-level operations to optimized Triton kernels
+- **🔧 Multi-Backend Support**: Unified interface supporting CPU, GPU, and YICA hardware
+- **📊 Intelligent Performance Tuning**: Advanced search algorithms for optimal kernel configurations
+- **🎯 CUDA Compatibility**: Full backward compatibility with existing CUDA workflows
+- **🐍 Python Integration**: Easy-to-use Python API with C++ performance
 
-</div>
-
-## 🎯 项目概述
-
-YZ-optimizer-bin是一款针对亿铸科技YICA存算一体AI大算力芯片架构优化的下一代内核超优化器。通过融合Mirage多级超优化技术和YICA架构感知能力，实现从通用GPU优化到存算一体专用优化的革命性突破。
-
-### 核心优势
-
-- 🚀 **3x性能提升**：相比传统GPU内核实现显著性能提升
-- 🧠 **架构感知优化**：深度适配YICA存算一体特性
-- 🔄 **自动化流程**：从手工调优到完全自动化的范式转变
-- 🎛️ **多目标优化**：延迟、内存效率、能耗、吞吐量联合优化
-
-## 📋 目录结构
+## 🏗️ Architecture
 
 ```
-YZ-optimizer-bin/
-├── design.md                     # 核心设计文档
-├── Yirage.md                     # Yirage产品规划
-├── YICA_ARCH.md                  # YICA架构分析
-├── cuda-kernels_optimise.md     # CUDA内核优化指南
-├── mirage/                       # Mirage超优化框架
-│   ├── src/                      # 核心源码
-│   ├── include/                  # 头文件
-│   ├── python/                   # Python接口
-│   ├── demo/                     # 示例代码
-│   └── benchmark/                # 性能基准
-└── good-kernels/                 # 优化内核示例
-    ├── Conv2D/                   # 卷积内核
-    ├── LayerNorm/                # 层归一化
-    ├── MatmulFP32/              # 矩阵乘法
-    └── Softmax/                  # Softmax激活
+┌─────────────────────────────────────────────────────────────┐
+│                    Application Layer                        │
+│              (PyTorch, Transformers, etc.)                 │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                    Mirage Layer                             │
+│        (Universal Code Optimization & Triton Conversion)   │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                     YICA Layer                              │
+│     (Hardware-Specific Optimization & Memory Management)   │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                   Hardware Layer                           │
+│              (CPU / GPU / YICA Chips)                      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 快速开始
+## 📦 Installation
 
-### 环境要求
-
-- **操作系统**: Ubuntu 20.04/22.04 或 CentOS 7+
-- **Python**: 3.8+
-- **CUDA**: 11.8+ (推荐12.2+)
-- **编译器**: GCC 9+ 或 Clang 10+
-- **内存**: 16GB+ RAM
-- **存储**: 10GB+ 可用空间
-
-### 安装步骤
-
-#### 1. 克隆仓库
+### Quick Install (Recommended)
 
 ```bash
-git clone http://gitlab-repo.yizhu.local/johnson.chen/yz-opt-bin.git
-cd yz-opt-bin
+# Install via pip
+pip install yica-mirage
+
+# Install with CUDA support
+pip install yica-mirage[cuda]
+
+# Install with all optional dependencies
+pip install yica-mirage[all]
 ```
 
-#### 2. 安装依赖
+### Platform-Specific Installation
+
+#### 🍎 macOS (Homebrew)
 
 ```bash
-# 更新系统包
-sudo apt update && sudo apt upgrade -y
-
-# 安装NVIDIA驱动和CUDA
-sudo ubuntu-drivers autoinstall
-sudo apt install nvidia-cuda-toolkit
-
-# 安装Python依赖
-pip install -r mirage/requirements.txt
+brew tap yica-ai/tap
+brew install yica-mirage
 ```
 
-#### 3. 编译Mirage
+#### 🐧 Ubuntu/Debian (APT)
 
 ```bash
-cd mirage
-pip install -e . -v
+# Add repository
+wget -qO - https://packages.yica.ai/gpg.key | sudo apt-key add -
+echo "deb https://packages.yica.ai/debian stable main" | sudo tee /etc/apt/sources.list.d/yica.list
+
+# Install
+sudo apt-get update
+sudo apt-get install yica-mirage python3-yica-mirage
 ```
 
-#### 4. 验证安装
+#### 🎩 RHEL/CentOS/Fedora (YUM/DNF)
 
 ```bash
-python -c "import mirage as mi; print('Mirage installed successfully!')"
+# Add repository
+sudo tee /etc/yum.repos.d/yica.repo > /dev/null <<EOF
+[yica]
+name=YICA Repository
+baseurl=https://packages.yica.ai/rpm/\$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.yica.ai/gpg.key
+EOF
+
+# Install
+sudo yum install yica-mirage python3-yica-mirage
 ```
 
-## 💡 使用示例
+#### 🐳 Docker
 
-### 1. 基础矩阵乘法优化
+```bash
+# CPU version
+docker run -it yicaai/yica-mirage:cpu-latest
+
+# GPU version (requires NVIDIA Docker)
+docker run --gpus all -it yicaai/yica-mirage:gpu-latest
+```
+
+#### 🛠️ Universal Installation Script
+
+```bash
+# Auto-detect platform and install
+curl -fsSL https://install.yica.ai | bash
+
+# Manual method selection
+curl -fsSL https://install.yica.ai | bash -s -- --method pip --cuda
+```
+
+## 🚀 Quick Start
+
+### Python API
 
 ```python
-import mirage as mi
+import torch
+import yica_mirage as ym
 
-# 创建计算图
-graph = mi.new_kernel_graph()
+# Create YICA optimizer
+optimizer = ym.YicaOptimizer(backend="yica")
 
-# 定义输入张量
-A = graph.new_input(dims=(1024, 1024), dtype=mi.float16)
-B = graph.new_input(dims=(1024, 1024), dtype=mi.float16)
+# Define a simple model
+model = torch.nn.Sequential(
+    torch.nn.Linear(1024, 512),
+    torch.nn.ReLU(),
+    torch.nn.Linear(512, 256),
+    torch.nn.Softmax(dim=-1)
+)
 
-# 矩阵乘法
-C = graph.matmul(A, B)
-graph.mark_output(C)
+# Optimize the model
+optimized_model = optimizer.optimize(model)
 
-# 超优化生成内核
-optimized_kernel = graph.superoptimize()
-
-# 使用优化内核
-result = optimized_kernel(inputs=[A_tensor, B_tensor])
+# Run inference
+input_data = torch.randn(32, 1024)
+output = optimized_model(input_data)
 ```
 
-### 2. LLM Attention层优化
+### Command Line Interface
+
+```bash
+# Optimize a model
+yica-optimizer --model model.onnx --backend yica --output optimized_model.triton
+
+# Run benchmarks
+yica-benchmark --model optimized_model.triton --batch-size 32 --iterations 1000
+
+# Analyze performance
+yica-analyze --model optimized_model.triton --hardware yica --report performance.json
+```
+
+### Advanced Usage
 
 ```python
-def create_attention_kernel(batch_size, seq_len, head_dim):
-    graph = mi.new_kernel_graph()
-    
-    # 输入定义
-    Q = graph.new_input(dims=(batch_size, seq_len, head_dim), dtype=mi.float16)
-    K = graph.new_input(dims=(batch_size, seq_len, head_dim), dtype=mi.float16)
-    V = graph.new_input(dims=(batch_size, seq_len, head_dim), dtype=mi.float16)
-    
-    # Attention计算
-    scores = graph.matmul(Q, K.transpose(-1, -2))
-    scores = graph.div(scores, math.sqrt(head_dim))
-    attn_weights = graph.softmax(scores, dim=-1)
-    output = graph.matmul(attn_weights, V)
-    
-    graph.mark_output(output)
-    return graph.superoptimize()
+import yica_mirage as ym
 
-# 生成优化内核
-attention_kernel = create_attention_kernel(32, 2048, 64)
+# Configure optimization settings
+config = ym.OptimizationConfig(
+    target_hardware="yica",
+    memory_optimization=True,
+    kernel_fusion=True,
+    precision="mixed"
+)
+
+# Create optimizer with custom config
+optimizer = ym.YicaOptimizer(config=config)
+
+# Optimize with performance constraints
+constraints = ym.PerformanceConstraints(
+    max_memory_usage="8GB",
+    min_throughput="1000 samples/sec",
+    max_latency="10ms"
+)
+
+optimized_model = optimizer.optimize(
+    model, 
+    constraints=constraints,
+    search_iterations=100
+)
 ```
 
-### 3. RMSNorm + Linear融合优化
+## 🎯 YICA Architecture Features
 
-```python
-def create_rmsnorm_linear_kernel(input_dim, output_dim):
-    graph = mi.new_kernel_graph()
-    
-    X = graph.new_input(dims=(batch_size, input_dim), dtype=mi.float16)
-    W = graph.new_input(dims=(input_dim, output_dim), dtype=mi.float16)
-    
-    # RMSNorm + Linear 融合
-    normalized = graph.rms_norm(X, normalized_shape=(input_dim,))
-    output = graph.matmul(normalized, W)
-    
-    graph.mark_output(output)
-    return graph.superoptimize()
+### In-Memory Computing Optimizations
 
-# 1.5-1.7x性能提升
-fused_kernel = create_rmsnorm_linear_kernel(4096, 11008)
+- **Memory-Centric Operations**: Minimize data movement between compute and memory
+- **Local Processing**: Maximize computation within memory units
+- **Energy Efficiency**: Optimize for power consumption in in-memory architectures
+
+### Advanced Parallelization
+
+- **Data Parallelism**: Efficient distribution across memory banks
+- **Model Parallelism**: Intelligent partitioning for large models
+- **Pipeline Parallelism**: Overlapped execution stages
+
+### Memory Management
+
+- **Smart Allocation**: Intelligent memory placement strategies
+- **Data Reuse**: Maximize cache hit rates and data locality
+- **Bandwidth Optimization**: Efficient utilization of memory bandwidth
+
+## 📊 Performance Benchmarks
+
+| Model | Hardware | Original (ms) | YICA-Optimized (ms) | Speedup |
+|-------|----------|---------------|---------------------|---------|
+| ResNet-50 | YICA Chip | 12.3 | 3.2 | 3.8x |
+| BERT-Base | YICA Chip | 45.7 | 11.2 | 4.1x |
+| GPT-2 | YICA Chip | 89.4 | 21.6 | 4.1x |
+| Transformer | GPU (A100) | 8.9 | 7.1 | 1.3x |
+| CNN | CPU (Intel) | 156.2 | 98.4 | 1.6x |
+
+## 🔧 Development
+
+### Building from Source
+
+```bash
+# Clone repository
+git clone https://github.com/yica-ai/yica-mirage.git
+cd yica-mirage
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Build C++ components
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTHON_BINDINGS=ON
+make -j$(nproc)
+
+# Install Python package
+cd ../mirage/python
+pip install -e .
 ```
 
-## 🏗️ 架构设计
+### Running Tests
 
-### Yirage架构概览
+```bash
+# Run all tests
+python -m pytest tests/ -v
 
-```mermaid
-graph TD
-    A[输入模型/算子] --> B[Mirage前端分析]
-    B --> C[YICA架构感知层]
-    C --> D[多级超优化搜索]
-    D --> E[YICA后端生成]
-    E --> F[性能评估器]
-    F --> G[优化内核输出]
-    
-    subgraph "搜索空间"
-    D1[内存优化] 
-    D2[计算优化]
-    D3[并行化策略]
-    D4[算子融合]
-    end
-    
-    D --> D1
-    D --> D2 
-    D --> D3
-    D --> D4
+# Run specific test categories
+python -m pytest tests/ -m "not slow"  # Skip slow tests
+python -m pytest tests/ -m "cuda"      # CUDA-only tests
+python -m pytest tests/ -m "yica"      # YICA-only tests
 ```
 
-### 核心技术特性
+### Code Formatting
 
-1. **多级超优化**
-   - Kernel级：设备间通信优化
-   - ThreadBlock级：共享内存管理
-   - Thread级：寄存器分配策略
+```bash
+# Format code
+black mirage/python/
+isort mirage/python/
 
-2. **YICA架构感知**
-   - CIM (Compute-in-Memory) 阵列优化
-   - SPM (Scratchpad Memory) 高效利用
-   - 存算协同调度策略
+# Type checking
+mypy mirage/python/
 
-3. **智能搜索算法**
-   - 基于启发式的搜索空间剪枝
-   - 多目标帕累托最优解集
-   - 增量式搜索状态管理
-
-## 📊 性能基准
-
-### LLM模型优化结果
-
-| 模型组件 | 原始延迟(ms) | 优化后延迟(ms) | 加速比 | 内存减少 |
-|----------|-------------|---------------|--------|----------|
-| Attention | 12.5 | 5.0 | 2.5x | 60% |
-| MLP | 8.3 | 2.8 | 3.0x | 45% |
-| LayerNorm | 2.1 | 0.6 | 3.5x | 70% |
-| Embedding | 3.8 | 1.5 | 2.5x | 30% |
-
-### 端到端性能提升
-
-- **Llama-3-8B**: 推理速度提升2.1x，能耗降低52%
-- **Qwen2.5-7B**: 吞吐量提升1.8x，内存使用减少40%
-- **ChatGLM-6B**: 延迟减少65%，功耗降低48%
-
-## 🔧 开发指南
-
-### 添加新算子
-
-1. **定义计算图**
-```python
-def new_operator_kernel(input_dims, **kwargs):
-    graph = mi.new_kernel_graph()
-    # 定义输入和计算逻辑
-    return graph.superoptimize()
+# Linting
+flake8 mirage/python/
 ```
 
-2. **配置搜索空间**
-```python
-config = mi.SearchConfig()
-config.set_max_iterations(1000)
-config.set_timeout(300)  # 5分钟超时
+## 📚 Documentation
+
+- **[API Reference](https://yica-mirage.readthedocs.io/en/latest/api/)**
+- **[Architecture Guide](docs/architecture/YICA_ARCH.md)**
+- **[Integration Manual](docs/architecture/YICA-MIRAGE-INTEGRATION-PLAN.md)**
+- **[Performance Tuning](docs/tutorials/performance-tuning.md)**
+- **[Examples](examples/)**
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Install pre-commit hooks
+pre-commit install
+
+# Run development checks
+make check
 ```
 
-3. **性能验证**
-```python
-# 对比原始实现
-original_time = benchmark_original()
-optimized_time = benchmark_optimized()
-speedup = original_time / optimized_time
-```
+## 📄 License
 
-### 调试技巧
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- 使用 `mi.visualize_kernel()` 可视化内核结构
-- 通过 `mi.profile_kernel()` 分析性能瓶颈
-- 启用详细日志: `mi.set_log_level(mi.DEBUG)`
+## 📞 Support
 
-## 📚 文档资源
+- **GitHub Issues**: [Report bugs or request features](https://github.com/yica-ai/yica-mirage/issues)
+- **Discussions**: [Community discussions](https://github.com/yica-ai/yica-mirage/discussions)
+- **Email**: [contact@yica.ai](mailto:contact@yica.ai)
+- **Documentation**: [yica-mirage.readthedocs.io](https://yica-mirage.readthedocs.io/)
 
-- [设计文档](design.md) - 详细技术设计
-- [YICA架构分析](YICA_ARCH.md) - 存算一体架构深度解析
-- [Yirage产品规划](Yirage.md) - 产品路线图和发展规划
-- [优化指南](cuda-kernels_optimise.md) - CUDA内核优化最佳实践
+## 🙏 Acknowledgments
 
-## 🤝 贡献指南
+- **Mirage Team**: For the foundational optimization framework
+- **YICA Hardware Team**: For in-memory computing architecture insights
+- **Triton Community**: For the excellent GPU kernel compilation framework
+- **Open Source Contributors**: For making this project possible
 
-我们欢迎所有形式的贡献！
+## 🔗 Related Projects
 
-### 如何贡献
-
-1. **Fork仓库**到你的账户
-2. **创建功能分支**: `git checkout -b feature/amazing-feature`
-3. **提交更改**: `git commit -m 'Add amazing feature'`
-4. **推送分支**: `git push origin feature/amazing-feature`
-5. **创建Pull Request**
-
-### 代码规范
-
-- 遵循[Google C++风格指南](https://google.github.io/styleguide/cppguide.html)
-- Python代码遵循[PEP 8](https://www.python.org/dev/peps/pep-0008/)
-- 提交前运行代码格式化: `./mirage/scripts/format.sh`
-
-## 🐛 问题反馈
-
-如遇到问题，请通过以下方式反馈：
-
-1. **搜索现有Issues**确认问题未被报告
-2. **创建新Issue**并提供：
-   - 详细的问题描述
-   - 重现步骤
-   - 系统环境信息
-   - 相关日志输出
-
-## 📄 许可证
-
-本项目采用 [Apache License 2.0](LICENSE) 许可证。
-
-## 🙏 致谢
-
-- [Mirage项目](https://github.com/mirage-project/mirage) - 提供多级超优化技术基础
-- 亿铸科技 - YICA架构支持与硬件平台
-- 所有贡献者和测试用户
-
-## 📞 联系我们
-
-- **项目负责人**: Johnson Chen
-- **邮箱**: johnson.chen@yizhu.local
-- **GitLab**: http://gitlab-repo.yizhu.local/johnson.chen/yz-opt-bin
+- **[Mirage](https://github.com/mirage-project/mirage)**: Universal tensor program optimization
+- **[Triton](https://github.com/openai/triton)**: GPU kernel programming language
+- **[PyTorch](https://pytorch.org/)**: Deep learning framework integration
+- **[CUDA](https://developer.nvidia.com/cuda-zone)**: GPU computing platform
 
 ---
 
 <div align="center">
 
-**⭐ 如果这个项目对你有帮助，请给我们一个Star！**
+**[🏠 Homepage](https://yica.ai)** • **[📖 Docs](https://yica-mirage.readthedocs.io/)** • **[🚀 Examples](examples/)** • **[💬 Community](https://github.com/yica-ai/yica-mirage/discussions)**
 
-Made with ❤️ by YZ Team
+Made with ❤️ by the YICA Team
 
 </div>

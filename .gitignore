@@ -1,0 +1,78 @@
+# YICA-Mirage Project .gitignore
+
+# Build directories
+build/
+build-*/
+cmake-build-*/
+CMakeFiles/
+Testing/
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+*.exe
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+*.out
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# Test outputs
+test_results/
+coverage/
+*.gcov
+*.gcda
+*.gcno
+
+# Documentation builds
+docs/_build/
+docs/html/
+doxygen/
+
+# Release packages
+*.tar.gz
+*.zip
+yica-mirage-release-*/
+
+# CMake
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Local configuration
+local_config.yaml
+.env
+
+# Compiled binaries
+yica_optimizer
+yica_optimizer_tests
+yica_analyzer
+test_yica_analyzer 

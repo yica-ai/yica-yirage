@@ -1,0 +1,480 @@
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(YICA_MODULAR LANGUAGES C CXX)
+
+message(STATUS "YICA 模块化构建系统 - 按硬件后端分离")
+message(STATUS "CMake Version: ${CMAKE_VERSION}")
+
+# 设置C++标准
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 包含目录
+include_directories("mirage/include")
+include_directories(".")
+
+# 硬件后端选项 - 可以多选
+option(BUILD_CPU_BACKEND "Build CPU backend" ON)
+option(BUILD_GPU_BACKEND "Build GPU CUDA backend" OFF)
+option(BUILD_YICA_BACKEND "Build YICA hardware backend" OFF)
+option(BUILD_HYBRID_BACKEND "Build hybrid multi-backend" OFF)
+
+# 功能选项
+option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_BENCHMARKS "Build benchmarks" OFF)
+
+# 编译类型配置
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Build in Debug mode")
+    set(CMAKE_CXX_FLAGS "-O0 -g -Wall -fPIC ${CMAKE_CXX_FLAGS}")
+else()
+    set(CMAKE_CXX_FLAGS "-O2 -Wall -fPIC ${CMAKE_CXX_FLAGS}")
+endif()
+
+# ============================================================================
+# 核心基础库 - 所有后端共享
+# ============================================================================
+
+set(YICA_CORE_SRCS
+    # 基础数据类型和布局
+    mirage/src/base/data_type.cc
+    mirage/src/base/layout.cc
+    mirage/src/layout.cc
+    mirage/src/profile_result.cc
+    
+    # 搜索和优化核心
+    mirage/src/search/config.cc
+    mirage/src/search/dim_strategy.cc
+    mirage/src/search/op_utils.cc
+    
+    # 抽象表达式
+    mirage/src/search/abstract_expr/abstract_expr.cc
+    mirage/src/search/abstract_expr/abstract_expr_eval.cc
+    
+    # 范围传播
+    mirage/src/search/range_propagation/irange.cc
+    mirage/src/search/range_propagation/range.cc
+    mirage/src/search/range_propagation/tbrange.cc
+    
+    # 形式验证
+    mirage/src/search/verification/formal_verifier.cc
+)
+
+# 创建核心库
+add_library(yica_core STATIC ${YICA_CORE_SRCS})
+target_compile_definitions(yica_core PRIVATE YICA_CORE_LIBRARY)
+
+# ============================================================================
+# CPU 后端
+# ============================================================================
+
+if(BUILD_CPU_BACKEND)
+    message(STATUS "构建CPU后端")
+    
+    # CPU后端源文件
+    set(YICA_CPU_SRCS
+        # YICA CPU优化器
+        mirage/src/search/yica/yica_analyzer.cc
+        mirage/src/search/yica/yica_types.cc
+        mirage/src/search/yica/optimization_strategy.cc
+        mirage/src/search/yica/cpu_code_generator.cc
+        
+        # CPU特定优化
+        mirage/src/search/yica/cpu/cpu_optimizer.cc
+        mirage/src/search/yica/cpu/openmp_parallel.cc
+        mirage/src/search/yica/cpu/simd_optimization.cc
+        mirage/src/search/yica/cpu/cache_optimization.cc
+        
+        # CPU kernel实现
+        yica_all_reduce.cc
+        yica_rms_norm.cc
+        yica_reduction.cc
+        yica_element_ops.cc
+        yica_device_memory_manager.cc
+        yica_customized.cc
+        yica_chunk.cc
+        yica_graph.cc
+        yica_matmul.cc
+    )
+    
+    # CPU编译标志
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_CPU_BACKEND -DNO_CUDA")
+    
+    # 检查OpenMP支持（可选）
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+        message(STATUS "OpenMP支持已启用")
+    else()
+        message(WARNING "OpenMP未找到，CPU后端将不支持并行化")
+        message(STATUS "macOS用户可以运行: brew install libomp")
+    endif()
+    
+    # 检查SIMD支持
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
+    if(COMPILER_SUPPORTS_AVX2)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+        message(STATUS "AVX2优化已启用")
+    endif()
+    
+    # 创建CPU后端库
+    add_library(yica_cpu SHARED ${YICA_CPU_SRCS})
+    target_link_libraries(yica_cpu yica_core)
+    
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(yica_cpu OpenMP::OpenMP_CXX)
+    endif()
+    
+    # 安装CPU后端
+    install(TARGETS yica_cpu LIBRARY DESTINATION lib)
+    
+    # CPU后端测试
+    if(BUILD_TESTS)
+        add_subdirectory(tests/cpu)
+    endif()
+    
+    # CPU后端示例
+    if(BUILD_EXAMPLES)
+        add_subdirectory(examples/cpu)
+    endif()
+    
+    # CPU后端基准测试
+    if(BUILD_BENCHMARKS)
+        add_subdirectory(benchmarks/cpu)
+    endif()
+endif()
+
+# ============================================================================
+# GPU CUDA 后端
+# ============================================================================
+
+if(BUILD_GPU_BACKEND)
+    message(STATUS "构建GPU CUDA后端")
+    
+    # 启用CUDA语言
+    enable_language(CUDA)
+    
+    # 查找CUDA
+    find_package(CUDA REQUIRED)
+    if(NOT CUDA_FOUND)
+        message(FATAL_ERROR "CUDA not found, cannot build GPU backend")
+    endif()
+    
+    # CUDA架构设置
+    set(CMAKE_CUDA_ARCHITECTURES "70;75;80;86;89;90")
+    
+    # GPU后端源文件
+    set(YICA_GPU_SRCS
+        # GPU优化器
+        mirage/src/search/yica/gpu/gpu_optimizer.cc
+        mirage/src/search/yica/gpu/cuda_code_generator.cc
+        mirage/src/search/yica/gpu/memory_optimizer.cc
+        
+        # CUDA kernel文件
+        mirage/src/search/yica/gpu/kernels/all_reduce_kernel.cu
+        mirage/src/search/yica/gpu/kernels/matmul_kernel.cu
+        mirage/src/search/yica/gpu/kernels/element_ops_kernel.cu
+        mirage/src/search/yica/gpu/kernels/reduction_kernel.cu
+        
+        # GPU runtime
+        mirage/src/search/yica/gpu/gpu_runtime.cc
+        mirage/src/search/yica/gpu/cuda_memory_manager.cc
+    )
+    
+    # GPU编译标志
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_GPU_BACKEND -DUSE_CUDA")
+    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -DYICA_GPU_BACKEND")
+    
+    # CUDA编译标志
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O0 -g -Xcompiler=-fPIC")
+    else()
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O2 -Xcompiler=-fPIC")
+    endif()
+    
+    # 创建GPU后端库
+    add_library(yica_gpu SHARED ${YICA_GPU_SRCS})
+    target_link_libraries(yica_gpu yica_core)
+    target_link_libraries(yica_gpu ${CUDA_LIBRARIES})
+    
+    # 设置CUDA属性
+    set_target_properties(yica_gpu PROPERTIES 
+        CUDA_SEPARABLE_COMPILATION ON
+        CUDA_ARCHITECTURES "70;75;80;86;89;90"
+    )
+    
+    # 安装GPU后端
+    install(TARGETS yica_gpu LIBRARY DESTINATION lib)
+    
+    # GPU后端测试
+    if(BUILD_TESTS)
+        add_subdirectory(tests/gpu)
+    endif()
+    
+    # GPU后端示例
+    if(BUILD_EXAMPLES)
+        add_subdirectory(examples/gpu)
+    endif()
+    
+    # GPU后端基准测试
+    if(BUILD_BENCHMARKS)
+        add_subdirectory(benchmarks/gpu)
+    endif()
+endif()
+
+# ============================================================================
+# YICA 硬件后端
+# ============================================================================
+
+if(BUILD_YICA_BACKEND)
+    message(STATUS "构建YICA硬件后端")
+    
+    # 查找YICA SDK
+    find_path(YICA_INCLUDE_DIR yica/yica.h PATHS /opt/yica/include)
+    find_library(YICA_LIBRARY yica PATHS /opt/yica/lib)
+    
+    if(NOT YICA_INCLUDE_DIR OR NOT YICA_LIBRARY)
+        message(WARNING "YICA SDK not found, using simulation mode")
+        set(YICA_SIMULATION_MODE ON)
+    else()
+        message(STATUS "Found YICA SDK: ${YICA_INCLUDE_DIR}")
+        set(YICA_SIMULATION_MODE OFF)
+    endif()
+    
+    # YICA后端源文件
+    set(YICA_HARDWARE_SRCS
+        # YICA硬件抽象层
+        mirage/src/yica/yica_hardware_abstraction.cc
+        mirage/src/yica/yica_device_manager.cc
+        mirage/src/yica/yica_memory_manager.cc
+        
+        # YIS指令生成器
+        mirage/src/yica/yis_instruction_generator.cc
+        mirage/src/yica/yis_optimizer.cc
+        
+        # CIM阵列优化
+        mirage/src/yica/cim_array_optimizer.cc
+        mirage/src/yica/spm_optimizer.cc
+        
+        # YICA kernel生成器
+        mirage/src/yica/yica_kernel_generator.cc
+        
+        # 硬件特定实现
+        mirage/src/yica/hardware/cim_operations.cc
+        mirage/src/yica/hardware/spm_operations.cc
+        mirage/src/yica/hardware/yccl_operations.cc
+    )
+    
+    # YICA编译标志
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_HARDWARE_BACKEND")
+    
+    if(YICA_SIMULATION_MODE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_SIMULATION_MODE")
+        message(STATUS "YICA模拟模式已启用")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_HARDWARE_MODE")
+        message(STATUS "YICA硬件模式已启用")
+    endif()
+    
+    # 创建YICA后端库
+    add_library(yica_hardware SHARED ${YICA_HARDWARE_SRCS})
+    target_link_libraries(yica_hardware yica_core)
+    
+    if(NOT YICA_SIMULATION_MODE)
+        target_include_directories(yica_hardware PRIVATE ${YICA_INCLUDE_DIR})
+        target_link_libraries(yica_hardware ${YICA_LIBRARY})
+    endif()
+    
+    # 安装YICA后端
+    install(TARGETS yica_hardware LIBRARY DESTINATION lib)
+    
+    # YICA后端测试
+    if(BUILD_TESTS)
+        add_subdirectory(tests/yica)
+    endif()
+    
+    # YICA后端示例
+    if(BUILD_EXAMPLES)
+        add_subdirectory(examples/yica)
+    endif()
+    
+    # YICA后端基准测试
+    if(BUILD_BENCHMARKS)
+        add_subdirectory(benchmarks/yica)
+    endif()
+endif()
+
+# ============================================================================
+# 混合多后端
+# ============================================================================
+
+if(BUILD_HYBRID_BACKEND)
+    message(STATUS "构建混合多后端")
+    
+    # 检查至少有两个后端被启用
+    set(ENABLED_BACKENDS 0)
+    if(BUILD_CPU_BACKEND)
+        math(EXPR ENABLED_BACKENDS "${ENABLED_BACKENDS} + 1")
+    endif()
+    if(BUILD_GPU_BACKEND)
+        math(EXPR ENABLED_BACKENDS "${ENABLED_BACKENDS} + 1")
+    endif()
+    if(BUILD_YICA_BACKEND)
+        math(EXPR ENABLED_BACKENDS "${ENABLED_BACKENDS} + 1")
+    endif()
+    
+    if(ENABLED_BACKENDS LESS 2)
+        message(FATAL_ERROR "混合后端需要至少启用两个硬件后端")
+    endif()
+    
+    # 混合后端源文件
+    set(YICA_HYBRID_SRCS
+        # 后端管理器
+        mirage/src/hybrid/backend_manager.cc
+        mirage/src/hybrid/backend_selector.cc
+        mirage/src/hybrid/performance_monitor.cc
+        
+        # 自动调度器
+        mirage/src/hybrid/auto_scheduler.cc
+        mirage/src/hybrid/load_balancer.cc
+        
+        # 跨后端优化
+        mirage/src/hybrid/cross_backend_optimizer.cc
+        mirage/src/hybrid/memory_coordinator.cc
+    )
+    
+    # 混合后端编译标志
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DYICA_HYBRID_BACKEND")
+    
+    # 创建混合后端库
+    add_library(yica_hybrid SHARED ${YICA_HYBRID_SRCS})
+    target_link_libraries(yica_hybrid yica_core)
+    
+    # 链接启用的后端
+    if(BUILD_CPU_BACKEND)
+        target_link_libraries(yica_hybrid yica_cpu)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHYBRID_HAS_CPU")
+    endif()
+    
+    if(BUILD_GPU_BACKEND)
+        target_link_libraries(yica_hybrid yica_gpu)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHYBRID_HAS_GPU")
+    endif()
+    
+    if(BUILD_YICA_BACKEND)
+        target_link_libraries(yica_hybrid yica_hardware)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHYBRID_HAS_YICA")
+    endif()
+    
+    # 安装混合后端
+    install(TARGETS yica_hybrid LIBRARY DESTINATION lib)
+    
+    # 混合后端测试
+    if(BUILD_TESTS)
+        add_subdirectory(tests/hybrid)
+    endif()
+    
+    # 混合后端示例
+    if(BUILD_EXAMPLES)
+        add_subdirectory(examples/hybrid)
+    endif()
+    
+    # 混合后端基准测试
+    if(BUILD_BENCHMARKS)
+        add_subdirectory(benchmarks/hybrid)
+    endif()
+endif()
+
+# ============================================================================
+# 统一接口库
+# ============================================================================
+
+# 创建统一的YICA接口库
+set(YICA_UNIFIED_SRCS
+    mirage/src/unified/yica_unified_interface.cc
+    mirage/src/unified/backend_dispatcher.cc
+    mirage/src/unified/unified_memory_manager.cc
+)
+
+add_library(yica_unified SHARED ${YICA_UNIFIED_SRCS})
+target_link_libraries(yica_unified yica_core)
+
+# 链接所有启用的后端
+if(BUILD_CPU_BACKEND)
+    target_link_libraries(yica_unified yica_cpu)
+endif()
+
+if(BUILD_GPU_BACKEND)
+    target_link_libraries(yica_unified yica_gpu)
+endif()
+
+if(BUILD_YICA_BACKEND)
+    target_link_libraries(yica_unified yica_hardware)
+endif()
+
+if(BUILD_HYBRID_BACKEND)
+    target_link_libraries(yica_unified yica_hybrid)
+endif()
+
+# 安装统一接口库
+install(TARGETS yica_unified LIBRARY DESTINATION lib)
+
+# ============================================================================
+# 头文件安装
+# ============================================================================
+
+install(DIRECTORY mirage/include/ DESTINATION include)
+
+# 根据启用的后端安装对应头文件
+if(BUILD_CPU_BACKEND)
+    install(FILES 
+        yica_all_reduce.h
+        yica_rms_norm.h
+        yica_reduction.h
+        yica_element_ops.h
+        yica_device_memory_manager.h
+        yica_customized.h
+        yica_chunk.h
+        yica_graph.h
+        yica_matmul.h
+        DESTINATION include/yica/cpu
+    )
+endif()
+
+# ============================================================================
+# 构建总结
+# ============================================================================
+
+message(STATUS "========================================")
+message(STATUS "YICA模块化构建配置总结")
+message(STATUS "========================================")
+message(STATUS "CPU后端:     ${BUILD_CPU_BACKEND}")
+message(STATUS "GPU后端:     ${BUILD_GPU_BACKEND}")
+message(STATUS "YICA后端:    ${BUILD_YICA_BACKEND}")
+message(STATUS "混合后端:    ${BUILD_HYBRID_BACKEND}")
+message(STATUS "构建测试:    ${BUILD_TESTS}")
+message(STATUS "构建示例:    ${BUILD_EXAMPLES}")
+message(STATUS "构建基准:    ${BUILD_BENCHMARKS}")
+message(STATUS "========================================")
+
+# 验证至少启用一个后端
+set(TOTAL_BACKENDS 0)
+if(BUILD_CPU_BACKEND)
+    math(EXPR TOTAL_BACKENDS "${TOTAL_BACKENDS} + 1")
+endif()
+if(BUILD_GPU_BACKEND)
+    math(EXPR TOTAL_BACKENDS "${TOTAL_BACKENDS} + 1")
+endif()
+if(BUILD_YICA_BACKEND)
+    math(EXPR TOTAL_BACKENDS "${TOTAL_BACKENDS} + 1")
+endif()
+if(BUILD_HYBRID_BACKEND)
+    math(EXPR TOTAL_BACKENDS "${TOTAL_BACKENDS} + 1")
+endif()
+
+if(TOTAL_BACKENDS EQUAL 0)
+    message(FATAL_ERROR "至少需要启用一个硬件后端")
+endif()
+
+message(STATUS "将构建 ${TOTAL_BACKENDS} 个硬件后端") 

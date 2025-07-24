@@ -1,0 +1,355 @@
+# YICA 软件分发配置
+# 定义不同硬件配置的预构建版本和分发策略
+
+version: "1.0"
+project_name: "YICA-Optimizer"
+description: "YICA存算一体架构优化器 - 支持多种硬件配置"
+
+# 发布渠道配置
+distribution_channels:
+  github_releases:
+    enabled: true
+    repository: "yica-project/yica-optimizer"
+    create_draft: true
+    
+  docker_hub:
+    enabled: true
+    organization: "yica"
+    repositories:
+      - "yica-optimizer"
+      - "yica-runtime"
+    
+  package_managers:
+    apt:
+      enabled: true
+      ppa: "ppa:yica/stable"
+    
+    yum:
+      enabled: true
+      repository: "yica-stable"
+    
+    homebrew:
+      enabled: true
+      tap: "yica/tap"
+    
+    pip:
+      enabled: false  # Python绑定单独分发
+
+# 硬件配置定义
+hardware_configs:
+  cpu_only:
+    name: "CPU Only"
+    description: "纯CPU版本，无GPU依赖，适用于服务器和开发环境"
+    dependencies:
+      system:
+        - "libomp-dev"
+        - "libblas-dev"
+        - "liblapack-dev"
+      optional:
+        - "libz3-dev"  # 形式验证支持
+    
+    build_flags:
+      - "-DYICA_CPU_ONLY=ON"
+      - "-DNO_CUDA=ON"
+      - "-DUSE_OPENMP=ON"
+      - "-DUSE_AVX2=AUTO"
+    
+    target_platforms:
+      - "linux-x86_64"
+      - "linux-aarch64"
+      - "macos-x86_64"
+      - "macos-arm64"
+      - "windows-x86_64"
+    
+    package_size_mb: 15
+    memory_requirement_mb: 512
+    
+  gpu_cuda:
+    name: "GPU CUDA"
+    description: "CUDA GPU版本，包含完整GPU加速支持"
+    dependencies:
+      system:
+        - "nvidia-driver-470"
+        - "cuda-toolkit-11.8"
+        - "libcudnn8"
+      optional:
+        - "tensorrt"
+    
+    build_flags:
+      - "-DUSE_CUDA=ON"
+      - "-DCUDA_ARCHITECTURES=70;75;80;86;89;90"
+      - "-DUSE_CUTLASS=ON"
+      - "-DUSE_CUDNN=ON"
+    
+    target_platforms:
+      - "linux-x86_64"
+      - "windows-x86_64"
+    
+    cuda_versions:
+      - "11.8"
+      - "12.1"
+      - "12.2"
+    
+    package_size_mb: 150
+    memory_requirement_mb: 2048
+    gpu_memory_requirement_mb: 4096
+    
+  yica_hardware:
+    name: "YICA Hardware"
+    description: "YICA硬件版本，针对真实YICA硬件优化"
+    dependencies:
+      system:
+        - "yica-driver"
+        - "yica-sdk"
+        - "libyica-runtime"
+      optional:
+        - "yccl"  # YICA集合通信库
+    
+    build_flags:
+      - "-DBUILD_YICA_BACKEND=ON"
+      - "-DENABLE_YICA_OPTIMIZATION=ON"
+      - "-DENABLE_YIS_INSTRUCTION_SET=ON"
+      - "-DUSE_YCCL=ON"
+    
+    target_platforms:
+      - "linux-x86_64-yica"
+    
+    hardware_requirements:
+      - "YICA-V1.0+"
+      - "SPM >= 2GB per die"
+      - "CIM arrays >= 4"
+    
+    package_size_mb: 80
+    memory_requirement_mb: 1024
+    
+  hybrid_multi:
+    name: "Hybrid Multi-Backend"
+    description: "混合版本，支持CPU+GPU+YICA多种后端自动切换"
+    dependencies:
+      system:
+        - "nvidia-driver-470"
+        - "cuda-toolkit-11.8"
+        - "libomp-dev"
+      optional:
+        - "yica-sdk"
+        - "tensorrt"
+    
+    build_flags:
+      - "-DENABLE_MULTI_BACKEND=ON"
+      - "-DUSE_CUDA=ON"
+      - "-DBUILD_YICA_BACKEND=ON"
+      - "-DENABLE_AUTO_BACKEND_SELECTION=ON"
+    
+    target_platforms:
+      - "linux-x86_64"
+    
+    package_size_mb: 200
+    memory_requirement_mb: 3072
+
+# 预构建版本配置
+prebuilt_releases:
+  stable:
+    version_pattern: "v{major}.{minor}.{patch}"
+    release_schedule: "monthly"
+    
+    include_configs:
+      - "cpu_only"
+      - "gpu_cuda"
+      - "yica_hardware"
+    
+    testing_requirements:
+      unit_tests: true
+      integration_tests: true
+      performance_benchmarks: true
+      hardware_validation: true
+    
+  nightly:
+    version_pattern: "nightly-{date}"
+    release_schedule: "daily"
+    
+    include_configs:
+      - "cpu_only"
+      - "gpu_cuda"
+    
+    testing_requirements:
+      unit_tests: true
+      integration_tests: false
+      
+  experimental:
+    version_pattern: "experimental-{branch}-{commit}"
+    release_schedule: "on_demand"
+    
+    include_configs:
+      - "hybrid_multi"
+    
+    testing_requirements:
+      unit_tests: true
+
+# 自动构建矩阵
+build_matrix:
+  # CPU版本构建矩阵
+  cpu_builds:
+    - platform: "ubuntu-20.04"
+      compiler: "gcc-9"
+      config: "cpu_only"
+      
+    - platform: "ubuntu-22.04"
+      compiler: "gcc-11"
+      config: "cpu_only"
+      
+    - platform: "centos-8"
+      compiler: "gcc-8"
+      config: "cpu_only"
+      
+    - platform: "macos-12"
+      compiler: "clang-14"
+      config: "cpu_only"
+      
+    - platform: "windows-2022"
+      compiler: "msvc-2022"
+      config: "cpu_only"
+  
+  # GPU版本构建矩阵
+  gpu_builds:
+    - platform: "ubuntu-20.04"
+      compiler: "gcc-9"
+      cuda_version: "11.8"
+      config: "gpu_cuda"
+      
+    - platform: "ubuntu-22.04"
+      compiler: "gcc-11"
+      cuda_version: "12.1"
+      config: "gpu_cuda"
+      
+    - platform: "windows-2022"
+      compiler: "msvc-2022"
+      cuda_version: "12.1"
+      config: "gpu_cuda"
+  
+  # YICA硬件版本构建矩阵
+  yica_builds:
+    - platform: "ubuntu-20.04-yica"
+      compiler: "gcc-9"
+      yica_version: "1.0"
+      config: "yica_hardware"
+
+# 用户选择指南
+user_selection_guide:
+  decision_tree:
+    - question: "您的环境中是否有NVIDIA GPU？"
+      yes: "gpu_path"
+      no: "cpu_path"
+      
+    - id: "gpu_path"
+      question: "您是否需要最大GPU性能？"
+      yes: "gpu_cuda"
+      no: "cpu_path"
+      
+    - id: "cpu_path"
+      question: "您是否有YICA硬件？"
+      yes: "yica_hardware"
+      no: "cpu_only"
+  
+  recommendations:
+    development:
+      primary: "cpu_only"
+      reason: "开发环境通常不需要GPU，CPU版本编译快，依赖少"
+      
+    production_inference:
+      primary: "gpu_cuda"
+      secondary: "yica_hardware"
+      reason: "生产推理需要最大性能，GPU或YICA硬件提供最佳加速"
+      
+    research:
+      primary: "hybrid_multi"
+      reason: "研究环境需要灵活性，混合版本支持多种后端对比"
+      
+    edge_deployment:
+      primary: "cpu_only"
+      secondary: "yica_hardware"
+      reason: "边缘部署资源受限，CPU版本或专用硬件更合适"
+
+# 下载和安装指南
+installation_guide:
+  quick_install:
+    cpu_only:
+      ubuntu: |
+        # 添加YICA仓库
+        curl -fsSL https://packages.yica.ai/gpg | sudo apt-key add -
+        echo "deb https://packages.yica.ai/ubuntu focal main" | sudo tee /etc/apt/sources.list.d/yica.list
+        sudo apt update && sudo apt install yica-optimizer-cpu
+        
+      centos: |
+        # 添加YICA仓库
+        sudo yum-config-manager --add-repo https://packages.yica.ai/centos/yica.repo
+        sudo yum install yica-optimizer-cpu
+        
+      macos: |
+        # 使用Homebrew安装
+        brew tap yica/tap
+        brew install yica-optimizer
+        
+      docker: |
+        # Docker安装
+        docker pull yica/yica-optimizer:cpu-latest
+        docker run -it yica/yica-optimizer:cpu-latest
+    
+    gpu_cuda:
+      ubuntu: |
+        # 先安装NVIDIA驱动和CUDA
+        sudo apt install nvidia-driver-470 cuda-toolkit-11.8
+        # 安装YICA GPU版本
+        sudo apt install yica-optimizer-gpu-cuda118
+        
+      docker: |
+        # 使用NVIDIA Docker
+        docker pull yica/yica-optimizer:gpu-cuda118
+        docker run --gpus all -it yica/yica-optimizer:gpu-cuda118
+  
+  custom_build:
+    description: "如果预构建版本不满足您的需求，可以使用灵活构建脚本"
+    command: "./build-flexible.sh --detect-auto --with-tests"
+    
+# 版本兼容性矩阵
+compatibility_matrix:
+  yica_hardware_versions:
+    "1.0": ["cpu_only", "yica_hardware"]
+    "1.1": ["cpu_only", "yica_hardware", "hybrid_multi"]
+    "2.0": ["yica_hardware", "hybrid_multi"]
+  
+  cuda_versions:
+    "11.8": ["gpu_cuda", "hybrid_multi"]
+    "12.1": ["gpu_cuda", "hybrid_multi"]
+    "12.2": ["gpu_cuda", "hybrid_multi"]
+  
+  python_versions:
+    "3.8": ["all"]
+    "3.9": ["all"]
+    "3.10": ["all"]
+    "3.11": ["all"]
+    "3.12": ["cpu_only", "gpu_cuda"]  # YICA硬件版本Python绑定开发中
+
+# 性能基准参考
+performance_benchmarks:
+  inference_throughput:
+    cpu_only:
+      small_model: "100 samples/sec"
+      large_model: "10 samples/sec"
+      
+    gpu_cuda:
+      small_model: "2000 samples/sec"
+      large_model: "200 samples/sec"
+      
+    yica_hardware:
+      small_model: "5000 samples/sec"
+      large_model: "800 samples/sec"
+  
+  memory_usage:
+    cpu_only: "基线"
+    gpu_cuda: "基线 + GPU内存"
+    yica_hardware: "基线 × 0.6 (存算一体优化)"
+    
+  power_consumption:
+    cpu_only: "基线"
+    gpu_cuda: "基线 × 3-5"
+    yica_hardware: "基线 × 0.3 (低功耗设计)" 
