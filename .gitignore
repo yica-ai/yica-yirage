@@ -1,4 +1,4 @@
-# YICA-Mirage Project .gitignore
+# YICA-Yirage Project .gitignore
 
 # Build directories
 build/
@@ -59,7 +59,7 @@ doxygen/
 # Release packages
 *.tar.gz
 *.zip
-yica-mirage-release-*/
+yica-yirage-release-*/
 
 # CMake
 CMakeCache.txt
@@ -68,8 +68,9 @@ CTestTestfile.cmake
 Makefile
 
 # Local configuration
-local_config.yaml
 .env
+
+venv/
 
 # Compiled binaries
 yica_optimizer

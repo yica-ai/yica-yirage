@@ -1,10 +1,10 @@
-class YicaMirage < Formula
-  desc "YICA-Mirage: AI计算优化框架，支持存算一体架构"
-  homepage "https://github.com/yica-ai/yica-mirage"
-  url "https://github.com/yica-ai/yica-mirage/archive/v1.0.0.tar.gz"
+class YICAYirage < Formula
+  desc "YICA-Yirage: AI计算优化框架，支持存算一体架构"
+  homepage "https://github.com/yica-ai/yica-yirage"
+  url "https://github.com/yica-ai/yica-yirage/archive/v1.0.0.tar.gz"
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"  # 需要更新
   license "MIT"
-  head "https://github.com/yica-ai/yica-mirage.git", branch: "main"
+  head "https://github.com/yica-ai/yica-yirage.git", branch: "main"
 
   # 版本要求
   depends_on "cmake" => :build
@@ -58,8 +58,8 @@ class YicaMirage < Formula
     system "cmake", "--install", "build"
 
     # 安装Python包
-    cd "mirage/python" do
-      venv.pip_install_and_link buildpath/"mirage/python"
+    cd "yirage/python" do
+      venv.pip_install_and_link buildpath/"yirage/python"
     end
 
     # 创建启动脚本
@@ -78,7 +78,7 @@ class YicaMirage < Formula
       #include "yica/yica_optimizer.h"
       
       int main() {
-          std::cout << "YICA-Mirage C++ library works!" << std::endl;
+          std::cout << "YICA-Yirage C++ library works!" << std::endl;
           return 0;
       }
     EOS
@@ -89,9 +89,9 @@ class YicaMirage < Formula
 
     # 测试Python绑定
     system libexec/"bin/python", "-c", <<~EOS
-      import yica_mirage
-      print("YICA-Mirage Python bindings work!")
-      print(f"Version: {yica_mirage.__version__}")
+      import yica_yirage
+      print("YICA-Yirage Python bindings work!")
+      print(f"Version: {yica_yirage.__version__}")
     EOS
 
     # 测试命令行工具

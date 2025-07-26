@@ -12,7 +12,7 @@ on:
         default: '1.0.0'
 
 env:
-  PACKAGE_NAME: yica-mirage
+  PACKAGE_NAME: yica-yirage
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -90,7 +90,7 @@ jobs:
 
     - name: Build Python package
       run: |
-        cd mirage/python
+        cd yirage/python
         python setup.py build_ext --inplace
         python -m pip install -e .
 
@@ -108,7 +108,7 @@ jobs:
         CIBW_ENVIRONMENT_LINUX: CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
         CIBW_ENVIRONMENT_MACOS: CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
         CIBW_ENVIRONMENT_WINDOWS: CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
-        CIBW_TEST_COMMAND: python -c "import yica_mirage; print('Import successful')"
+        CIBW_TEST_COMMAND: python -c "import yica_yirage; print('Import successful')"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
@@ -134,14 +134,14 @@ jobs:
     - name: Build source distribution
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        cd mirage/python
+        cd yirage/python
         python setup.py sdist
 
     - name: Upload source distribution
       uses: actions/upload-artifact@v3
       with:
         name: source-dist
-        path: mirage/python/dist/*.tar.gz
+        path: yirage/python/dist/*.tar.gz
 
   # Build Homebrew formula
   build-homebrew:
@@ -163,14 +163,14 @@ jobs:
 
     - name: Update Homebrew formula
       run: |
-        sed -i '' "s/sha256 \".*\"/sha256 \"${{ steps.sha256.outputs.sha256 }}\"/" scripts/packaging/yica-mirage.rb
-        sed -i '' "s|url \".*\"|url \"${{ steps.sha256.outputs.url }}\"|" scripts/packaging/yica-mirage.rb
+        sed -i '' "s/sha256 \".*\"/sha256 \"${{ steps.sha256.outputs.sha256 }}\"/" scripts/packaging/yica-yirage.rb
+        sed -i '' "s|url \".*\"|url \"${{ steps.sha256.outputs.url }}\"|" scripts/packaging/yica-yirage.rb
 
     - name: Upload Homebrew formula
       uses: actions/upload-artifact@v3
       with:
         name: homebrew-formula
-        path: scripts/packaging/yica-mirage.rb
+        path: scripts/packaging/yica-yirage.rb
 
   # Build Debian packages
   build-debian:
@@ -213,7 +213,7 @@ jobs:
     - name: Build RPM package
       uses: nFnK/create-rpm-action@v1
       with:
-        SPEC_FILE: "scripts/packaging/yica-mirage.spec"
+        SPEC_FILE: "scripts/packaging/yica-yirage.spec"
 
     - name: Upload RPM packages
       uses: actions/upload-artifact@v3
@@ -250,8 +250,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          yicaai/yica-mirage:${{ matrix.variant }}-${{ github.ref_name }}
-          yicaai/yica-mirage:${{ matrix.variant }}-latest
+          yicaai/yica-yirage:${{ matrix.variant }}-${{ github.ref_name }}
+          yicaai/yica-yirage:${{ matrix.variant }}-latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -271,7 +271,7 @@ jobs:
     - name: Create release notes
       run: |
         cat > release_notes.md << EOF
-        # YICA-Mirage ${{ github.ref_name }}
+        # YICA-Yirage ${{ github.ref_name }}
         
         ## What's New
         - High-performance AI computing optimization framework
@@ -283,39 +283,39 @@ jobs:
         
         ### pip (Recommended)
         \`\`\`bash
-        pip install yica-mirage
+        pip install yica-yirage
         \`\`\`
         
         ### Homebrew (macOS)
         \`\`\`bash
         brew tap yica-ai/tap
-        brew install yica-mirage
+        brew install yica-yirage
         \`\`\`
         
         ### APT (Debian/Ubuntu)
         \`\`\`bash
         wget -qO - https://packages.yica.ai/gpg.key | sudo apt-key add -
         echo "deb https://packages.yica.ai/debian stable main" | sudo tee /etc/apt/sources.list.d/yica.list
-        sudo apt-get update && sudo apt-get install yica-mirage
+        sudo apt-get update && sudo apt-get install yica-yirage
         \`\`\`
         
         ### YUM/DNF (RHEL/CentOS/Fedora)
         \`\`\`bash
         sudo yum-config-manager --add-repo https://packages.yica.ai/rpm/yica.repo
-        sudo yum install yica-mirage
+        sudo yum install yica-yirage
         \`\`\`
         
         ## Docker
         \`\`\`bash
-        docker run -it yicaai/yica-mirage:cpu-${{ github.ref_name }}
-        docker run --gpus all -it yicaai/yica-mirage:gpu-${{ github.ref_name }}
+        docker run -it yicaai/yica-yirage:cpu-${{ github.ref_name }}
+        docker run --gpus all -it yicaai/yica-yirage:gpu-${{ github.ref_name }}
         \`\`\`
         EOF
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        name: YICA-Mirage ${{ github.ref_name }}
+        name: YICA-Yirage ${{ github.ref_name }}
         body_path: release_notes.md
         files: |
           wheels-*/*.whl

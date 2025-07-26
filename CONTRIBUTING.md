@@ -1,20 +1,20 @@
-# Contributing to YICA-Mirage
+# Contributing to YICA-Yirage
 
-We welcome contributions to YICA-Mirage! This document provides guidelines for contributing to the project.
+We welcome contributions to YICA-Yirage! This document provides guidelines for contributing to the project.
 
 ## Development Setup
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR-USERNAME/yica-mirage.git`
+2. Clone your fork: `git clone https://github.com/yicai-ai/yica-yirage.git`
 3. Install development dependencies: `pip install -e ".[dev]"`
 4. Create a feature branch: `git checkout -b feature/amazing-feature`
 
 ## Code Style
 
 - Follow PEP 8 for Python code
-- Use Black for code formatting: `black mirage/python/`
-- Use isort for import sorting: `isort mirage/python/`
-- Run type checking: `mypy mirage/python/`
+- Use Black for code formatting: `black yirage/python/`
+- Use isort for import sorting: `isort yirage/python/`
+- Run type checking: `mypy yirage/python/`
 
 ## Testing
 

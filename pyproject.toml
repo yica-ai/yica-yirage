@@ -9,23 +9,22 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "yica-mirage"
-version = "1.0.0"
-description = "YICA-Mirage: AI Computing Optimization Framework for In-Memory Computing Architecture"
+name = "yica-yirage"
+version = "1.0.1"
+description = "YICA-Yirage: AI Computing Optimization Framework for In-Memory Computing Architecture"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {text = "MIT"}
 authors = [
     {name = "YICA Team", email = "contact@yica.ai"},
 ]
 maintainers = [
     {name = "YICA Team", email = "contact@yica.ai"},
 ]
-keywords = ["ai", "optimization", "compiler", "triton", "yica", "mirage", "deep-learning", "in-memory-computing"]
+keywords = ["ai", "optimization", "compiler", "triton", "yica", "yirage", "deep-learning", "in-memory-computing"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
@@ -44,9 +43,8 @@ requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.19.0",
     "torch>=1.12.0",
-    "triton>=2.0.0",
+    "triton>=2.0.0; sys_platform=='linux'",
     "z3-solver>=4.8.0",
-    "pybind11>=2.6.0",
 ]
 
 [project.optional-dependencies]
@@ -68,29 +66,29 @@ rocm = [
     "torch-rocm>=1.12.0",
 ]
 all = [
-    "yica-mirage[dev,cuda]",
+    "yica-yirage[dev,cuda]",
 ]
 
 [project.scripts]
-yica-optimizer = "yica_mirage.cli:main"
-yica-benchmark = "yica_mirage.benchmark:main"
-yica-analyze = "yica_mirage.analyzer:main"
+yica-optimizer = "yirage.yica_optimizer:main"
+yica-benchmark = "yirage.yica_performance_monitor:main"
+yica-analyze = "yirage.yica_advanced:main"
 
 [project.urls]
-Homepage = "https://github.com/yica-ai/yica-mirage"
-Documentation = "https://yica-mirage.readthedocs.io/"
-Repository = "https://github.com/yica-ai/yica-mirage.git"
-"Bug Tracker" = "https://github.com/yica-ai/yica-mirage/issues"
-Changelog = "https://github.com/yica-ai/yica-mirage/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/yica-ai/yica-yirage"
+Documentation = "https://yica-yirage.readthedocs.io/"
+Repository = "https://github.com/yica-ai/yica-yirage.git"
+"Bug Tracker" = "https://github.com/yica-ai/yica-yirage/issues"
+Changelog = "https://github.com/yica-ai/yica-yirage/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
-package-dir = {"" = "mirage/python"}
+package-dir = {"" = "yirage/python"}
 
 [tool.setuptools.packages.find]
-where = ["mirage/python"]
+where = ["yirage/python"]
 
 [tool.setuptools.package-data]
-yica_mirage = [
+yica_yirage = [
     "kernels/*.cu",
     "kernels/*.h", 
     "configs/*.yaml",
@@ -153,7 +151,7 @@ addopts = [
     "-ra",
     "--strict-markers",
     "--strict-config",
-    "--cov=yica_mirage",
+    "--cov=yica_yirage",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -166,7 +164,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["yica_mirage"]
+source = ["yica_yirage"]
 omit = [
     "*/tests/*",
     "*/test_*",

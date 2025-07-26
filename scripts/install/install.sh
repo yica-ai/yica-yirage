@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# YICA-Mirage Cross-Platform Installation Script
+# YICA-Yirage Cross-Platform Installation Script
 # Supports pip, brew, apt, yum, and manual installation
 
 set -e
@@ -19,9 +19,9 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 log_debug() { echo -e "${BLUE}[DEBUG]${NC} $1"; }
 
 # Configuration
-PACKAGE_NAME="yica-mirage"
+PACKAGE_NAME="yica-yirage"
 VERSION="1.0.0"
-GITHUB_REPO="yica-ai/yica-mirage"
+GITHUB_REPO="yica-ai/yica-yirage"
 INSTALL_PREFIX="/usr/local"
 
 # Platform detection
@@ -105,7 +105,7 @@ check_dependencies() {
 
 # Install via pip
 install_pip() {
-    log_info "Installing YICA-Mirage via pip..."
+    log_info "Installing YICA-Yirage via pip..."
     
     # Upgrade pip first
     python3 -m pip install --upgrade pip
@@ -121,25 +121,25 @@ install_pip() {
         python3 -m pip install "${PACKAGE_NAME}"
     fi
     
-    log_info "YICA-Mirage installed successfully via pip"
+    log_info "YICA-Yirage installed successfully via pip"
 }
 
 # Install via Homebrew (macOS)
 install_brew() {
-    log_info "Installing YICA-Mirage via Homebrew..."
+    log_info "Installing YICA-Yirage via Homebrew..."
     
     # Add tap if not exists
     brew tap yica-ai/tap || true
     
     # Install package
-    brew install yica-mirage
+    brew install yica-yirage
     
-    log_info "YICA-Mirage installed successfully via Homebrew"
+    log_info "YICA-Yirage installed successfully via Homebrew"
 }
 
 # Install via APT (Debian/Ubuntu)
 install_apt() {
-    log_info "Installing YICA-Mirage via APT..."
+    log_info "Installing YICA-Yirage via APT..."
     
     # Update package list
     sudo apt-get update
@@ -157,14 +157,14 @@ install_apt() {
     
     # Update and install
     sudo apt-get update
-    sudo apt-get install -y yica-mirage python3-yica-mirage
+    sudo apt-get install -y yica-yirage python3-yica-yirage
     
-    log_info "YICA-Mirage installed successfully via APT"
+    log_info "YICA-Yirage installed successfully via APT"
 }
 
 # Install via YUM/DNF (RHEL/CentOS/Fedora)
 install_yum() {
-    log_info "Installing YICA-Mirage via $PKG_MANAGER..."
+    log_info "Installing YICA-Yirage via $PKG_MANAGER..."
     
     # Install dependencies
     sudo $PKG_MANAGER install -y \
@@ -184,14 +184,14 @@ gpgkey=https://packages.yica.ai/gpg.key
 EOF
     
     # Install package
-    sudo $PKG_MANAGER install -y yica-mirage python3-yica-mirage
+    sudo $PKG_MANAGER install -y yica-yirage python3-yica-yirage
     
-    log_info "YICA-Mirage installed successfully via $PKG_MANAGER"
+    log_info "YICA-Yirage installed successfully via $PKG_MANAGER"
 }
 
 # Manual installation from source
 install_manual() {
-    log_info "Installing YICA-Mirage manually from source..."
+    log_info "Installing YICA-Yirage manually from source..."
     
     local temp_dir=$(mktemp -d)
     cd "$temp_dir"
@@ -218,14 +218,14 @@ install_manual() {
     
     # Install Python package
     log_info "Installing Python package..."
-    cd ../mirage/python
+    cd ../yirage/python
     python3 -m pip install .
     
     # Cleanup
     cd /
     rm -rf "$temp_dir"
     
-    log_info "YICA-Mirage installed successfully from source"
+    log_info "YICA-Yirage installed successfully from source"
 }
 
 # Verify installation
@@ -233,7 +233,7 @@ verify_installation() {
     log_info "Verifying installation..."
     
     # Check Python package
-    if python3 -c "import yica_mirage; print(f'YICA-Mirage version: {yica_mirage.__version__}')" 2>/dev/null; then
+    if python3 -c "import yica_yirage; print(f'YICA-Yirage version: {yica_yirage.__version__}')" 2>/dev/null; then
         log_info "Python package verified"
     else
         log_error "Python package verification failed"
@@ -254,7 +254,7 @@ verify_installation() {
 # Show usage
 show_usage() {
     cat << EOF
-YICA-Mirage Installation Script
+YICA-Yirage Installation Script
 
 Usage: $0 [OPTIONS]
 
@@ -321,7 +321,7 @@ main() {
         esac
     done
     
-    log_info "YICA-Mirage Installation Script v$VERSION"
+    log_info "YICA-Yirage Installation Script v$VERSION"
     log_info "=========================================="
     
     # Detect platform if method not specified
@@ -364,7 +364,7 @@ main() {
     verify_installation
     
     log_info "=========================================="
-    log_info "YICA-Mirage installation completed successfully!"
+    log_info "YICA-Yirage installation completed successfully!"
     log_info "Run 'yica-optimizer --help' to get started."
 }
 

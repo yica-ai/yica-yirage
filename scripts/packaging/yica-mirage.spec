@@ -1,11 +1,11 @@
-Name:           yica-mirage
+Name:           yica-yirage
 Version:        1.0.0
 Release:        1%{?dist}
-Summary:        YICA-Mirage AI Computing Optimization Framework
+Summary:        YICA-Yirage AI Computing Optimization Framework
 
 License:        MIT
-URL:            https://github.com/yica-ai/yica-mirage
-Source0:        https://github.com/yica-ai/yica-mirage/archive/v%{version}.tar.gz
+URL:            https://github.com/yica-ai/yica-yirage
+Source0:        https://github.com/yica-ai/yica-yirage/archive/v%{version}.tar.gz
 
 BuildRequires:  cmake >= 3.18
 BuildRequires:  ninja-build
@@ -26,11 +26,11 @@ Requires:       python3-z3
 Requires:       z3
 
 %description
-YICA-Mirage is a high-performance AI computing optimization framework
+YICA-Yirage is a high-performance AI computing optimization framework
 designed for in-memory computing architectures.
 
 Core Features:
-- Mirage-based universal code optimization
+- Yirage-based universal code optimization
 - YICA in-memory computing architecture specific optimizations
 - Automatic Triton code generation
 - Multi-backend support (CPU/GPU/YICA)
@@ -45,14 +45,14 @@ Requires:       python3-pybind11-devel
 
 %description    devel
 This package contains header files and static libraries needed to develop
-YICA-Mirage applications.
+YICA-Yirage applications.
 
 %package        doc
 Summary:        Documentation for %{name}
 BuildArch:      noarch
 
 %description    doc
-This package contains complete documentation for YICA-Mirage, including
+This package contains complete documentation for YICA-Yirage, including
 API reference, tutorials, and examples.
 
 %package        -n python3-%{name}
@@ -62,7 +62,7 @@ Requires:       python3-numpy >= 1.19.0
 Requires:       python3-torch >= 1.12.0
 
 %description    -n python3-%{name}
-This package provides Python3 bindings for YICA-Mirage, allowing the use
+This package provides Python3 bindings for YICA-Yirage, allowing the use
 of YICA optimization functionality in Python applications.
 
 %prep
@@ -78,7 +78,7 @@ of YICA optimization functionality in Python applications.
 %cmake_build
 
 # Build Python package
-cd mirage/python
+cd yirage/python
 %py3_build
 
 %install
@@ -86,7 +86,7 @@ cd mirage/python
 %cmake_install
 
 # Install Python package
-cd mirage/python
+cd yirage/python
 %py3_install
 
 # Install documentation
@@ -104,18 +104,18 @@ cp README.md CHANGELOG.md %{buildroot}%{_docdir}/%{name}/
 
 %files devel
 %{_includedir}/yica/
-%{_includedir}/mirage/yica/
+%{_includedir}/yirage/yica/
 %{_libdir}/libyica_*.so
 %{_libdir}/libyica_*.a
-%{_libdir}/cmake/yica-mirage/
-%{_libdir}/pkgconfig/yica-mirage.pc
+%{_libdir}/cmake/yica-yirage/
+%{_libdir}/pkgconfig/yica-yirage.pc
 
 %files doc
 %{_docdir}/%{name}/
 
 %files -n python3-%{name}
-%{python3_sitearch}/yica_mirage/
-%{python3_sitearch}/yica_mirage-*.egg-info/
+%{python3_sitearch}/yica_yirage/
+%{python3_sitearch}/yica_yirage-*.egg-info/
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -123,7 +123,7 @@ cp README.md CHANGELOG.md %{buildroot}%{_docdir}/%{name}/
 %changelog
 * Thu Jan 24 2025 YICA Team <contact@yica.ai> - 1.0.0-1
 - Initial release
-- Mirage-based universal code optimization
+- Yirage-based universal code optimization
 - YICA in-memory computing architecture support
 - Automatic Triton code generation
 - Multi-backend support (CPU/GPU/YICA)

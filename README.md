@@ -1,11 +1,11 @@
-# YICA-Mirage
+# YICA-Yirage
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI version](https://badge.fury.io/py/yica-mirage.svg)](https://badge.fury.io/py/yica-mirage)
-[![CI/CD](https://github.com/yica-ai/yica-mirage/workflows/Release%20Pipeline/badge.svg)](https://github.com/yica-ai/yica-mirage/actions)
+[![PyPI version](https://badge.fury.io/py/yica-yirage.svg)](https://badge.fury.io/py/yica-yirage)
+[![CI/CD](https://github.com/yica-ai/yica-yirage/workflows/Release%20Pipeline/badge.svg)](https://github.com/yica-ai/yica-yirage/actions)
 
-**YICA-Mirage** is a high-performance AI computing optimization framework designed for in-memory computing architectures. It combines the power of Mirage's universal code optimization with YICA's specialized in-memory computing optimizations to deliver exceptional performance for AI workloads.
+**YICA-Yirage** is a high-performance AI computing optimization framework designed for in-memory computing architectures. It combines the power of Yirage's universal code optimization with YICA's specialized in-memory computing optimizations to deliver exceptional performance for AI workloads.
 
 ## 🚀 Key Features
 
@@ -25,7 +25,7 @@
 └─────────────────────────┬───────────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
-│                    Mirage Layer                             │
+│                    Yirage Layer                             │
 │        (Universal Code Optimization & Triton Conversion)   │
 └─────────────────────────┬───────────────────────────────────┘
                           │
@@ -46,13 +46,13 @@
 
 ```bash
 # Install via pip
-pip install yica-mirage
+pip install yica-yirage
 
 # Install with CUDA support
-pip install yica-mirage[cuda]
+pip install yica-yirage[cuda]
 
 # Install with all optional dependencies
-pip install yica-mirage[all]
+pip install yica-yirage[all]
 ```
 
 ### Platform-Specific Installation
@@ -61,7 +61,7 @@ pip install yica-mirage[all]
 
 ```bash
 brew tap yica-ai/tap
-brew install yica-mirage
+brew install yica-yirage
 ```
 
 #### 🐧 Ubuntu/Debian (APT)
@@ -73,7 +73,7 @@ echo "deb https://packages.yica.ai/debian stable main" | sudo tee /etc/apt/sourc
 
 # Install
 sudo apt-get update
-sudo apt-get install yica-mirage python3-yica-mirage
+sudo apt-get install yica-yirage python3-yica-yirage
 ```
 
 #### 🎩 RHEL/CentOS/Fedora (YUM/DNF)
@@ -90,17 +90,17 @@ gpgkey=https://packages.yica.ai/gpg.key
 EOF
 
 # Install
-sudo yum install yica-mirage python3-yica-mirage
+sudo yum install yica-yirage python3-yica-yirage
 ```
 
 #### 🐳 Docker
 
 ```bash
 # CPU version
-docker run -it yicaai/yica-mirage:cpu-latest
+docker run -it yicaai/yica-yirage:cpu-latest
 
 # GPU version (requires NVIDIA Docker)
-docker run --gpus all -it yicaai/yica-mirage:gpu-latest
+docker run --gpus all -it yicaai/yica-yirage:gpu-latest
 ```
 
 #### 🛠️ Universal Installation Script
@@ -119,10 +119,10 @@ curl -fsSL https://install.yica.ai | bash -s -- --method pip --cuda
 
 ```python
 import torch
-import yica_mirage as ym
+import yica_yirage as ym
 
 # Create YICA optimizer
-optimizer = ym.YicaOptimizer(backend="yica")
+optimizer = ym.YICAOptimizer(backend="yica")
 
 # Define a simple model
 model = torch.nn.Sequential(
@@ -156,7 +156,7 @@ yica-analyze --model optimized_model.triton --hardware yica --report performance
 ### Advanced Usage
 
 ```python
-import yica_mirage as ym
+import yica_yirage as ym
 
 # Configure optimization settings
 config = ym.OptimizationConfig(
@@ -167,7 +167,7 @@ config = ym.OptimizationConfig(
 )
 
 # Create optimizer with custom config
-optimizer = ym.YicaOptimizer(config=config)
+optimizer = ym.YICAOptimizer(config=config)
 
 # Optimize with performance constraints
 constraints = ym.PerformanceConstraints(
@@ -219,8 +219,8 @@ optimized_model = optimizer.optimize(
 
 ```bash
 # Clone repository
-git clone https://github.com/yica-ai/yica-mirage.git
-cd yica-mirage
+git clone https://github.com/yica-ai/yica-yirage.git
+cd yica-yirage
 
 # Install dependencies
 pip install -r requirements.txt
@@ -231,7 +231,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTHON_BINDINGS=ON
 make -j$(nproc)
 
 # Install Python package
-cd ../mirage/python
+cd ../yirage/python
 pip install -e .
 ```
 
@@ -251,19 +251,19 @@ python -m pytest tests/ -m "yica"      # YICA-only tests
 
 ```bash
 # Format code
-black mirage/python/
-isort mirage/python/
+black yirage/python/
+isort yirage/python/
 
 # Type checking
-mypy mirage/python/
+mypy yirage/python/
 
 # Linting
-flake8 mirage/python/
+flake8 yirage/python/
 ```
 
 ## 📚 Documentation
 
-- **[API Reference](https://yica-mirage.readthedocs.io/en/latest/api/)**
+- **[API Reference](https://yica-yirage.readthedocs.io/en/latest/api/)**
 - **[Architecture Guide](docs/architecture/YICA_ARCH.md)**
 - **[Integration Manual](docs/architecture/YICA-MIRAGE-INTEGRATION-PLAN.md)**
 - **[Performance Tuning](docs/tutorials/performance-tuning.md)**
@@ -292,21 +292,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/yica-ai/yica-mirage/issues)
-- **Discussions**: [Community discussions](https://github.com/yica-ai/yica-mirage/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/yica-ai/yica-yirage/issues)
+- **Discussions**: [Community discussions](https://github.com/yica-ai/yica-yirage/discussions)
 - **Email**: [contact@yica.ai](mailto:contact@yica.ai)
-- **Documentation**: [yica-mirage.readthedocs.io](https://yica-mirage.readthedocs.io/)
+- **Documentation**: [yica-yirage.readthedocs.io](https://yica-yirage.readthedocs.io/)
 
 ## 🙏 Acknowledgments
 
-- **Mirage Team**: For the foundational optimization framework
+- **Yirage Team**: For the foundational optimization framework
 - **YICA Hardware Team**: For in-memory computing architecture insights
 - **Triton Community**: For the excellent GPU kernel compilation framework
 - **Open Source Contributors**: For making this project possible
 
 ## 🔗 Related Projects
 
-- **[Mirage](https://github.com/mirage-project/mirage)**: Universal tensor program optimization
+- **[Yirage](https://github.com/yirage-project/yirage)**: Universal tensor program optimization
 - **[Triton](https://github.com/openai/triton)**: GPU kernel programming language
 - **[PyTorch](https://pytorch.org/)**: Deep learning framework integration
 - **[CUDA](https://developer.nvidia.com/cuda-zone)**: GPU computing platform
@@ -315,7 +315,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**[🏠 Homepage](https://yica.ai)** • **[📖 Docs](https://yica-mirage.readthedocs.io/)** • **[🚀 Examples](examples/)** • **[💬 Community](https://github.com/yica-ai/yica-mirage/discussions)**
+**[🏠 Homepage](https://yica.ai)** • **[📖 Docs](https://yica-yirage.readthedocs.io/)** • **[🚀 Examples](examples/)** • **[💬 Community](https://github.com/yica-ai/yica-yirage/discussions)**
 
 Made with ❤️ by the YICA Team
 
