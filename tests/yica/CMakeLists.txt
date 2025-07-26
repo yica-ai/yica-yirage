@@ -1,5 +1,6 @@
 # YICA硬件后端测试配置
 cmake_minimum_required(VERSION 3.16)
+project(YICAHardwareTests)
 
 message(STATUS "配置YICA硬件后端测试")
 
@@ -16,13 +17,20 @@ else()
 endif()
 
 # 查找测试框架
-find_package(GTest QUIET)
-if(NOT GTest_FOUND)
-    message(STATUS "GTest未找到，使用内置测试框架")
+option(USE_BUILTIN_TEST_FRAMEWORK "Use builtin test framework instead of GTest" ON)
+
+if(USE_BUILTIN_TEST_FRAMEWORK)
+    message(STATUS "使用内置测试框架")
     set(USE_BUILTIN_TEST_FRAMEWORK ON)
 else()
-    message(STATUS "使用GTest测试框架")
-    set(USE_BUILTIN_TEST_FRAMEWORK OFF)
+    find_package(GTest QUIET)
+    if(NOT GTest_FOUND)
+        message(STATUS "GTest未找到，使用内置测试框架")
+        set(USE_BUILTIN_TEST_FRAMEWORK ON)
+    else()
+        message(STATUS "使用GTest测试框架")
+        set(USE_BUILTIN_TEST_FRAMEWORK OFF)
+    endif()
 endif()
 
 # YICA后端测试源文件
@@ -84,9 +92,6 @@ else()
     target_link_libraries(yica_hardware_tests GTest::GTest GTest::Main)
 endif()
 
-# 链接YICA后端库
-target_link_libraries(yica_hardware_tests yica_hardware yica_core)
-
 # YICA特定编译标志
 target_compile_definitions(yica_hardware_tests PRIVATE 
     YICA_HARDWARE_BACKEND
@@ -103,18 +108,14 @@ else()
     message(STATUS "YICA测试将在硬件模式下运行")
 endif()
 
-# 包含目录
-target_include_directories(yica_hardware_tests PRIVATE
-    ${CMAKE_SOURCE_DIR}/mirage/include
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-# YICA测试配置
+# 设置target属性
 set_target_properties(yica_hardware_tests PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
+
+# 启用测试
+enable_testing()
 
 # 添加YICA测试
 if(USE_BUILTIN_TEST_FRAMEWORK)
@@ -126,64 +127,70 @@ if(USE_BUILTIN_TEST_FRAMEWORK)
     add_test(NAME yica_operators_test COMMAND yica_hardware_tests operators)
     add_test(NAME yica_optimization_test COMMAND yica_hardware_tests optimization)
     add_test(NAME yica_communication_test COMMAND yica_hardware_tests communication)
+    
+    # 设置测试属性
+    set_tests_properties(yica_basic_test PROPERTIES
+        LABELS "yica;basic"
+        TIMEOUT 60
+    )
+
+    set_tests_properties(yica_hardware_test PROPERTIES
+        LABELS "yica;hardware"
+        TIMEOUT 120
+    )
+
+    set_tests_properties(yica_yis_test PROPERTIES
+        LABELS "yica;yis;instruction"
+        TIMEOUT 180
+    )
+
+    set_tests_properties(yica_cim_test PROPERTIES
+        LABELS "yica;cim;compute_in_memory"
+        TIMEOUT 240
+    )
+
+    set_tests_properties(yica_spm_test PROPERTIES
+        LABELS "yica;spm;memory"
+        TIMEOUT 180
+    )
+
+    set_tests_properties(yica_operators_test PROPERTIES
+        LABELS "yica;operators"
+        TIMEOUT 300
+    )
+
+    set_tests_properties(yica_optimization_test PROPERTIES
+        LABELS "yica;optimization;energy"
+        TIMEOUT 240
+    )
+
+    set_tests_properties(yica_communication_test PROPERTIES
+        LABELS "yica;yccl;communication"
+        TIMEOUT 300
+    )
 else()
     add_test(NAME yica_hardware_tests COMMAND yica_hardware_tests)
 endif()
 
-# YICA测试属性
-set_tests_properties(yica_basic_test PROPERTIES
-    LABELS "yica;basic"
-    TIMEOUT 60
-)
-
-set_tests_properties(yica_hardware_test PROPERTIES
-    LABELS "yica;hardware"
-    TIMEOUT 120
-)
-
-set_tests_properties(yica_yis_test PROPERTIES
-    LABELS "yica;yis;instruction"
-    TIMEOUT 180
-)
-
-set_tests_properties(yica_cim_test PROPERTIES
-    LABELS "yica;cim;compute_in_memory"
-    TIMEOUT 240
-)
-
-set_tests_properties(yica_spm_test PROPERTIES
-    LABELS "yica;spm;memory"
-    TIMEOUT 180
-)
-
-set_tests_properties(yica_operators_test PROPERTIES
-    LABELS "yica;operators"
-    TIMEOUT 300
-)
-
-set_tests_properties(yica_optimization_test PROPERTIES
-    LABELS "yica;optimization;energy"
-    TIMEOUT 240
-)
-
-set_tests_properties(yica_communication_test PROPERTIES
-    LABELS "yica;yccl;communication"
-    TIMEOUT 300
-)
-
 # 如果在硬件模式下，设置硬件访问权限
 if(NOT YICA_SIMULATION_MODE)
-    set_tests_properties(yica_hardware_test PROPERTIES
-        ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0"
-    )
+    if(TEST yica_hardware_test)
+        set_tests_properties(yica_hardware_test PROPERTIES
+            ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0"
+        )
+    endif()
     
-    set_tests_properties(yica_cim_test PROPERTIES
-        ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0;YICA_CIM_ARRAYS=4"
-    )
+    if(TEST yica_cim_test)
+        set_tests_properties(yica_cim_test PROPERTIES
+            ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0;YICA_CIM_ARRAYS=4"
+        )
+    endif()
     
-    set_tests_properties(yica_spm_test PROPERTIES
-        ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0;YICA_SPM_SIZE=2147483648"  # 2GB
-    )
+    if(TEST yica_spm_test)
+        set_tests_properties(yica_spm_test PROPERTIES
+            ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0;YICA_SPM_SIZE=2147483648"  # 2GB
+        )
+    endif()
 endif()
 
 # YICA性能测试（需要真实硬件）
@@ -198,12 +205,6 @@ if(BUILD_YICA_PERFORMANCE_TESTS)
         test_yica_cim_utilization.cc
     )
     
-    target_link_libraries(yica_hardware_perf_tests yica_hardware yica_core)
-    
-    if(NOT YICA_SIMULATION_MODE)
-        target_link_libraries(yica_hardware_perf_tests ${YICA_LIBRARY})
-    endif()
-    
     target_compile_definitions(yica_hardware_perf_tests PRIVATE 
         YICA_HARDWARE_BACKEND
         YICA_PERFORMANCE_TEST
@@ -213,6 +214,7 @@ if(BUILD_YICA_PERFORMANCE_TESTS)
         target_compile_definitions(yica_hardware_perf_tests PRIVATE YICA_SIMULATION_MODE)
     else()
         target_compile_definitions(yica_hardware_perf_tests PRIVATE YICA_HARDWARE_MODE)
+        target_link_libraries(yica_hardware_perf_tests ${YICA_LIBRARY})
     endif()
     
     add_test(NAME yica_performance_test COMMAND yica_hardware_perf_tests)
@@ -231,133 +233,28 @@ endif()
 # YICA功耗测试（需要特殊权限）
 option(BUILD_YICA_POWER_TESTS "Build YICA power measurement tests" OFF)
 if(BUILD_YICA_POWER_TESTS)
-    add_executable(yica_hardware_power_tests
-        test_yica_power_measurement.cc
-        test_yica_dynamic_voltage_scaling.cc
-        test_yica_thermal_management.cc
-        test_yica_power_efficiency.cc
-    )
-    
-    target_link_libraries(yica_hardware_power_tests yica_hardware yica_core)
-    
-    if(NOT YICA_SIMULATION_MODE)
-        target_link_libraries(yica_hardware_power_tests ${YICA_LIBRARY})
-    endif()
-    
-    target_compile_definitions(yica_hardware_power_tests PRIVATE 
-        YICA_HARDWARE_BACKEND
-        YICA_POWER_TEST
-    )
-    
-    if(YICA_SIMULATION_MODE)
-        target_compile_definitions(yica_hardware_power_tests PRIVATE YICA_SIMULATION_MODE)
-    else()
-        target_compile_definitions(yica_hardware_power_tests PRIVATE YICA_HARDWARE_MODE)
-    endif()
-    
-    add_test(NAME yica_power_test COMMAND yica_hardware_power_tests)
-    set_tests_properties(yica_power_test PROPERTIES
-        LABELS "yica;power;energy"
-        TIMEOUT 900  # 15分钟
-    )
-    
-    if(NOT YICA_SIMULATION_MODE)
-        set_tests_properties(yica_power_test PROPERTIES
-            ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0"
-        )
-    endif()
+    # 这些测试文件目前不存在，仅作为示例
+    message(STATUS "Power tests are disabled - test files not implemented")
 endif()
 
 # YICA可靠性测试（长时间运行）
 option(BUILD_YICA_RELIABILITY_TESTS "Build YICA reliability tests" OFF)
 if(BUILD_YICA_RELIABILITY_TESTS)
-    add_executable(yica_hardware_reliability_tests
-        test_yica_error_correction.cc
-        test_yica_fault_tolerance.cc
-        test_yica_long_running_stability.cc
-        test_yica_temperature_stress.cc
-    )
-    
-    target_link_libraries(yica_hardware_reliability_tests yica_hardware yica_core)
-    
-    if(NOT YICA_SIMULATION_MODE)
-        target_link_libraries(yica_hardware_reliability_tests ${YICA_LIBRARY})
-    endif()
-    
-    target_compile_definitions(yica_hardware_reliability_tests PRIVATE 
-        YICA_HARDWARE_BACKEND
-        YICA_RELIABILITY_TEST
-    )
-    
-    if(YICA_SIMULATION_MODE)
-        target_compile_definitions(yica_hardware_reliability_tests PRIVATE YICA_SIMULATION_MODE)
-    else()
-        target_compile_definitions(yica_hardware_reliability_tests PRIVATE YICA_HARDWARE_MODE)
-    endif()
-    
-    add_test(NAME yica_reliability_test COMMAND yica_hardware_reliability_tests)
-    set_tests_properties(yica_reliability_test PROPERTIES
-        LABELS "yica;reliability;stress"
-        TIMEOUT 7200  # 2小时
-    )
+    # 这些测试文件目前不存在，仅作为示例
+    message(STATUS "Reliability tests are disabled - test files not implemented")
 endif()
 
 # YICA多设备测试（如果有多个YICA设备）
 option(BUILD_YICA_MULTI_DEVICE_TESTS "Build YICA multi-device tests" OFF)
 if(BUILD_YICA_MULTI_DEVICE_TESTS)
-    add_executable(yica_multi_device_tests
-        test_yica_multi_device_coordination.cc
-        test_yica_device_to_device.cc
-        test_yica_distributed_computation.cc
-        test_yica_load_balancing.cc
-    )
-    
-    target_link_libraries(yica_multi_device_tests yica_hardware yica_core)
-    
-    if(NOT YICA_SIMULATION_MODE)
-        target_link_libraries(yica_multi_device_tests ${YICA_LIBRARY})
-    endif()
-    
-    target_compile_definitions(yica_multi_device_tests PRIVATE 
-        YICA_HARDWARE_BACKEND
-        YICA_MULTI_DEVICE_TEST
-    )
-    
-    if(YICA_SIMULATION_MODE)
-        target_compile_definitions(yica_multi_device_tests PRIVATE YICA_SIMULATION_MODE)
-    else()
-        target_compile_definitions(yica_multi_device_tests PRIVATE YICA_HARDWARE_MODE)
-    endif()
-    
-    add_test(NAME yica_multi_device_test COMMAND yica_multi_device_tests)
-    set_tests_properties(yica_multi_device_test PROPERTIES
-        LABELS "yica;multi_device;distributed"
-        TIMEOUT 600
-    )
-    
-    if(NOT YICA_SIMULATION_MODE)
-        set_tests_properties(yica_multi_device_test PROPERTIES
-            ENVIRONMENT "YICA_DEVICE_PATH=/dev/yica0,/dev/yica1"
-        )
-    endif()
+    # 这些测试文件目前不存在，仅作为示例
+    message(STATUS "Multi-device tests are disabled - test files not implemented")
 endif()
 
 # 安装YICA测试可执行文件（可选）
 option(INSTALL_TESTS "Install test executables" OFF)
 if(INSTALL_TESTS)
     install(TARGETS yica_hardware_tests RUNTIME DESTINATION bin/tests)
-    if(BUILD_YICA_PERFORMANCE_TESTS)
-        install(TARGETS yica_hardware_perf_tests RUNTIME DESTINATION bin/tests)
-    endif()
-    if(BUILD_YICA_POWER_TESTS)
-        install(TARGETS yica_hardware_power_tests RUNTIME DESTINATION bin/tests)
-    endif()
-    if(BUILD_YICA_RELIABILITY_TESTS)
-        install(TARGETS yica_hardware_reliability_tests RUNTIME DESTINATION bin/tests)
-    endif()
-    if(BUILD_YICA_MULTI_DEVICE_TESTS)
-        install(TARGETS yica_multi_device_tests RUNTIME DESTINATION bin/tests)
-    endif()
 endif()
 
 message(STATUS "YICA硬件后端测试配置完成") 
