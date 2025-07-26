@@ -1,0 +1,82 @@
+{
+  "test_summary": {
+    "total_tests": 2,
+    "timestamp": "2025-07-26T11:47:33.946308",
+    "config": {
+      "num_cim_arrays": 4,
+      "spm_size_kb": 512,
+      "memory_bandwidth_gbps": 1000.0,
+      "enable_yica_optimization": true,
+      "enable_cim_parallelism": true,
+      "enable_spm_hierarchy": true,
+      "enable_pim_computing": true
+    }
+  },
+  "performance_summary": {
+    "average_speedup": 3.4993051400535395,
+    "max_speedup": 3.4995110817995685,
+    "min_speedup": 3.4990991983075106,
+    "speedup_std": 0.0002059417460289481,
+    "geometric_mean_speedup": 3.499305133993479
+  },
+  "efficiency_summary": {
+    "average_memory_reduction": 25.0,
+    "average_power_gain": 4.299444112042832,
+    "average_cim_utilization": 0.01227125061652699
+  },
+  "optimization_features": {
+    "cim_parallelism": true,
+    "spm_hierarchy": true,
+    "pim_computing": true,
+    "num_cim_arrays": 4,
+    "spm_size_kb": 512
+  },
+  "detailed_results": [
+    {
+      "test_name": "MatMul_512x512x512",
+      "baseline_time_ms": 75.73515892028809,
+      "optimized_time_ms": 21.64418744027624,
+      "speedup": 3.4990991983075106,
+      "memory_usage_reduction": 25.0,
+      "power_efficiency_gain": 4.299279358646009,
+      "cim_utilization": 0.012402196051050925,
+      "optimization_features": [
+        "CIM并行",
+        "SPM优化",
+        "数据重用"
+      ],
+      "details": {
+        "matrix_shape": [
+          512,
+          512,
+          512
+        ],
+        "theoretical_ops": 268435456,
+        "cim_arrays_used": 4
+      }
+    },
+    {
+      "test_name": "MatMul_1024x1024x1024",
+      "baseline_time_ms": 619.0242099761963,
+      "optimized_time_ms": 176.8887697471936,
+      "speedup": 3.4995110817995685,
+      "memory_usage_reduction": 25.0,
+      "power_efficiency_gain": 4.299608865439655,
+      "cim_utilization": 0.012140305182003056,
+      "optimization_features": [
+        "CIM并行",
+        "SPM优化",
+        "数据重用"
+      ],
+      "details": {
+        "matrix_shape": [
+          1024,
+          1024,
+          1024
+        ],
+        "theoretical_ops": 2147483648,
+        "cim_arrays_used": 4
+      }
+    }
+  ]
+}

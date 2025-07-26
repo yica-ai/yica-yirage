@@ -1,0 +1,11 @@
+{
+  "results": {
+    "yica_api": {
+      "test_type": "yica_api",
+      "yirage_available": true,
+      "optimizer_creation_ms": 0.0008344650268554688,
+      "monitor_creation_ms": 0.005745887756347656,
+      "version_info_ms": 0.00015497207641601562
+    }
+  }
+}

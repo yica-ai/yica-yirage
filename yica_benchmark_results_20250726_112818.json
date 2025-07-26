@@ -1,0 +1,43 @@
+{
+  "results": {
+    "matrix_operations": {
+      "test_type": "matrix_operations",
+      "sizes_tested": [
+        128,
+        256,
+        512,
+        1024
+      ],
+      "results": {
+        "128x128": {
+          "numpy_time_ms": 0.37699222564697266,
+          "numpy_gflops": 11.125704231173398,
+          "torch_time_ms": 0.25884151458740234,
+          "torch_gflops": 16.20413945840871,
+          "device": "cpu"
+        },
+        "256x256": {
+          "numpy_time_ms": 1.5135431289672852,
+          "numpy_gflops": 22.169458773794393,
+          "torch_time_ms": 1.0062837600708008,
+          "torch_gflops": 33.34490064476361,
+          "device": "cpu"
+        },
+        "512x512": {
+          "numpy_time_ms": 6.4359235763549805,
+          "numpy_gflops": 41.708925349301595,
+          "torch_time_ms": 4.237880706787109,
+          "torch_gflops": 63.34190945254583,
+          "device": "cpu"
+        },
+        "1024x1024": {
+          "numpy_time_ms": 27.38931655883789,
+          "numpy_gflops": 78.40588659402154,
+          "torch_time_ms": 18.142518997192383,
+          "torch_gflops": 118.36744656749873,
+          "device": "cpu"
+        }
+      }
+    }
+  }
+}

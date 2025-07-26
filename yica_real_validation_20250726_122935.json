@@ -1,0 +1,9 @@
+{
+  "yirage_available": true,
+  "yica_real_available": true,
+  "torch_available": true,
+  "numpy_available": true,
+  "graph_construction": "FAILED: module 'yirage' has no attribute 'new_kernel_graph'",
+  "superoptimize": "SKIPPED",
+  "execution": "SKIPPED"
+}
