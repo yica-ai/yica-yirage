@@ -1,0 +1,94 @@
+# YICA-QEMU Mac本地验证环境
+# 基于Ubuntu 22.04 + ROCm 5.7.3 + YZ-G100驱动模拟
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+
+# 基础系统配置
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    curl \
+    vim \
+    python3 \
+    python3-pip \
+    python3-dev \
+    pkg-config \
+    libssl-dev \
+    libffi-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    llvm \
+    libncurses5-dev \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev \
+    qemu-system-x86 \
+    qemu-utils \
+    bridge-utils \
+    uml-utilities \
+    && rm -rf /var/lib/apt/lists/*
+
+# YICA架构专用环境 - 不依赖CUDA/ROCm
+# 安装YICA开发所需的基础库
+RUN apt-get update && apt-get install -y \
+    libeigen3-dev \
+    libopenblas-dev \
+    liblapack-dev \
+    libomp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python环境配置 - 专注YICA优化工具
+RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install numpy cython pytest pytest-cov matplotlib seaborn
+# 安装CPU版本PyTorch用于对比基准测试
+RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# 创建工作目录
+WORKDIR /yica-workspace
+
+# 配置环境变量 - YICA专用
+ENV YICA_HOME="/yica-workspace"
+ENV PYTHONPATH="/yica-workspace/yirage/python:$PYTHONPATH"
+ENV LD_LIBRARY_PATH="/yica-workspace/yirage/build:$LD_LIBRARY_PATH"
+ENV OMP_NUM_THREADS=4
+ENV YICA_BACKEND_MODE="cpu"
+
+# 拷贝YICA项目代码
+COPY . /yica-workspace/
+
+# 编译Z3依赖
+RUN cd /yica-workspace/yirage/deps/z3 && \
+    mkdir -p build && cd build && \
+    cmake .. && make -j$(nproc)
+
+# 编译YICA核心库
+RUN cd /yica-workspace/yirage && \
+    mkdir -p build && cd build && \
+    export Z3_DIR=/yica-workspace/yirage/deps/z3/build && \
+    cmake .. && make -j$(nproc)
+
+# 安装Python包
+RUN cd /yica-workspace/yirage/python && \
+    python3 setup.py develop
+
+# 创建QEMU镜像目录
+RUN mkdir -p /yica-workspace/qemu-images
+
+# 暴露端口（VNC和SSH）
+EXPOSE 5900-5999 22
+
+# 启动脚本
+COPY docker/start-yica-qemu.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-yica-qemu.sh
+
+CMD ["/usr/local/bin/start-yica-qemu.sh"] 
