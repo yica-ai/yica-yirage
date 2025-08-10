@@ -230,10 +230,10 @@ setup_gem5_environment() {
             cd ..
         fi
         
-        echo "✅ gem5环境配置完成"
+        echo "✅ gem5 环境配置完成"
 EOF
     
-    print_success "gem5环境配置完成"
+    print_success "gem5 环境配置完成"
 }
 
 # 创建Dockerfile

@@ -332,15 +332,48 @@ import os
 import sys
 import platform
 
-# 读取版本信息
+# 读取版本信息 - 动态从版本文件获取
 def get_version():
     version_file = os.path.join('python', 'yirage', 'version.py')
-    with open(version_file, 'r') as f:
-        content = f.read()
-        for line in content.split('\n'):
-            if line.startswith('__version__'):
-                return line.split('=')[1].strip().strip('"').strip("'")
-    return "1.0.1"
+    
+    # 方法1: 直接执行版本文件获取版本
+    try:
+        version_globals = {}
+        with open(version_file, 'r') as f:
+            exec(f.read(), version_globals)
+        
+        if '__version__' in version_globals:
+            version = version_globals['__version__']
+            print(f"✅ 动态读取版本: {version} (来源: {version_file})")
+            return version
+    except Exception as e:
+        print(f"⚠️  方法1失败: {e}")
+    
+    # 方法2: 文本解析 (备用)
+    try:
+        with open(version_file, 'r') as f:
+            content = f.read()
+            import re
+            match = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
+            if match:
+                version = match.group(1)
+                print(f"✅ 解析版本: {version} (来源: {version_file})")
+                return version
+    except Exception as e:
+        print(f"⚠️  方法2失败: {e}")
+    
+    # 方法3: 尝试导入 (如果在正确路径)
+    try:
+        import sys
+        sys.path.insert(0, 'python')
+        from yirage.version import __version__
+        print(f"✅ 导入版本: {__version__} (来源: 模块导入)")
+        return __version__
+    except Exception as e:
+        print(f"⚠️  方法3失败: {e}")
+    
+    print(f"❌ 无法获取版本信息，使用默认值")
+    return "dev-unknown"
 
 # 检测编译环境
 def detect_compile_env():
@@ -643,12 +676,30 @@ import os
 
 def get_version():
     version_file = os.path.join('python', 'yirage', 'version.py')
-    with open(version_file, 'r') as f:
-        content = f.read()
-        for line in content.split('\n'):
-            if line.startswith('__version__'):
-                return line.split('=')[1].strip().strip('"').strip("'")
-    return "1.0.1"
+    
+    # 动态读取版本信息
+    try:
+        version_globals = {}
+        with open(version_file, 'r') as f:
+            exec(f.read(), version_globals)
+        
+        if '__version__' in version_globals:
+            return version_globals['__version__']
+    except Exception:
+        pass
+    
+    # 备用方法：正则解析
+    try:
+        with open(version_file, 'r') as f:
+            content = f.read()
+            import re
+            match = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
+            if match:
+                return match.group(1)
+    except Exception:
+        pass
+    
+    return "dev-unknown"
 
 setup(
     name="yica-yirage",

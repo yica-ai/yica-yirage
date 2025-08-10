@@ -1,0 +1,31 @@
+{
+  "name": "yica-yirage-docs",
+  "description": "YICA/YiRage 项目文档网站",
+  "version": "2.0.0",
+  "author": "YICA Development Team",
+  "scripts": {
+    "dev": "nuxt dev --extends docus",
+    "build": "nuxt build --extends docus",
+    "preview": "nuxt preview --extends docus",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "docus": "latest",
+    "better-sqlite3": "^12.2.0",
+    "nuxt": "^4.0.0"
+  },
+  "keywords": [
+    "YICA",
+    "YiRage", 
+    "AI computing",
+    "in-memory computing",
+    "CIM",
+    "optimization engine",
+    "documentation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yica-ai/yica-yirage-docs"
+  },
+  "license": "MIT"
+}
