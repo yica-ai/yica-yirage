@@ -61,6 +61,13 @@ doxygen/
 *.zip
 yica-yirage-release-*/
 
+# Large software packages (keep separate)
+software-release/
+runtime/
+compiler/
+qemubin/
+oplib/
+
 # CMake
 CMakeCache.txt
 cmake_install.cmake
@@ -70,10 +77,28 @@ Makefile
 # Local configuration
 .env
 
+# Virtual environments
 venv/
+.venv/
+env/
+.env/
 
 # Compiled binaries
 yica_optimizer
 yica_optimizer_tests
 yica_analyzer
 test_yica_analyzer 
+
+# Yirage specific build artifacts
+yirage/venv_build
+yirage/venv_enhanced
+yirage/venv_simple
+yirage/venv_z3_test
+yirage/build/
+yirage/build_cpp/
+yirage/dist/
+
+# Generated files
+generated_*.py
+test_generated_*.py
+test_triton_*.py
