@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yica-yirage"
-version = "1.0.1"
+version = "1.0.4"
 description = "YICA-Yirage: AI Computing Optimization Framework for In-Memory Computing Architecture"
 readme = "README.md"
 license = {text = "MIT"}
