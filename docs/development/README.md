@@ -1,163 +1,163 @@
-# 开发指南
+# Development Guide
 
-本目录包含YICA/YiRage的开发相关文档和指南。
+This directory contains development-related documentation and guides for YICA/YiRage.
 
-## 📖 文档列表
+## 📖 Documentation List
 
-### 测试与性能
-- **[性能测试](performance-testing.md)** - 性能测试方法、工具和基准
+### Testing and Performance
+- **[Performance Testing](performance-testing.md)** - Performance testing methods, tools, and benchmarks
 
-### 计划添加的文档
-- **构建指南** - 从源码构建项目的详细步骤
-- **调试指南** - 调试技巧和故障排除
-- **贡献指南** - 如何为项目贡献代码
-- **API开发** - 如何开发新的API接口
-- **后端扩展** - 如何添加新的计算后端
+### Planned Documentation
+- **Build Guide** - Detailed steps for building the project from source
+- **Debugging Guide** - Debugging techniques and troubleshooting
+- **Contribution Guide** - How to contribute code to the project
+- **API Development** - How to develop new API interfaces
+- **Backend Extensions** - How to add new computation backends
 
-## 🛠️ 开发环境
+## 🛠️ Development Environment
 
-### 基本要求
-- **C++17** 或更高版本
+### Basic Requirements
+- **C++17** or higher
 - **Python 3.8+**
 - **CMake 3.16+**
-- **CUDA** (可选，用于CUDA后端)
+- **CUDA** (optional, for CUDA backend)
 
-### 推荐工具
-- **IDE**: VSCode、CLion、或其他C++/Python IDE
-- **调试器**: GDB、LLDB
-- **性能分析**: Perf、VTune、Nsight
-- **版本控制**: Git
+### Recommended Tools
+- **IDE**: VSCode, CLion, or other C++/Python IDEs
+- **Debugger**: GDB, LLDB
+- **Performance Analysis**: Perf, VTune, Nsight
+- **Version Control**: Git
 
-## 🔧 构建系统
+## 🔧 Build System
 
-### 快速构建
+### Quick Build
 ```bash
-# 基本构建
+# Basic build
 mkdir build && cd build
 cmake ..
 make -j$(nproc)
 
-# 启用所有后端
+# Enable all backends
 cmake -DBUILD_ALL_BACKENDS=ON ..
 make -j$(nproc)
 
-# 仅构建特定后端
+# Build only specific backend
 cmake -DBUILD_CPU_BACKEND=ON -DBUILD_GPU_BACKEND=OFF ..
 make -j$(nproc)
 ```
 
-### Python包构建
+### Python Package Build
 ```bash
-# 标准安装
+# Standard installation
 cd yirage/python
 pip install -e .
 
-# 简化安装（兼容模式）
+# Simplified installation (compatibility mode)
 python simple_cython_setup.py build_ext --inplace
 ```
 
-## 🧪 测试框架
+## 🧪 Testing Framework
 
-### 单元测试
+### Unit Tests
 ```bash
-# C++ 测试
+# C++ tests
 cd build
 ctest
 
-# Python 测试
+# Python tests
 cd yirage/python
 python -m pytest tests/
 ```
 
-### 性能测试
+### Performance Tests
 ```bash
-# 运行基准测试
+# Run benchmarks
 python yirage/benchmark/run_benchmarks.py
 
-# 对比不同后端
+# Compare different backends
 python yirage/benchmark/compare_backends.py
 ```
 
-## 📊 性能分析
+## 📊 Performance Analysis
 
-### 内置性能工具
-- **YiRage Profiler**: 内置的性能分析器
-- **YICA Monitor**: YICA架构特定的监控工具
-- **Backend Comparator**: 多后端性能对比
+### Built-in Performance Tools
+- **YiRage Profiler**: Built-in performance analyzer
+- **YICA Monitor**: YICA architecture-specific monitoring tools
+- **Backend Comparator**: Multi-backend performance comparison
 
-### 外部工具集成
+### External Tool Integration
 - **CUDA Profiler**: Nsight Systems/Compute
-- **CPU Profiler**: Intel VTune、perf
-- **Memory Profiler**: Valgrind、AddressSanitizer
+- **CPU Profiler**: Intel VTune, perf
+- **Memory Profiler**: Valgrind, AddressSanitizer
 
-## 🔍 调试技巧
+## 🔍 Debugging Techniques
 
-### 常见问题
-1. **编译错误**: 检查依赖和编译器版本
-2. **运行时错误**: 使用调试模式和断点
-3. **性能问题**: 使用profiler分析瓶颈
-4. **内存问题**: 使用内存检查工具
+### Common Issues
+1. **Compilation Errors**: Check dependencies and compiler versions
+2. **Runtime Errors**: Use debug mode and breakpoints
+3. **Performance Issues**: Use profiler to analyze bottlenecks
+4. **Memory Issues**: Use memory checking tools
 
-### 调试命令
+### Debug Commands
 ```bash
-# 调试模式构建
+# Debug mode build
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 
-# 使用GDB调试
+# Debug with GDB
 gdb ./yirage_optimizer
 (gdb) run --backend yica input.py
 
-# 内存检查
+# Memory checking
 valgrind --tool=memcheck ./yirage_optimizer
 ```
 
-## 🚀 最佳实践
+## 🚀 Best Practices
 
-### 代码质量
-- 遵循C++17标准
-- 使用智能指针管理内存
-- 编写单元测试
-- 添加详细注释
+### Code Quality
+- Follow C++17 standards
+- Use smart pointers for memory management
+- Write unit tests
+- Add detailed comments
 
-### 性能优化
-- 优先考虑算法复杂度
-- 合理使用并行化
-- 注意内存访问模式
-- 测量然后优化
+### Performance Optimization
+- Prioritize algorithm complexity
+- Use parallelization appropriately
+- Pay attention to memory access patterns
+- Measure before optimizing
 
-### 兼容性设计
-- 支持多种编译器
-- 兼容不同操作系统
-- 优雅处理缺失依赖
-- 提供fallback机制
+### Compatibility Design
+- Support multiple compilers
+- Compatible with different operating systems
+- Gracefully handle missing dependencies
+- Provide fallback mechanisms
 
-## 🔗 相关资源
+## 🔗 Related Resources
 
-### 内部文档
-- [架构设计](../architecture/) - 系统架构详解
-- [生产级设计](../design/) - 生产环境设计
-- [API文档](../api/) - 编程接口参考
+### Internal Documentation
+- [Architecture Design](../architecture/) - System architecture details
+- [Production Design](../design/) - Production environment design
+- [API Documentation](../api/) - Programming interface reference
 
-### 外部资源
-- [CUDA编程指南](https://docs.nvidia.com/cuda/)
-- [CMake文档](https://cmake.org/documentation/)
-- [Cython用户指南](https://cython.readthedocs.io/)
+### External Resources
+- [CUDA Programming Guide](https://docs.nvidia.com/cuda/)
+- [CMake Documentation](https://cmake.org/documentation/)
+- [Cython User Guide](https://cython.readthedocs.io/)
 
-## 📈 贡献流程
+## 📈 Contribution Process
 
-### 代码贡献
-1. Fork项目仓库
-2. 创建功能分支
-3. 编写代码和测试
-4. 提交Pull Request
-5. 代码审查和合并
+### Code Contributions
+1. Fork the project repository
+2. Create a feature branch
+3. Write code and tests
+4. Submit Pull Request
+5. Code review and merge
 
-### 文档贡献
-1. 识别文档改进点
-2. 编写或更新文档
-3. 检查格式和链接
-4. 提交文档PR
+### Documentation Contributions
+1. Identify documentation improvements
+2. Write or update documentation
+3. Check formatting and links
+4. Submit documentation PR
 
 ---
 
-*本开发指南将持续更新，欢迎贡献更多开发相关的文档和最佳实践。*
+*This development guide will be continuously updated. Contributions for more development-related documentation and best practices are welcome.*
