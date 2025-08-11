@@ -112,12 +112,11 @@ html_js_files = [
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '_static/images/yica-logo.png'
+html_logo = '_static/images/yica-logo.svg'
 
 # The name of an image file (relative to this directory) to use as a favicon of
-# the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
-html_favicon = '_static/images/favicon.ico'
+# the docs. Using SVG for better scalability.
+html_favicon = '_static/images/favicon.svg'
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

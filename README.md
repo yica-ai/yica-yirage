@@ -9,7 +9,7 @@
 ## 🌟 Key Features
 
 - **🚀 Automated Kernel Generation**: Automatically generates optimized GPU kernels without manual CUDA/Triton programming
-- **🧠 In-Memory Computing Support**: Specialized optimizations for in-memory computing architectures  
+- **🧠 In-Memory Computing Support**: Specialized optimizations for in-memory computing architectures 
 - **⚡ Superoptimization**: Multi-level optimization techniques for maximum performance
 - **🔄 PyTorch Integration**: Seamless integration with existing PyTorch workflows
 - **🎯 Production Ready**: Comprehensive testing and validation framework
