@@ -1,8 +1,16 @@
+<div align="center">
+
+![YICA Logo](docs/_static/images/yica-logo.svg)
+
 # YICA-YiRage: AI Computing Optimization Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yica-ai/yica-yirage)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://yica-yirage.readthedocs.io/)
+[![GitHub Stars](https://img.shields.io/github/stars/yica-ai/yica-yirage?style=social)](https://github.com/yica-ai/yica-yirage)
+
+</div>
 
 **YICA-YiRage** is an AI computing optimization framework specifically designed for in-memory computing architectures. It extends the YiRage superoptimization engine with YICA (Yet another In-memory Computing Architecture) support, providing automated GPU kernel generation and optimization for deep learning workloads on specialized hardware.
 
@@ -93,28 +101,34 @@ qkv_output = kernel(inputs=[hidden_states, qkv_weights])
 
 ## 🏗️ Architecture
 
+<div align="center">
+
+![Architecture Diagram](https://img.shields.io/badge/Architecture-YICA--YiRage-blue?style=for-the-badge)
+
+</div>
+
 YICA-YiRage consists of three main components:
 
-1. **YiRage Core**: Multi-level superoptimization engine
-2. **YICA Backend**: In-memory computing architecture support
-3. **Python Interface**: High-level API for easy integration
+1. **🧠 YiRage Core**: Multi-level superoptimization engine
+2. **⚡ YICA Backend**: In-memory computing architecture support  
+3. **🐍 Python Interface**: High-level API for easy integration
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    YICA-YiRage Framework                    │
 ├─────────────────────────────────────────────────────────────┤
-│  Python API Layer                                          │
+│  🐍 Python API Layer                                       │
 │  ├── Graph Construction (yr.new_kernel_graph())           │
 │  ├── Tensor Operations (matmul, rms_norm, etc.)           │
 │  └── PyTorch Integration                                   │
 ├─────────────────────────────────────────────────────────────┤
-│  YiRage Optimization Engine                                │
+│  🧠 YiRage Optimization Engine                             │
 │  ├── Search-based Optimization                            │
 │  ├── Multi-level Code Generation                          │
 │  ├── Triton/CUDA Backend                                  │
 │  └── Performance Profiling                                │
 ├─────────────────────────────────────────────────────────────┤
-│  YICA Hardware Abstraction                                 │
+│  ⚡ YICA Hardware Abstraction                              │
 │  ├── In-Memory Computing Support                          │
 │  ├── Hardware-Specific Optimizations                      │
 │  └── Memory Management                                     │
@@ -148,15 +162,22 @@ python scripts/run_yica_benchmarks.sh
 
 ## 🚀 Performance
 
+<div align="center">
+
+![Performance Badge](https://img.shields.io/badge/Performance-Up%20to%201.7x%20Faster-brightgreen?style=for-the-badge)
+![Memory Badge](https://img.shields.io/badge/Memory-Up%20to%2020%25%20Reduction-blue?style=for-the-badge)
+
+</div>
+
 YICA-YiRage achieves significant performance improvements over baseline PyTorch:
 
-| Operation | Speedup | Memory Reduction |
-|-----------|---------|------------------|
-| RMSNorm + Linear | 1.5-1.7x | 15-20% |
-| Attention (Fused) | 1.3-1.5x | 10-15% |
-| Transformer Layer | 1.4-1.6x | 12-18% |
+| 🔥 Operation | ⚡ Speedup | 💾 Memory Reduction |
+|--------------|-----------|---------------------|
+| **RMSNorm + Linear** | `1.5-1.7x` | `15-20%` |
+| **Attention (Fused)** | `1.3-1.5x` | `10-15%` |
+| **Transformer Layer** | `1.4-1.6x` | `12-18%` |
 
-*Results measured on NVIDIA A100 with mixed precision training*
+> 📊 *Results measured on NVIDIA A100 with mixed precision training*
 
 ## 🤝 Contributing
 
@@ -205,7 +226,25 @@ If you use YICA-YiRage in your research, please cite:
 
 ## 🆘 Support
 
-- **Documentation**: [https://yica-yirage.readthedocs.io/](https://yica-yirage.readthedocs.io/)
-- **Issues**: [GitHub Issues](https://github.com/yica-ai/yica-yirage/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yica-ai/yica-yirage/discussions)
-- **Email**: contact@yica.ai
+<div align="center">
+
+| 📖 Documentation | 🐛 Issues | 💬 Discussions | ✉️ Contact |
+|:----------------:|:---------:|:-------------:|:---------:|
+| [Read the Docs](https://yica-yirage.readthedocs.io/) | [GitHub Issues](https://github.com/yica-ai/yica-yirage/issues) | [GitHub Discussions](https://github.com/yica-ai/yica-yirage/discussions) | contact@yica.ai |
+
+</div>
+
+---
+
+<div align="center">
+
+![YICA Logo](docs/_static/images/yica-logo.svg)
+
+**Made with ❤️ by the YICA Team**
+
+[![YICA](https://img.shields.io/badge/Powered%20by-YICA-blue?style=for-the-badge)](https://github.com/yica-ai)
+[![YiRage](https://img.shields.io/badge/Built%20with-YiRage-orange?style=for-the-badge)](https://github.com/yirage-project)
+
+*Unleashing the power of AI computing on in-memory architectures* 🚀
+
+</div>
