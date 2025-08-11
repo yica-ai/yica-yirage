@@ -251,17 +251,17 @@ python -m pdb -c continue script.py
 - [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/)
 
 ### Community
-- **GitHub Repository**: [https://github.com/your-org/yica-yirage](https://github.com/your-org/yica-yirage)
-- **Issue Tracker**: [https://github.com/your-org/yica-yirage/issues](https://github.com/your-org/yica-yirage/issues)
-- **Discussions**: [https://github.com/your-org/yica-yirage/discussions](https://github.com/your-org/yica-yirage/discussions)
+- **GitHub Repository**: [https://github.com/yica-ai/yica-yirage](https://github.com/yica-ai/yica-yirage)
+- **Issue Tracker**: [https://github.com/yica-ai/yica-yirage/issues](https://github.com/yica-ai/yica-yirage/issues)
+- **Discussions**: [https://github.com/yica-ai/yica-yirage/discussions](https://github.com/yica-ai/yica-yirage/discussions)
 
 ## 📞 Support
 
 ### Getting Help
 1. Check this quick reference guide
 2. Consult the [full documentation](../README.md)
-3. Search [existing issues](https://github.com/your-org/yica-yirage/issues)
-4. Create a [new issue](https://github.com/your-org/yica-yirage/issues/new) with:
+3. Search [existing issues](https://github.com/yica-ai/yica-yirage/issues)
+4. Create a [new issue](https://github.com/yica-ai/yica-yirage/issues/new) with:
    - System information (`yirage diagnose --full`)
    - Error messages and logs
    - Steps to reproduce the problem
@@ -281,6 +281,6 @@ docker cp ./backup/data yica-container:/home/yica/workspace/
 
 ---
 
-**Server**: johnson.chen@10.11.60.58  
-**Workspace**: /home/johnson.chen/yica-docker-workspace  
+**Server**: johnson.chen@10.11.60.58
+**Workspace**: /home/johnson.chen/yica-docker-workspace
 **Documentation Version**: v2.0
