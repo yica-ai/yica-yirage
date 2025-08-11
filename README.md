@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yica-ai/yica-yirage)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://github.com/yica-ai/yica-yirage/tree/main/docs)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://yica-ai.github.io/yica-yirage/)
 [![GitHub Stars](https://img.shields.io/github/stars/yica-ai/yica-yirage?style=social)](https://github.com/yica-ai/yica-yirage)
 
 </div>
