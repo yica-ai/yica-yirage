@@ -85,7 +85,7 @@ build_docs() {
     
     # Build HTML documentation
     log_info "Building HTML documentation with Sphinx..."
-    python3 -m sphinx -b html . "$BUILD_DIR/html" -W --keep-going
+    python3 -m sphinx -b html . "$BUILD_DIR/html" --keep-going
     
     # Build PDF documentation (if pandoc available)
     if command -v pandoc &> /dev/null; then

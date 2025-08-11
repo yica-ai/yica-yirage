@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yica-ai/yica-yirage)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://yica-yirage.readthedocs.io/)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://github.com/yica-ai/yica-yirage/tree/main/docs)
 [![GitHub Stars](https://img.shields.io/github/stars/yica-ai/yica-yirage?style=social)](https://github.com/yica-ai/yica-yirage)
 
 </div>
@@ -230,7 +230,7 @@ If you use YICA-YiRage in your research, please cite:
 
 | 📖 Documentation | 🐛 Issues | 💬 Discussions | ✉️ Contact |
 |:----------------:|:---------:|:-------------:|:---------:|
-| [Read the Docs](https://yica-yirage.readthedocs.io/) | [GitHub Issues](https://github.com/yica-ai/yica-yirage/issues) | [GitHub Discussions](https://github.com/yica-ai/yica-yirage/discussions) | contact@yica.ai |
+| [Read the Docs](https://yica-ai.github.io/yica-yirage/) | [GitHub Issues](https://github.com/yica-ai/yica-yirage/issues) | [GitHub Discussions](https://github.com/yica-ai/yica-yirage/discussions) | contact@yica.ai |
 
 </div>
 

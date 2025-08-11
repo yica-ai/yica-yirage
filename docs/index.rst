@@ -67,7 +67,6 @@ Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (AI Ke
    project-management/README
    project-management/backend-integration
    project-management/implementation-analysis
-   project-management/roadmap
    project-management/execution-plan
 
 Index and Tables
@@ -88,7 +87,7 @@ YICA is a revolutionary Compute-in-Memory (CIM) architecture designed specifical
 Key Features:
 
 * **Compute-in-Memory Architecture**: 512 CIM arrays providing high parallel computing capability
-* **Three-tier Memory Hierarchy**: Register file, SPM (Scratchpad Memory), and DRAM for optimized memory management  
+* **Three-tier Memory Hierarchy**: Register file, SPM (Scratchpad Memory), and DRAM for optimized memory management
 * **YIS Instruction Set**: Custom instruction set designed specifically for CIM architecture
 * **Multi-backend Support**: Seamless switching between CUDA, Triton, and YICA backends
 * **Automatic Optimization**: Intelligent search for optimal computation graphs
