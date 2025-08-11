@@ -1,0 +1,61 @@
+# Sphinx documentation dependencies
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.2.0
+myst-parser>=1.0.0
+sphinx-copybutton>=0.5.0
+sphinx-tabs>=3.4.0
+sphinx-autodoc-typehints>=1.19.0
+
+# Additional extensions
+sphinxcontrib-applehelp>=1.0.4
+sphinxcontrib-devhelp>=1.0.2
+sphinxcontrib-htmlhelp>=2.0.1
+sphinxcontrib-jsmath>=1.0.1
+sphinxcontrib-qthelp>=1.0.3
+sphinxcontrib-serializinghtml>=1.1.5
+
+# For better code highlighting
+Pygments>=2.15.0
+
+# For building PDF
+# sphinx-latex-parser>=1.0.0  # Removed - package not available
+
+# For search functionality
+# sphinx-search>=0.1.0  # Removed - package not available
+
+# For better table support
+# sphinx-toolbox>=3.5.0  # Removed - package not available
+
+# For API documentation
+# sphinx-autodoc>=0.5.0  # Removed - package not available
+# sphinx-napoleon>=0.7.0  # Removed - package not available
+
+# For mathematical expressions
+# sphinx-math-dollar>=1.2.1  # Removed - package not available
+
+# For better admonitions
+# sphinx-panels>=0.6.0  # Removed - package not available
+
+# For better code blocks
+# sphinx-code-include>=1.0.0  # Removed - package not available
+
+# For better diagrams
+# sphinxcontrib-mermaid>=0.8.1  # Removed - package not available
+
+# For better images
+# sphinxcontrib-images>=0.9.4  # Removed - package not available
+
+# For better external links
+# sphinxext-opengraph>=0.7.0  # Removed - package not available
+
+# For better SEO
+# sphinx-sitemap>=2.4.0  # Removed - package not available
+
+# For better accessibility
+# sphinx-a11y>=0.1.0  # Removed - package not available
+
+# For better performance
+sphinx-autobuild>=2021.3.14
+
+# For development
+watchdog>=2.3.0

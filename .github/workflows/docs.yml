@@ -1,0 +1,172 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd docs
+        pip install -r requirements.txt
+
+    - name: Build documentation
+      run: |
+        cd docs
+        make clean
+        make build
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+
+    - name: Test documentation
+      run: |
+        cd docs
+        make test
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation-build
+        path: docs/_build/html/
+        retention-days: 30
+
+  deploy-rtd:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Read the Docs CLI
+      run: |
+        pip install rtd-cli
+
+    - name: Deploy to Read the Docs
+      env:
+        RTD_TOKEN: ${{ secrets.RTD_TOKEN }}
+      run: |
+        rtd deploy --token $RTD_TOKEN yica-yirage
+
+  deploy-github-pages:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: documentation-build
+        path: docs/_build/html/
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html
+        cname: yica-yirage.readthedocs.io
+
+  test-links:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install link checker
+      run: |
+        pip install linkchecker
+
+    - name: Check links
+      run: |
+        cd docs
+        make build
+        linkchecker _build/html/index.html --ignore-url=^http://localhost --ignore-url=^https://localhost
+
+  lint-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install linting tools
+      run: |
+        pip install markdownlint-cli
+        pip install rstcheck
+
+    - name: Lint Markdown files
+      run: |
+        find docs -name "*.md" -exec markdownlint {} \;
+
+    - name: Lint RST files
+      run: |
+        find docs -name "*.rst" -exec rstcheck {} \;
+
+  performance-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        cd docs
+        pip install -r requirements.txt
+
+    - name: Build and measure performance
+      run: |
+        cd docs
+        time make build
+        echo "Build completed successfully"
+        du -sh _build/html/
