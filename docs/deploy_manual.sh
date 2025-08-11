@@ -12,7 +12,7 @@ cd _build/html
 # Initialize git repository if not exists
 if [ ! -d .git ]; then
     git init
-    git remote add origin https://github.com/yica-ai/yica-mirage.git
+    git remote add origin https://github.com/yica-ai/yica-yirage.git
 fi
 
 # Add all files
@@ -26,4 +26,4 @@ echo "Pushing to gh-pages branch..."
 git push origin HEAD:gh-pages --force
 
 echo "Deployment completed!"
-echo "Documentation will be available at: https://yica-ai.github.io/yica-mirage/"
+echo "Documentation will be available at: https://yica-ai.github.io/yica-yirage/"

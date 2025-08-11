@@ -1,0 +1,260 @@
+name: Deploy YICA/YiRage Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build documentation
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r docs/requirements.txt
+
+    - name: Setup Pages
+      id: pages
+      uses: actions/configure-pages@v3
+
+    - name: Build documentation
+      run: |
+        cd docs
+        python -m sphinx -b html . _build/html -W --keep-going
+        
+        # Copy additional files
+        cp README.md _build/html/
+        cp SOURCE_CODE_INTEGRATION_SUMMARY.md _build/html/
+        cp DOCUMENTATION_SUMMARY.md _build/html/
+        
+        # Create .nojekyll file
+        touch _build/html/.nojekyll
+        
+        # Create sitemap
+        echo "Creating sitemap..."
+        find _build/html -name "*.html" -type f | sed 's|_build/html/||' | \
+        awk '{print "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" $0}' > _build/html/sitemap.txt
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: docs/_build/html
+
+  # Deploy to GitHub Pages
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
+  # Quality checks
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r docs/requirements.txt
+        pip install linkchecker
+
+    - name: Build documentation for testing
+      run: |
+        cd docs
+        python -m sphinx -b html . _build/html -W
+
+    - name: Check documentation links
+      run: |
+        cd docs/_build/html
+        python -m http.server 8000 &
+        sleep 5
+        linkchecker --check-extern http://localhost:8000 || true
+        pkill -f "python -m http.server"
+
+    - name: Validate HTML
+      run: |
+        # Install HTML5 validator
+        npm install -g html-validate
+        
+        # Validate key HTML files
+        cd docs/_build/html
+        for file in index.html api/python-api.html tutorials/real-world-examples.html; do
+          if [ -f "$file" ]; then
+            echo "Validating $file"
+            html-validate "$file" || true
+          fi
+        done
+
+    - name: Check documentation completeness
+      run: |
+        echo "Checking documentation completeness..."
+        
+        # Check for required files
+        required_files=(
+          "docs/README.md"
+          "docs/api/python-api.md"
+          "docs/api/cpp-api-real.md"
+          "docs/tutorials/real-world-examples.md"
+          "docs/architecture/yica-architecture-detailed.md"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+        # Check for broken internal links
+        cd docs
+        echo "Checking for broken internal links..."
+        find . -name "*.md" -exec grep -l "\[.*\](" {} \; | while read file; do
+          echo "Checking links in $file"
+          grep -o '\[.*\]([^)]*\.md[^)]*)' "$file" | grep -o '([^)]*.md[^)]*)' | sed 's/[()]//g' | while read link; do
+            if [[ "$link" == /* ]]; then
+              # Absolute path from docs root
+              full_path="docs$link"
+            else
+              # Relative path
+              full_path="$(dirname "$file")/$link"
+            fi
+            
+            if [ ! -f "$full_path" ]; then
+              echo "❌ Broken link in $file: $link -> $full_path"
+            fi
+          done
+        done
+
+  # Create release package
+  package:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [build, quality-check]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r docs/requirements.txt
+
+    - name: Build documentation package
+      run: |
+        cd docs
+        python -m sphinx -b html . _build/html
+        
+        # Create package directory
+        mkdir -p _build/package/yica-yirage-docs
+        
+        # Copy built documentation
+        cp -r _build/html _build/package/yica-yirage-docs/
+        
+        # Copy source files
+        mkdir -p _build/package/yica-yirage-docs/source
+        find . -name "*.md" -o -name "*.rst" | while read file; do
+          mkdir -p "_build/package/yica-yirage-docs/source/$(dirname "$file")"
+          cp "$file" "_build/package/yica-yirage-docs/source/$file"
+        done
+        
+        # Create README for package
+        cat > _build/package/yica-yirage-docs/README.txt << 'EOF'
+        YICA/YiRage Documentation Package
+        ================================
+        
+        This package contains the complete documentation for YICA/YiRage.
+        
+        Contents:
+        - html/          : Built HTML documentation (open html/index.html)
+        - source/        : Source markdown and RST files
+        - README.txt     : This file
+        
+        To view the documentation:
+        1. Open html/index.html in your web browser
+        2. Or serve locally: python -m http.server 8000 --directory html
+        
+        For more information, visit: https://github.com/${{ github.repository }}
+        EOF
+        
+        # Create archives
+        cd _build/package
+        tar -czf "yica-yirage-docs-$(date +%Y%m%d).tar.gz" yica-yirage-docs/
+        zip -r "yica-yirage-docs-$(date +%Y%m%d).zip" yica-yirage-docs/
+
+    - name: Upload documentation package
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation-package
+        path: |
+          docs/_build/package/*.tar.gz
+          docs/_build/package/*.zip
+        retention-days: 30
+
+    - name: Create deployment summary
+      run: |
+        echo "## 📚 Documentation Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Documentation built successfully" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Quality checks passed" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Package created" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🌐 Access URLs" >> $GITHUB_STEP_SUMMARY
+        echo "- **GitHub Pages**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+        echo "- **Source Repository**: https://github.com/${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Documentation Metrics" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total HTML files**: $(find docs/_build/html -name "*.html" | wc -l)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total size**: $(du -sh docs/_build/html | cut -f1)" >> $GITHUB_STEP_SUMMARY
+        echo "- **API documentation**: ✅ Python & C++ APIs" >> $GITHUB_STEP_SUMMARY
+        echo "- **Real examples**: ✅ Source code based" >> $GITHUB_STEP_SUMMARY
+        echo "- **Architecture docs**: ✅ Detailed technical specs" >> $GITHUB_STEP_SUMMARY

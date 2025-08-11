@@ -1,32 +1,32 @@
-# YICA与Mirage集成方案
+# YICA与yirage集成方案
 
 ## 项目目标
 
-**借助Mirage已有的代码基础，增加YICA特定的优化逻辑，为YICA架构提供后端支持，最终输出优化后的Triton代码。**
+**借助yirage已有的代码基础，增加YICA特定的优化逻辑，为YICA架构提供后端支持，最终输出优化后的Triton代码。**
 
 ## 技术路线
 
 ```
-Mirage计算图 → YICA优化器 → Mirage搜索引擎 → Triton Transpiler → 优化的Triton代码
+yirage计算图 → YICA优化器 → yirage搜索引擎 → Triton Transpiler → 优化的Triton代码
 ```
 
 ## 核心组件设计
 
-### 1. YICA后端集成到Mirage
+### 1. YICA后端集成到yirage
 
-在Mirage现有的后端系统中添加YICA支持：
+在yirage现有的后端系统中添加YICA支持：
 
 ```python
-# mirage/python/mirage/kernel.py 
+# yirage/python/yirage/kernel.py 
 def superoptimize(self, backend="yica", **kwargs):
     # 现有代码支持 "cuda", "nki", "triton"
     # 新增 "yica" 后端支持
     
     if backend == "yica":
-        from .yica_optimizer import YICAMirageOptimizer
+        from .yica_optimizer import YICAyirageOptimizer
         
         # 1. YICA特定的搜索和优化
-        yica_optimizer = YICAMirageOptimizer(self.cygraph)
+        yica_optimizer = YICAyirageOptimizer(self.cygraph)
         optimized_graphs = yica_optimizer.optimize_for_yica(
             yica_config=kwargs.get('yica_config'),
             optimization_objectives=kwargs.get('objectives', ['latency'])
@@ -44,16 +44,16 @@ def superoptimize(self, backend="yica", **kwargs):
 创建专门的YICA优化逻辑：
 
 ```python
-# mirage/python/mirage/yica_optimizer.py
+# yirage/python/yirage/yica_optimizer.py
 
-class YICAMirageOptimizer:
+class YICAyirageOptimizer:
     """
-    YICA架构专用的Mirage优化器
-    利用Mirage的搜索引擎，增加YICA特定的优化策略
+    YICA架构专用的yirage优化器
+    利用yirage的搜索引擎，增加YICA特定的优化策略
     """
     
-    def __init__(self, mirage_graph):
-        self.mirage_graph = mirage_graph
+    def __init__(self, yirage_graph):
+        self.yirage_graph = yirage_graph
         self.yica_analyzer = YICAArchitectureAnalyzer()
         self.search_space = YICASearchSpace()
         
@@ -63,12 +63,12 @@ class YICAMirageOptimizer:
         """
         # 1. 分析计算图的YICA适配性
         analysis = self.yica_analyzer.analyze_graph(
-            self.mirage_graph, yica_config
+            self.yirage_graph, yica_config
         )
         
         # 2. 生成YICA特定的搜索空间
         search_candidates = self.search_space.generate_yica_optimized_variants(
-            self.mirage_graph, analysis
+            self.yirage_graph, analysis
         )
         
         # 3. 应用YICA特定的优化策略
@@ -91,27 +91,27 @@ class YICAMirageOptimizer:
 ### 3. YICA架构分析器
 
 ```python
-# mirage/python/mirage/yica_analyzer.py
+# yirage/python/yirage/yica_analyzer.py
 
 class YICAArchitectureAnalyzer:
     """
-    分析Mirage计算图对YICA架构的适配性
+    分析yirage计算图对YICA架构的适配性
     """
     
-    def analyze_graph(self, mirage_graph, yica_config):
+    def analyze_graph(self, yirage_graph, yica_config):
         analysis = YICAAnalysisResult()
         
         # 分析计算密集度
-        analysis.compute_intensity = self._analyze_compute_intensity(mirage_graph)
+        analysis.compute_intensity = self._analyze_compute_intensity(yirage_graph)
         
         # 分析内存访问模式
-        analysis.memory_pattern = self._analyze_memory_access_pattern(mirage_graph)
+        analysis.memory_pattern = self._analyze_memory_access_pattern(yirage_graph)
         
         # 分析CIM友好度
-        analysis.cim_friendliness = self._analyze_cim_friendliness(mirage_graph)
+        analysis.cim_friendliness = self._analyze_cim_friendliness(yirage_graph)
         
         # 分析并行化潜力
-        analysis.parallelization_potential = self._analyze_parallelization(mirage_graph)
+        analysis.parallelization_potential = self._analyze_parallelization(yirage_graph)
         
         return analysis
     
@@ -132,7 +132,7 @@ class YICAArchitectureAnalyzer:
 ### 4. YICA搜索空间定义
 
 ```python
-# mirage/python/mirage/yica_search_space.py
+# yirage/python/yirage/yica_search_space.py
 
 class YICASearchSpace:
     """
@@ -178,10 +178,10 @@ class YICASearchSpace:
         return strategies
 ```
 
-### 5. 扩展Mirage的Triton Transpiler
+### 5. 扩展yirage的Triton Transpiler
 
 ```cpp
-// mirage/src/triton_transpiler/yica_transpile.cc
+// yirage/src/triton_transpiler/yica_transpile.cc
 
 class YICATritonTranspiler : public TritonTranspiler {
     /*
@@ -242,7 +242,7 @@ private:
 ### 6. YICA运行时支持
 
 ```python
-# mirage/include/mirage/triton_transpiler/runtime/yica_runtime.py
+# yirage/include/yirage/triton_transpiler/runtime/yica_runtime.py
 
 class CIMArray:
     """
@@ -296,11 +296,11 @@ class SPMManager:
 
 ## 集成流程
 
-### 步骤1: 扩展Mirage后端支持
+### 步骤1: 扩展yirage后端支持
 
 ```bash
-# 在mirage/python/mirage/kernel.py中添加YICA后端
-# 在mirage/python/mirage/目录下添加YICA相关模块：
+# 在yirage/python/yirage/kernel.py中添加YICA后端
+# 在yirage/python/yirage/目录下添加YICA相关模块：
 # - yica_optimizer.py
 # - yica_analyzer.py  
 # - yica_search_space.py
@@ -309,30 +309,30 @@ class SPMManager:
 ### 步骤2: 扩展Triton Transpiler
 
 ```bash
-# 在mirage/src/triton_transpiler/目录下添加：
+# 在yirage/src/triton_transpiler/目录下添加：
 # - yica_transpile.cc
 # - yica_transpile.h
 
-# 在mirage/include/mirage/triton_transpiler/runtime/目录下添加：
+# 在yirage/include/yirage/triton_transpiler/runtime/目录下添加：
 # - yica_runtime.py
 ```
 
 ### 步骤3: 集成到构建系统
 
 ```cmake
-# 在mirage/CMakeLists.txt中添加YICA组件
+# 在yirage/CMakeLists.txt中添加YICA组件
 set(YICA_TRANSPILER_SRCS
     src/triton_transpiler/yica_transpile.cc
 )
 
 # 添加到目标
-target_sources(mirage_runtime PRIVATE ${YICA_TRANSPILER_SRCS})
+target_sources(yirage_runtime PRIVATE ${YICA_TRANSPILER_SRCS})
 ```
 
 ### 步骤4: Python绑定
 
 ```python
-# 在mirage/python/mirage/_cython/core.pyx中添加YICA函数绑定
+# 在yirage/python/yirage/_cython/core.pyx中添加YICA函数绑定
 def generate_yica_triton_program(CyKNGraph input_graph, *, 
                                 int target_cc,
                                 dict yica_config) -> dict:
@@ -343,7 +343,7 @@ def generate_yica_triton_program(CyKNGraph input_graph, *,
 ## 使用示例
 
 ```python
-import mirage as mi
+import yirage as mi
 
 # 创建计算图
 graph = mi.new_kernel_graph()
@@ -377,10 +377,10 @@ with open("yica_optimized_kernel.py", "w") as f:
 
 ## 技术优势
 
-1. **复用Mirage生态** - 利用成熟的搜索引擎和优化框架
+1. **复用yirage生态** - 利用成熟的搜索引擎和优化框架
 2. **YICA特化优化** - 针对存算一体架构的专门优化策略  
 3. **Triton代码输出** - 生成高性能的Triton GPU内核
 4. **渐进式集成** - 可以逐步扩展和完善YICA支持
 5. **后端兼容性** - 与现有的CUDA/NKI后端并存
 
-这个方案更符合你们的实际需求：**借助Mirage → 增加YICA优化 → 输出Triton代码**。 
+这个方案更符合你们的实际需求：**借助yirage → 增加YICA优化 → 输出Triton代码**。 

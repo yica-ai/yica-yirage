@@ -1,0 +1,40 @@
+# Read the Docs configuration file for YICA/YiRage
+version: 2
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.10"
+  jobs:
+    post_create_environment:
+      - pip install --upgrade pip setuptools wheel
+    post_install:
+      - pip install -r docs/requirements.txt
+
+python:
+  install:
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
+
+sphinx:
+  configuration: docs/conf.py
+  builder: html
+  fail_on_warning: false
+
+formats:
+  - pdf
+  - epub
+
+# Submodules configuration (if needed)
+submodules:
+  include: []
+  exclude: all
+
+# Search configuration
+search:
+  ranking:
+    api/python-api.md: 10
+    api/cpp-api-real.md: 10
+    tutorials/real-world-examples.md: 8
+    architecture/yica-architecture-detailed.md: 8

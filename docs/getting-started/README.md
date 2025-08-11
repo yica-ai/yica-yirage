@@ -1,62 +1,119 @@
-# 快速入门指南
+# Getting Started Guide
 
-欢迎使用YICA/YiRage！本节提供快速入门的基础信息。
+Welcome to YICA/YiRage! This section provides essential information to get you started.
 
-## 📖 文档列表
+## 📖 Documentation Overview
 
-### [设计理念](design-philosophy.md)
-了解YICA/YiRage的核心设计原则：
-- 自包含性 (Self-Contained)
-- 环境无关性 (Environment Agnostic) 
-- 后端分离的真正目的
-- 转换优化代码工具的设计理念
+### [Design Philosophy](design-philosophy.md)
+Understand the core design principles of YICA/YiRage:
+- Self-Contained Architecture
+- Environment Agnostic Design
+- The True Purpose of Backend Separation
+- Code Transformation and Optimization Tool Philosophy
 
-### [快速参考](quick-reference.md)
-常用命令和操作的快速参考：
-- 一键部署命令
-- 访问地址和端口
-- 容器管理命令
-- 故障排除指南
+### [Quick Reference](quick-reference.md)
+Quick reference for common commands and operations:
+- One-click deployment commands
+- Access addresses and ports
+- Container management commands
+- Troubleshooting guide
 
-## 🚀 推荐阅读顺序
+## 🚀 Recommended Reading Order
 
-1. **[设计理念](design-philosophy.md)** - 理解项目的设计思想
-2. **[快速参考](quick-reference.md)** - 掌握基本操作命令
-3. **[架构设计](../architecture/)** - 深入了解系统架构
-4. **[部署运维](../deployment/)** - 学习部署和运维
+1. **[Design Philosophy](design-philosophy.md)** - Understand the project's design philosophy
+2. **[Quick Reference](quick-reference.md)** - Master basic operation commands
+3. **[Architecture Design](../architecture/)** - Deep dive into system architecture
+4. **[Deployment Operations](../deployment/)** - Learn deployment and operations
 
-## 💡 核心概念
+## 💡 Core Concepts
 
-### YICA架构
-- **存算一体(CIM)**: 计算单元直接集成到内存中
-- **YIS指令集**: 专为YICA设计的指令集
-- **三级内存层次**: 寄存器、SPM、DRAM
+### YICA Architecture
+- **Compute-in-Memory (CIM)**: Computing units directly integrated into memory
+- **YIS Instruction Set**: Custom instruction set designed specifically for YICA
+- **Three-tier Memory Hierarchy**: Register files, SPM, and DRAM
 
-### YiRage引擎
-- **多后端支持**: CUDA、Triton、YICA
-- **自动优化**: 智能搜索最优计算图
-- **转换工具**: 代码转换和优化
+### YiRage Engine
+- **Multi-backend Support**: CUDA, Triton, and YICA backends
+- **Automatic Optimization**: Intelligent search for optimal computation graphs
+- **Transformation Tool**: Code transformation and optimization capabilities
 
-## 🎯 使用场景
+## 🎯 Use Cases
 
-- **AI模型推理**: 大幅提升推理性能
-- **算子优化**: 自动生成优化的计算内核
-- **跨平台部署**: 支持多种硬件后端
-- **研究开发**: 算法验证和性能分析
+- **AI Model Inference**: Significantly improve inference performance
+- **Operator Optimization**: Automatically generate optimized computation kernels
+- **Cross-platform Deployment**: Support multiple hardware backends
+- **Research and Development**: Algorithm validation and performance analysis
 
-## ❓ 常见问题
+## ❓ Frequently Asked Questions
 
-**Q: 什么是存算一体架构？**
-A: 将计算单元直接集成到内存中，减少数据移动，提高计算效率。
+**Q: What is Compute-in-Memory architecture?**
+A: It integrates computing units directly into memory, reducing data movement and improving computational efficiency.
 
-**Q: YiRage与其他优化工具有什么区别？**  
-A: YiRage是转换优化工具，专注于代码转换和多后端支持，而非依赖特定硬件。
+**Q: How is YiRage different from other optimization tools?**  
+A: YiRage is a transformation optimization tool that focuses on code transformation and multi-backend support, rather than depending on specific hardware.
 
-**Q: 如何选择合适的后端？**
-A: 根据硬件环境自动选择，或手动指定 `backend="yica"` 等。
+**Q: How to choose the appropriate backend?**
+A: The system automatically selects based on the hardware environment, or you can manually specify `backend="yica"` etc.
 
-## 🔗 下一步
+## 🔗 Next Steps
 
-- 阅读 [YICA架构文档](../architecture/yica-architecture.md)
-- 查看 [部署指南](../deployment/)
-- 尝试 [API示例](../api/)
+- Read [YiRage Architecture Documentation](../architecture/yirage-architecture.md)
+- Check [Deployment Guide](../deployment/)
+- Try [API Examples](../api/)
+
+## 🛠️ Prerequisites
+
+### System Requirements
+- **Operating System**: Linux, macOS, or Windows
+- **Python**: 3.8 or higher
+- **Memory**: 8GB RAM minimum (16GB recommended)
+- **Storage**: 10GB free space
+
+### Optional Requirements
+- **CUDA**: For GPU backend support
+- **Docker**: For containerized deployment
+- **OpenMP**: For parallel optimization (automatically detected)
+
+## 📋 Installation Overview
+
+### Quick Installation
+```bash
+# Clone the repository
+git clone https://github.com/your-org/yica-yirage.git
+cd yica-yirage
+
+# Build and install
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+
+### Docker Installation
+```bash
+# One-click deployment
+./scripts/docker_yica_deployment.sh
+```
+
+For detailed installation instructions, see the [Deployment Guide](../deployment/).
+
+## 🎓 Learning Path
+
+### For Beginners
+```
+1. Getting Started → 2. Environment Setup → 3. Basic Concepts → 4. Simple Examples
+```
+
+### For Developers
+```
+1. Architecture Understanding → 2. API Learning → 3. Advanced Features → 4. Custom Development
+```
+
+### For DevOps
+```
+1. Deployment Basics → 2. Environment Configuration → 3. Monitoring Management → 4. Troubleshooting
+```
+
+### For Researchers
+```
+1. Theoretical Foundation → 2. Algorithm Principles → 3. Performance Analysis → 4. Optimization Research
+```

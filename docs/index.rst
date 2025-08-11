@@ -1,51 +1,50 @@
-YICA/YiRage Documentation Center
-================================
+YICA/YiRage Documentation
+=========================
 
-Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (Super Optimization Engine) documentation center.
+Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (AI Kernel Super Optimizer) documentation.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Quick Start
+   :caption: Getting Started
 
+   getting-started/README
    getting-started/design-philosophy
    getting-started/quick-reference
 
 .. toctree::
    :maxdepth: 2
-   :caption: Architecture Design
+   :caption: Architecture
 
-   architecture/yica-architecture
+   architecture/README
    architecture/yirage-architecture
+   architecture/yica-architecture-detailed
    architecture/modular-architecture
    architecture/implementation-summary
-   architecture/mirage-integration-plan
-   architecture/mirage-extension
-   architecture/mirage-updates
+   architecture/yirage-integration-plan
+   architecture/yirage-extension
+   architecture/yirage-updates
 
 .. toctree::
    :maxdepth: 2
-   :caption: Development Guide
+   :caption: User Guide
 
-   development/performance-testing
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Deployment & Operations
-
-   deployment/docker-deployment
-   deployment/qemu-setup
-   deployment/deployment-report
+   USAGE
+   tutorials/README
 
 .. toctree::
    :maxdepth: 2
-   :caption: API Documentation
+   :caption: API Reference
 
+   api/README
+   api/python-api-corrected
+   api/cpp-api-verified
    api/analyzer
 
 .. toctree::
    :maxdepth: 2
-   :caption: Production Design
+   :caption: Development
 
+   development/README
    design/build_system_redesign
    design/compatibility_layer_enhancement
    design/configuration_management_system
@@ -55,18 +54,21 @@ Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (Super
 
 .. toctree::
    :maxdepth: 2
+   :caption: Deployment
+
+   deployment/README
+   deployment/docker-deployment
+   deployment/deployment-report
+
+.. toctree::
+   :maxdepth: 2
    :caption: Project Management
 
+   project-management/README
    project-management/backend-integration
    project-management/implementation-analysis
    project-management/roadmap
    project-management/execution-plan
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials
-
-   tutorials/index
 
 Index and Tables
 ================
@@ -83,20 +85,27 @@ YICA (YICA Intelligence Computing Architecture)
 
 YICA is a revolutionary Compute-in-Memory (CIM) architecture designed specifically for AI computing optimization. By integrating computing units directly into memory, it significantly reduces data movement and provides exceptional performance and energy efficiency.
 
-YiRage (Super Optimization Engine)
----------------------------------
+Key Features:
 
-YiRage is a high-performance AI operator optimization engine that supports multiple backends (CUDA, Triton, YICA). It can automatically search and optimize computation graphs of AI models, achieving significant performance improvements.
-
-Core Features
-=============
-
-* **Compute-in-Memory Architecture**: 512 CIM arrays for highly parallel computing
-* **Three-Level Memory Hierarchy**: Optimized memory management with register files, SPM, and DRAM
-* **YIS Instruction Set**: Instruction set specifically designed for CIM architecture
-* **Multi-Backend Support**: Seamless switching between CUDA, Triton, and YICA backends
+* **Compute-in-Memory Architecture**: 512 CIM arrays providing high parallel computing capability
+* **Three-tier Memory Hierarchy**: Register file, SPM (Scratchpad Memory), and DRAM for optimized memory management  
+* **YIS Instruction Set**: Custom instruction set designed specifically for CIM architecture
+* **Multi-backend Support**: Seamless switching between CUDA, Triton, and YICA backends
 * **Automatic Optimization**: Intelligent search for optimal computation graphs
 * **High Performance**: 2-3x performance improvement compared to traditional solutions
+
+YiRage (AI Kernel Super Optimizer)
+----------------------------------
+
+YiRage is a next-generation AI kernel optimizer that combines YICA architecture awareness with intelligent optimization strategies. It serves as a code transformation and optimization tool designed to maximize performance across different hardware backends.
+
+Core Capabilities:
+
+* **Architecture-Aware Optimization**: Deep integration with YICA CIM architecture characteristics
+* **Multi-objective Search**: Balances latency, energy efficiency, and memory utilization
+* **Automatic Code Generation**: Transforms high-level models into optimized kernels
+* **Cross-platform Support**: Works across different hardware environments
+* **Hierarchical Optimization**: Multi-level optimization from algorithm to instruction level
 
 Performance Metrics
 ===================

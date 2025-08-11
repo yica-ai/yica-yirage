@@ -1,114 +1,162 @@
-# 架构设计文档
+# Architecture Documentation
 
-本目录包含YICA/YiRage的详细架构设计文档。
+This directory contains detailed architectural design documentation for YICA/YiRage.
 
-## 📖 文档列表
+## 📖 Documentation Overview
 
-### 核心架构
-- **[YICA架构](yica-architecture.md)** - YICA硬件架构的完整设计
-- **[YiRage架构](yirage-architecture.md)** - 超优化引擎的软件架构
-- **[模块化架构](modular-architecture.md)** - 系统的模块化设计方案
+### Core Architecture
+- **[YiRage Architecture](yirage-architecture.md)** - Complete design of the AI kernel super optimizer
+- **[YICA Architecture Detailed](yica-architecture-detailed.md)** - In-depth technical analysis of YICA hardware and software integration
+- **[Modular Architecture](modular-architecture.md)** - System modular design approach
+- **[Implementation Summary](implementation-summary.md)** - Overview of overall architecture implementation
 
-### 实现与集成
-- **[实现总结](implementation-summary.md)** - 整体架构实现的概览
-- **[Mirage集成计划](mirage-integration-plan.md)** - 与Mirage系统的集成设计
-- **[Mirage扩展](mirage-extension.md)** - Mirage功能扩展设计
-- **[Mirage更新](mirage-updates.md)** - Mirage版本更新说明
+### Integration and Extensions
+- **[YiRage Integration Plan](yirage-integration-plan.md)** - System integration design
+- **[YiRage Extension](yirage-extension.md)** - Feature extension design
+- **[YiRage Updates](yirage-updates.md)** - Version update documentation
 
-## 🏗️ 架构概览
+## 🏗️ Architecture Overview
 
-### YICA硬件架构
+### YICA Hardware Architecture
 ```
-YICA计算系统
-├── 8个 Dies
-│   ├── 4个 Clusters (每Die)
-│   │   ├── 16个 CIM Arrays (每Cluster)
-│   │   └── SPM内存管理
-│   └── 内部高速互连
-├── 三级内存层次
-│   ├── 寄存器文件层 (最快)
-│   ├── SPM层 (可编程)
-│   └── DRAM层 (大容量)
-└── YIS指令集支持
+YICA Computing System
+├── 8 Dies
+│   ├── 4 Clusters (per Die)
+│   │   ├── 16 CIM Arrays (per Cluster)
+│   │   └── SPM Memory Management
+│   └── Internal High-Speed Interconnect
+├── Three-tier Memory Hierarchy
+│   ├── Register File Layer (Fastest)
+│   ├── SPM Layer (Programmable)
+│   └── DRAM Layer (High Capacity)
+└── YIS Instruction Set Support
 ```
 
-### YiRage软件架构
+### YiRage Software Architecture
 ```
-YiRage超优化引擎
-├── 前端接口
+YiRage AI Kernel Super Optimizer
+├── Frontend Interfaces
 │   ├── Python API
 │   ├── C++ API
-│   └── 命令行工具
-├── 核心引擎
-│   ├── 图搜索算法
-│   ├── 代码生成器
-│   └── 性能评估器
-├── 后端支持
+│   └── Command Line Tools
+├── Core Engine
+│   ├── Graph Search Algorithms
+│   ├── Code Generator
+│   └── Performance Evaluator
+├── Backend Support
 │   ├── CUDA Backend
 │   ├── Triton Backend
 │   ├── YICA Backend
-│   └── 通用Backend
-└── 优化策略
-    ├── 算子融合
-    ├── 内存优化
-    └── 并行化
+│   └── Generic Backend
+└── Optimization Strategies
+    ├── Operator Fusion
+    ├── Memory Optimization
+    └── Parallelization
 ```
 
-## 🎯 设计原则
+## 🎯 Design Principles
 
-### 1. 自包含性
-- 所有必要组件内置
-- 不依赖外部复杂源文件
-- 一键构建和部署
+### 1. Self-Contained Architecture
+- All necessary components built-in
+- No dependency on external complex source files
+- One-click build and deployment
 
-### 2. 环境无关性
-- 可在任何环境编译
-- 硬件不匹配也能工作
-- 跨平台兼容
+### 2. Environment Agnostic Design
+- Compiles in any environment
+- Works even with hardware mismatches
+- Cross-platform compatibility
 
-### 3. 后端分离
-- 减少编译时间
-- 灵活的后端选择
-- 易于扩展和维护
+### 3. Backend Separation
+- Reduces compilation time
+- Flexible backend selection
+- Easy to extend and maintain
 
-### 4. 高性能设计
-- 存算一体架构
-- 多级并行优化
-- 智能内存管理
+### 4. High-Performance Design
+- Compute-in-Memory architecture
+- Multi-level parallel optimization
+- Intelligent memory management
 
-## 📊 关键指标
+## 📊 Key Specifications
 
-### 硬件规格
-- **CIM阵列**: 512个 (8×4×16)
-- **内存带宽**: 高速SPM + DRAM分层
-- **指令集**: YIS专用指令集
-- **精度支持**: FP16/FP32/INT8
+### Hardware Specifications
+- **CIM Arrays**: 512 units (8×4×16)
+- **Memory Bandwidth**: High-speed SPM + DRAM hierarchical structure
+- **Instruction Set**: YIS specialized instruction set
+- **Precision Support**: FP16/FP32/INT8
 
-### 性能目标
-- **矩阵乘法**: 相比CUDA 2.2x加速
-- **注意力机制**: 相比Triton 1.5x加速
-- **端到端推理**: 相比PyTorch 2.5x加速
-- **能效比**: 相比传统架构3x提升
+### Performance Targets
+- **Matrix Multiplication**: 2.2x speedup vs CUDA
+- **Attention Mechanism**: 1.5x speedup vs Triton
+- **End-to-End Inference**: 2.5x speedup vs PyTorch
+- **Energy Efficiency**: 3x improvement vs traditional architectures
 
-## 🔗 相关文档
+## 🔄 System Components
 
-- [快速入门](../getting-started/) - 了解基本概念
-- [开发指南](../development/) - 开发相关信息
-- [部署运维](../deployment/) - 部署和运维
-- [API文档](../api/) - 编程接口参考
+### Core Optimization Engine
+- **Multi-objective Search**: Balances latency, energy efficiency, and memory utilization
+- **Architecture Awareness**: Deep integration with YICA CIM characteristics
+- **Hierarchical Optimization**: Algorithm, operator, kernel, and instruction level optimization
 
-## 📈 架构演进
+### Backend Abstraction Layer
+- **Unified Interface**: Common API across all backends
+- **Dynamic Selection**: Runtime backend switching
+- **Extensible Design**: Easy addition of new backends
 
-### 当前版本 (v2.0)
-- 完整的YICA硬件架构实现
-- YiRage引擎核心功能
-- 多后端支持
+### Performance Analysis Framework
+- **Real-time Profiling**: Live performance monitoring
+- **Comparative Analysis**: Multi-backend performance comparison
+- **Optimization Guidance**: Automated optimization recommendations
 
-### 下一版本计划
-- 更多算子支持
-- 性能进一步优化
-- 生态工具链完善
+## 🛠️ Development Architecture
+
+### Modular Design
+- **Independent Components**: Each module can be developed and tested separately
+- **Clear Interfaces**: Well-defined APIs between modules
+- **Extensible Framework**: Easy to add new features and capabilities
+
+### Testing Strategy
+- **Unit Testing**: Comprehensive test coverage for individual components
+- **Integration Testing**: End-to-end system validation
+- **Performance Testing**: Benchmark-driven development approach
+
+### Documentation Framework
+- **API Documentation**: Complete reference for all interfaces
+- **Architecture Guides**: Detailed design documentation
+- **Tutorial System**: Step-by-step learning materials
+
+## 🔗 Related Documentation
+
+- [Getting Started](../getting-started/) - Basic concepts and setup
+- [Development Guide](../development/) - Development environment setup
+- [Deployment Operations](../deployment/) - Deployment and operations
+- [API Documentation](../api/) - Programming interface reference
+
+## 📈 Architecture Evolution
+
+### Current Version (v2.0)
+- Complete YICA hardware architecture implementation
+- YiRage engine core functionality
+- Multi-backend support
+- Production-ready deployment
+
+### Next Version Roadmap
+- Extended operator support
+- Further performance optimization
+- Enhanced ecosystem toolchain
+- Advanced debugging capabilities
+
+## 🎛️ Configuration Management
+
+### Architecture Configuration
+- **Hardware Profiles**: Different YICA hardware configurations
+- **Optimization Profiles**: Predefined optimization strategies
+- **Backend Configurations**: Backend-specific settings
+
+### Runtime Configuration
+- **Dynamic Tuning**: Runtime parameter adjustment
+- **Performance Monitoring**: Live performance tracking
+- **Adaptive Optimization**: Self-tuning based on workload characteristics
 
 ---
 
-*这些架构文档为理解YICA/YiRage系统提供了完整的技术视角。建议按照核心架构→实现与集成的顺序阅读。*
+*These architecture documents provide a complete technical perspective for understanding the YICA/YiRage system. It is recommended to read them in the order: Core Architecture → Integration and Extensions.*

@@ -1,22 +1,22 @@
-# YICA存算一体架构 - Mirage例子改进总结
+# YICA存算一体架构 - yirage例子改进总结
 
 ## 实现概述
 
-基于用户需求，我直接在Mirage已有的例子上改成YICA版本，重新生成了新文件，同时保留了非YICA版本进行对比。
+基于用户需求，我直接在yirage已有的例子上改成YICA版本，重新生成了新文件，同时保留了非YICA版本进行对比。
 
 ## 完成的文件
 
 ### 1. YICA优化模块
 | 文件名 | 原始版本 | 功能描述 | YICA特性 |
 |--------|----------|----------|----------|
-| `mirage/demo/demo_yica_gated_mlp.py` | `demo_gated_mlp.py` | Gated MLP | 4个CIM阵列，SPM优化，存算一体SiLU |
-| `mirage/demo/demo_yica_group_query_attention.py` | `demo_group_query_attention.py` | Group Query Attention | 8个CIM阵列，在线Softmax，存算一体注意力 |
-| `mirage/demo/demo_yica_rms_norm.py` | `demo_rms_norm.py` | RMS Normalization | 2个CIM阵列，残差融合，存算一体平方根 |
-| `mirage/demo/demo_yica_lora.py` | `demo_lora.py` | LoRA微调 | 6个CIM阵列，自适应秩，存算一体缩放 |
+| `yirage/demo/demo_yica_gated_mlp.py` | `demo_gated_mlp.py` | Gated MLP | 4个CIM阵列，SPM优化，存算一体SiLU |
+| `yirage/demo/demo_yica_group_query_attention.py` | `demo_group_query_attention.py` | Group Query Attention | 8个CIM阵列，在线Softmax，存算一体注意力 |
+| `yirage/demo/demo_yica_rms_norm.py` | `demo_rms_norm.py` | RMS Normalization | 2个CIM阵列，残差融合，存算一体平方根 |
+| `yirage/demo/demo_yica_lora.py` | `demo_lora.py` | LoRA微调 | 6个CIM阵列，自适应秩，存算一体缩放 |
 
 ### 2. 综合演示和文档
-- `mirage/demo/demo_yica_comprehensive.py` - 综合演示脚本
-- `mirage/demo/README_YICA.md` - 详细使用文档
+- `yirage/demo/demo_yica_comprehensive.py` - 综合演示脚本
+- `yirage/demo/README_YICA.md` - 详细使用文档
 - `YICA_IMPLEMENTATION_SUMMARY.md` - 本总结文档
 
 ## YICA架构特性实现
@@ -45,7 +45,7 @@
 
 ## 主要改进点
 
-### 1. 相比原始Mirage版本
+### 1. 相比原始yirage版本
 - 添加了Triton内核实现具体的YICA优化
 - 引入了CIM阵列并行概念
 - 实现了SPM内存层次管理
@@ -54,7 +54,7 @@
 ### 2. 模块化设计
 - 每个YICA模块都是独立的类
 - 统一的配置参数接口
-- 支持与原始Mirage版本对比
+- 支持与原始yirage版本对比
 
 ### 3. 性能分析
 - 详细的性能对比框架
@@ -95,8 +95,8 @@ class YICAXXXModule:
 
 ### 性能对比框架
 ```python
-def run_yica_vs_mirage_comparison():
-    # 1. 构建原始Mirage版本
+def run_yica_vs_yirage_comparison():
+    # 1. 构建原始yirage版本
     # 2. 构建YICA优化版本  
     # 3. 性能测试和对比
     # 4. 详细分析和指标计算
@@ -129,22 +129,22 @@ def run_yica_vs_mirage_comparison():
 ### 单独运行
 ```bash
 # 运行单个模块
-python mirage/demo/demo_yica_gated_mlp.py
-python mirage/demo/demo_yica_group_query_attention.py
-python mirage/demo/demo_yica_rms_norm.py
-python mirage/demo/demo_yica_lora.py
+python yirage/demo/demo_yica_gated_mlp.py
+python yirage/demo/demo_yica_group_query_attention.py
+python yirage/demo/demo_yica_rms_norm.py
+python yirage/demo/demo_yica_lora.py
 ```
 
 ### 综合演示
 ```bash
 # 运行所有模块
-python mirage/demo/demo_yica_comprehensive.py
+python yirage/demo/demo_yica_comprehensive.py
 
 # 运行特定模块
-python mirage/demo/demo_yica_comprehensive.py --modules gated_mlp attention
+python yirage/demo/demo_yica_comprehensive.py --modules gated_mlp attention
 
 # 导出结果
-python mirage/demo/demo_yica_comprehensive.py --export results.txt
+python yirage/demo/demo_yica_comprehensive.py --export results.txt
 ```
 
 ## 预期性能收益
@@ -173,7 +173,7 @@ python mirage/demo/demo_yica_comprehensive.py --export results.txt
 ## 验证和测试
 
 ### 功能正确性
-- 与原始Mirage版本对比输出
+- 与原始yirage版本对比输出
 - 数值精度验证
 - 边界条件测试
 
@@ -189,9 +189,9 @@ python mirage/demo/demo_yica_comprehensive.py --export results.txt
 
 ## 总结
 
-成功实现了基于Mirage例子的YICA优化版本，具备以下特点：
+成功实现了基于yirage例子的YICA优化版本，具备以下特点：
 
-1. ✅ **保留原版本**: 所有原始Mirage例子都得到保留
+1. ✅ **保留原版本**: 所有原始yirage例子都得到保留
 2. ✅ **完整实现**: 4个核心模块的YICA优化版本
 3. ✅ **性能对比**: 完整的性能测试和分析框架
 4. ✅ **模块化设计**: 易于扩展和维护

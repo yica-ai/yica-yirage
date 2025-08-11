@@ -1,234 +1,495 @@
-# 部署运维指南
+# Deployment Documentation
 
-本目录包含YICA/YiRage的部署、运维和环境配置相关文档。
+This directory contains comprehensive deployment and operations documentation for YICA/YiRage.
 
-## 📖 文档列表
+## 📖 Documentation Overview
 
-### 部署方案
-- **[Docker部署](docker-deployment.md)** - 使用Docker容器化部署YICA-QEMU环境
-- **[QEMU设置](qemu-setup.md)** - QEMU虚拟化环境的详细配置
-- **[部署报告](deployment-report.md)** - Docker化部署的实施报告
+### Deployment Guides
+- **[Docker Deployment](docker-deployment.md)** - Deploy YICA environment using Docker containers
+- **[Deployment Report](deployment-report.md)** - Deployment implementation reports and status
 
-## 🚀 部署选项
+### Planned Documentation
+- **Production Deployment** - Large-scale production deployment guide
+- **Cloud Deployment** - AWS, GCP, Azure deployment strategies
+- **Kubernetes Deployment** - Container orchestration deployment
+- **Monitoring and Operations** - System monitoring and operational procedures
 
-### 1. Docker部署 (推荐)
-**适用场景**: 开发、测试、演示环境
-- ✅ 无需sudo权限
-- ✅ 环境隔离
-- ✅ 快速部署
-- ✅ 易于维护
+## 🚀 Deployment Options
 
-### 2. 原生部署
-**适用场景**: 生产环境、高性能需求
-- ✅ 最佳性能
-- ✅ 直接硬件访问
-- ⚠️ 需要系统管理权限
-- ⚠️ 依赖管理复杂
+### 1. Docker Deployment (Recommended)
 
-### 3. 混合部署
-**适用场景**: 多环境支持
-- ✅ 灵活配置
-- ✅ 分层管理
-- ⚠️ 复杂度较高
-
-## 🌐 部署架构
-
-### Docker化架构
-```
-┌─────────────────────────────────┐
-│         主机服务器               │
-│    (johnson.chen@10.11.60.58)  │
-│                                 │
-│ ┌─────────────────────────────┐ │
-│ │      Docker容器             │ │
-│ │  (yica-qemu-container)     │ │
-│ │                            │ │
-│ │ ┌─────────────────────────┐ │ │
-│ │ │    Ubuntu 22.04         │ │ │
-│ │ │  + YICA-QEMU环境        │ │ │
-│ │ │  + VNC服务器            │ │ │
-│ │ │  + noVNC Web界面        │ │ │
-│ │ └─────────────────────────┘ │ │
-│ └─────────────────────────────┘ │
-│                                 │
-│ 端口映射:                       │
-│ 5900 → VNC服务                  │
-│ 6080 → Web VNC                  │
-│ 4444 → QEMU监控                 │
-└─────────────────────────────────┘
-```
-
-### 网络配置
-| 服务 | 容器端口 | 主机端口 | 协议 | 说明 |
-|------|----------|----------|------|------|
-| VNC Server | 5901 | 5900 | TCP | 传统VNC客户端 |
-| noVNC Web | 6080 | 6080 | HTTP | Web浏览器访问 |
-| QEMU Monitor | 4444 | 4444 | TCP | QEMU控制接口 |
-| gem5 Interface | 3456 | 3456 | TCP | gem5通信端口 |
-| SSH | 22 | 2222 | TCP | 容器SSH访问 |
-
-## 🔧 快速部署
-
-### 一键部署
+#### Quick Start
 ```bash
-# 完整部署流程
+# One-click deployment
 ./scripts/docker_yica_deployment.sh
 
-# 分步执行
-./scripts/docker_yica_deployment.sh check    # 环境检查
-./scripts/docker_yica_deployment.sh sync     # 代码同步
-./scripts/docker_yica_deployment.sh build    # 镜像构建
-./scripts/docker_yica_deployment.sh start    # 容器启动
-./scripts/docker_yica_deployment.sh verify   # 部署验证
+# Access via web interface
+# URL: http://localhost:6080 (password: yica)
 ```
 
-### 快速访问
+#### Custom Configuration
 ```bash
-# Web访问 (推荐)
-http://10.11.60.58:6080
+# Build custom image
+docker build -t yica-custom -f docker/Dockerfile .
 
-# VNC客户端
-vnc://10.11.60.58:5900
-
-# SSH访问
-ssh -p 2222 yica@10.11.60.58
+# Run with custom settings
+docker run -d \
+  --name yica-container \
+  -p 6080:6080 \
+  -p 5900:5900 \
+  -v $(pwd)/data:/home/yica/data \
+  yica-custom
 ```
 
-## 🛠️ 管理操作
+### 2. Native Installation
 
-### 容器管理
+#### System Requirements
+- **OS**: Ubuntu 20.04+ / CentOS 8+ / macOS 11+
+- **CPU**: 4+ cores, x86_64 or ARM64
+- **Memory**: 8GB RAM minimum (16GB recommended)
+- **Storage**: 20GB free space
+- **Network**: Internet access for dependencies
+
+#### Installation Steps
 ```bash
-# 状态检查
-./scripts/yica_docker_manager.sh status
+# Install dependencies
+sudo apt update
+sudo apt install -y cmake build-essential python3-dev git
 
-# 容器操作
-./scripts/yica_docker_manager.sh start     # 启动
-./scripts/yica_docker_manager.sh stop      # 停止
-./scripts/yica_docker_manager.sh restart   # 重启
-./scripts/yica_docker_manager.sh shell     # 进入shell
+# Clone repository
+git clone https://github.com/your-org/yica-yirage.git
+cd yica-yirage
 
-# 日志查看
-./scripts/yica_docker_manager.sh logs
+# Build and install
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j$(nproc)
+sudo make install
+
+# Install Python package
+cd ../yirage/python
+pip install -e .
 ```
 
-### 服务管理
+### 3. Cloud Deployment
+
+#### AWS Deployment
 ```bash
-# VNC服务重启
-vncserver -kill :1
-vncserver :1 -geometry 1024x768 -depth 24
+# Using AWS CLI
+aws ec2 run-instances \
+  --image-id ami-0c55b159cbfafe1d0 \
+  --instance-type c5.2xlarge \
+  --key-name your-key \
+  --security-group-ids sg-xxxxxxxx \
+  --user-data file://deploy-script.sh
 
-# noVNC服务重启
-pkill websockify
-websockify --web=/usr/share/novnc/ 6080 localhost:5901 &
+# Using Terraform
+terraform init
+terraform plan -var="instance_type=c5.2xlarge"
+terraform apply
 ```
 
-## 📊 系统要求
-
-### 最低要求
-- **CPU**: 2核心
-- **内存**: 4GB RAM
-- **存储**: 20GB可用空间
-- **网络**: 互联网连接（用于下载依赖）
-
-### 推荐配置
-- **CPU**: 4核心或更多
-- **内存**: 8GB RAM或更多
-- **存储**: 50GB SSD
-- **GPU**: 可选，用于CUDA后端
-
-### 软件要求
-- **Docker**: 20.10+
-- **Docker Compose**: 1.29+
-- **Python**: 3.8+
-- **Git**: 2.20+
-
-## ⚠️ 故障排除
-
-### 常见问题
-
-#### 1. 容器无法启动
+#### Google Cloud Platform
 ```bash
-# 检查Docker状态
-docker info
+# Create VM instance
+gcloud compute instances create yica-instance \
+  --zone=us-central1-a \
+  --machine-type=c2-standard-8 \
+  --image-family=ubuntu-2004-lts \
+  --image-project=ubuntu-os-cloud \
+  --metadata-from-file startup-script=startup.sh
 
-# 查看详细错误
-./scripts/yica_docker_manager.sh logs
-
-# 重新构建镜像
-./scripts/docker_yica_deployment.sh build
+# Deploy using Kubernetes
+kubectl apply -f k8s/yica-deployment.yaml
 ```
 
-#### 2. VNC连接失败
-```bash
-# 检查端口状态
-curl -I http://10.11.60.58:6080
+## 🏗️ Architecture Deployment
 
-# 重启VNC服务
-./scripts/yica_docker_manager.sh shell
-vncserver -kill :1
-vncserver :1 -geometry 1024x768 -depth 24
-```
-
-#### 3. 性能问题
-```bash
-# 检查资源使用
-docker stats yica-qemu-container
-
-# 调整资源限制
-# 编辑 docker-compose.yml 中的资源配置
-```
-
-### 日志管理
-```bash
-# 容器日志
-./scripts/yica_docker_manager.sh logs
-
-# VNC日志
-tail -f ~/.vnc/*.log
-
-# QEMU日志
-./qemu2.sh 2>&1 | tee qemu.log
-```
-
-## 🔐 安全配置
-
-### 访问控制
-- 修改默认VNC密码
-- 限制网络访问范围
-- 使用防火墙规则
-
-### 数据保护
-- 定期备份重要数据
-- 使用安全的传输协议
-- 监控系统访问日志
-
-## 📈 性能优化
-
-### 容器优化
+### Single Node Deployment
 ```yaml
 # docker-compose.yml
-deploy:
-  resources:
-    limits:
-      cpus: '4.0'
-      memory: 8G
-    reservations:
-      cpus: '2.0'
-      memory: 4G
+version: '3.8'
+services:
+  yica-optimizer:
+    image: yica/yirage:latest
+    ports:
+      - "6080:6080"
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    environment:
+      - YICA_BACKEND=yica
+      - YICA_LOG_LEVEL=INFO
 ```
 
-### 网络优化
-- 使用本地网络存储
-- 优化网络带宽配置
-- 减少网络延迟
+### Multi-Node Cluster
+```yaml
+# k8s/yica-cluster.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yica-cluster
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: yica-optimizer
+  template:
+    metadata:
+      labels:
+        app: yica-optimizer
+    spec:
+      containers:
+      - name: yica-optimizer
+        image: yica/yirage:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "8Gi"
+            cpu: "4"
+          limits:
+            memory: "16Gi"
+            cpu: "8"
+```
 
-## 🔗 相关文档
+### Load Balancer Configuration
+```nginx
+# nginx.conf
+upstream yica_backend {
+    least_conn;
+    server yica-node1:8080 max_fails=3 fail_timeout=30s;
+    server yica-node2:8080 max_fails=3 fail_timeout=30s;
+    server yica-node3:8080 max_fails=3 fail_timeout=30s;
+}
 
-- [架构设计](../architecture/) - 了解系统架构
-- [开发指南](../development/) - 开发环境配置
-- [快速入门](../getting-started/) - 基础概念
-- [API文档](../api/) - 编程接口
+server {
+    listen 80;
+    server_name yica.example.com;
+    
+    location / {
+        proxy_pass http://yica_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+## ⚙️ Configuration Management
+
+### Environment Configuration
+```bash
+# Environment variables
+export YICA_BACKEND=yica
+export YICA_CONFIG_FILE=/etc/yica/config.json
+export YICA_LOG_LEVEL=INFO
+export YICA_DATA_DIR=/var/lib/yica
+export YICA_CACHE_DIR=/var/cache/yica
+```
+
+### Configuration Files
+```json
+{
+  "yica": {
+    "hardware": {
+      "num_dies": 8,
+      "clusters_per_die": 4,
+      "cim_arrays_per_cluster": 16
+    },
+    "optimization": {
+      "strategy": "balanced",
+      "max_search_time": 3600,
+      "parallel_jobs": 4
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "/var/log/yica/yica.log",
+    "rotation": "daily",
+    "max_size": "100MB"
+  }
+}
+```
+
+### Security Configuration
+```yaml
+# security.yaml
+authentication:
+  enabled: true
+  method: "jwt"
+  secret_key: "${JWT_SECRET_KEY}"
+
+authorization:
+  enabled: true
+  roles:
+    - name: "admin"
+      permissions: ["*"]
+    - name: "user"
+      permissions: ["optimize", "profile"]
+
+tls:
+  enabled: true
+  cert_file: "/etc/ssl/certs/yica.crt"
+  key_file: "/etc/ssl/private/yica.key"
+```
+
+## 📊 Monitoring and Operations
+
+### Health Checks
+```bash
+# Basic health check
+curl -f http://localhost:8080/health || exit 1
+
+# Detailed status
+curl http://localhost:8080/api/status
+
+# Performance metrics
+curl http://localhost:8080/metrics
+```
+
+### Monitoring Setup
+```yaml
+# prometheus.yml
+scrape_configs:
+  - job_name: 'yica'
+    static_configs:
+      - targets: ['localhost:8080']
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+
+# grafana dashboard
+{
+  "dashboard": {
+    "title": "YICA/YiRage Monitoring",
+    "panels": [
+      {
+        "title": "Optimization Throughput",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(yica_optimizations_total[5m])"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Log Management
+```bash
+# Configure log rotation
+sudo tee /etc/logrotate.d/yica << EOF
+/var/log/yica/*.log {
+    daily
+    rotate 30
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 644 yica yica
+}
+EOF
+
+# Centralized logging with ELK
+docker run -d \
+  --name elasticsearch \
+  -p 9200:9200 \
+  -e "discovery.type=single-node" \
+  elasticsearch:7.14.0
+
+docker run -d \
+  --name logstash \
+  -p 5000:5000 \
+  -v $(pwd)/logstash.conf:/usr/share/logstash/pipeline/logstash.conf \
+  logstash:7.14.0
+```
+
+## 🔒 Security Considerations
+
+### Network Security
+```bash
+# Firewall configuration
+sudo ufw allow 22/tcp    # SSH
+sudo ufw allow 80/tcp    # HTTP
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw allow 8080/tcp  # YICA API
+sudo ufw enable
+
+# SSL/TLS setup
+sudo certbot --nginx -d yica.example.com
+```
+
+### Container Security
+```dockerfile
+# Secure Dockerfile
+FROM ubuntu:20.04
+
+# Create non-root user
+RUN groupadd -r yica && useradd -r -g yica yica
+
+# Install security updates
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set secure permissions
+COPY --chown=yica:yica . /app
+USER yica
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+```
+
+### Access Control
+```yaml
+# RBAC configuration
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: yica-operator
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: yica-operator-binding
+subjects:
+- kind: User
+  name: yica-operator
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: yica-operator
+  apiGroup: rbac.authorization.k8s.io
+```
+
+## 🚨 Troubleshooting
+
+### Common Deployment Issues
+
+#### Container Startup Problems
+```bash
+# Check container logs
+docker logs yica-container
+
+# Check resource usage
+docker stats yica-container
+
+# Inspect container configuration
+docker inspect yica-container
+
+# Debug container interactively
+docker run -it --rm yica/yirage:latest /bin/bash
+```
+
+#### Network Connectivity Issues
+```bash
+# Test port connectivity
+telnet localhost 8080
+
+# Check DNS resolution
+nslookup yica.example.com
+
+# Verify firewall rules
+sudo iptables -L
+
+# Test internal networking
+docker network ls
+docker network inspect bridge
+```
+
+#### Performance Issues
+```bash
+# Monitor system resources
+htop
+iotop
+nethogs
+
+# Check YICA performance
+yirage diagnose --performance
+
+# Profile specific operations
+yirage profile --input test_model.py --output profile.json
+```
+
+### Recovery Procedures
+
+#### Database Recovery
+```bash
+# Backup current state
+yirage backup --output backup_$(date +%Y%m%d).tar.gz
+
+# Restore from backup
+yirage restore --input backup_20241201.tar.gz
+
+# Verify integrity
+yirage verify --check-all
+```
+
+#### Service Recovery
+```bash
+# Restart services
+systemctl restart yica-optimizer
+systemctl restart nginx
+
+# Check service status
+systemctl status yica-optimizer
+
+# View service logs
+journalctl -u yica-optimizer -f
+```
+
+## 📋 Deployment Checklists
+
+### Pre-Deployment Checklist
+- [ ] System requirements verified
+- [ ] Dependencies installed
+- [ ] Network ports configured
+- [ ] Security settings applied
+- [ ] Backup strategy defined
+- [ ] Monitoring setup complete
+
+### Post-Deployment Verification
+- [ ] Services running correctly
+- [ ] Health checks passing
+- [ ] API endpoints accessible
+- [ ] Performance benchmarks met
+- [ ] Monitoring alerts configured
+- [ ] Documentation updated
+
+### Production Readiness
+- [ ] Load testing completed
+- [ ] Failover procedures tested
+- [ ] Security audit passed
+- [ ] Compliance requirements met
+- [ ] Operations team trained
+- [ ] Incident response plan ready
+
+## 🔗 Related Documentation
+
+- [Getting Started](../getting-started/) - Basic setup and concepts
+- [Architecture](../architecture/) - System architecture overview
+- [API Reference](../api/) - API documentation
+- [Development](../development/) - Development environment
+
+## 📞 Support
+
+### Deployment Support
+- **Documentation**: Complete deployment guides
+- **Community**: GitHub Discussions and Discord
+- **Professional**: Enterprise support available
+
+### Emergency Contacts
+- **Critical Issues**: emergency@yica-support.com
+- **General Support**: support@yica-support.com
+- **Community**: Discord #deployment-help
 
 ---
 
-*部署文档将根据实际使用情况持续更新和完善。如有问题，请参考故障排除章节或联系维护团队。*
+*For the latest deployment information and updates, check our [GitHub repository](https://github.com/your-org/yica-yirage) and [documentation website](https://yica-yirage.readthedocs.io/).*

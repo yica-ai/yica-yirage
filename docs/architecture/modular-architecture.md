@@ -43,7 +43,7 @@ YZ-optimizer-bin/
 ├── build-flexible.sh               # 灵活构建脚本
 ├── run-backend-tests.sh            # 后端测试脚本
 ├── 
-├── mirage/
+├── yirage/
 │   ├── src/
 │   │   ├── base/                   # 核心基础组件
 │   │   ├── search/yica/
@@ -116,17 +116,17 @@ cmake -f CMakeLists-modular.txt \
 ### 3. 编译标志管理
 
 **后端特定标志:**
-```cmake
-# CPU后端
+```bash
+# CPU Backend
 -DYICA_CPU_BACKEND -DNO_CUDA -fopenmp -mavx2
 
-# GPU后端  
+# GPU Backend  
 -DYICA_GPU_BACKEND -DUSE_CUDA -arch=sm_80
 
-# YICA后端
+# YICA Backend
 -DYICA_HARDWARE_BACKEND -DENABLE_YIS_INSTRUCTION_SET
 
-# 混合后端
+# Hybrid Backend
 -DYICA_HYBRID_BACKEND -DHYBRID_HAS_CPU -DHYBRID_HAS_GPU
 ```
 
@@ -333,7 +333,7 @@ steps:
 
 ### 新后端添加流程
 
-1. **创建后端目录**: `mirage/src/search/yica/new_backend/`
+1. **创建后端目录**: `yirage/src/search/yica/new_backend/`
 2. **实现后端接口**: 继承统一的后端基类
 3. **添加CMake配置**: 在模块化配置中添加新选项
 4. **创建测试套件**: `tests/new_backend/`

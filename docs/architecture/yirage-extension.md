@@ -1,22 +1,22 @@
-# Mirage-YICA扩展：目标函数支持的搜索优化方案
+# yirage-YICA扩展：目标函数支持的搜索优化方案
 
 ## 概述
 
-在现有Mirage超优化器基础上，增加YICA架构特定的目标函数支持，通过扩展Mirage的搜索配置和评估机制来实现YICA优化。
+在现有yirage超优化器基础上，增加YICA架构特定的目标函数支持，通过扩展yirage的搜索配置和评估机制来实现YICA优化。
 
 ## 核心设计
 
 ### 1. YICA目标函数框架
 
 ```cpp
-// mirage/include/mirage/search/yica_objective.h
+// yirage/include/yirage/search/yica_objective.h
 #pragma once
 
-#include "mirage/search/config.h"
-#include "mirage/kernel/graph.h"
-#include "mirage/threadblock/graph.h"
+#include "yirage/search/config.h"
+#include "yirage/kernel/graph.h"
+#include "yirage/threadblock/graph.h"
 
-namespace mirage {
+namespace yirage {
 namespace search {
 namespace yica {
 
@@ -85,13 +85,13 @@ private:
   float estimateEnergyConsumption(const kernel::Graph& graph) const;
 };
 
-}}} // namespace mirage::search::yica
+}}} // namespace yirage::search::yica
 ```
 
-### 2. 扩展Mirage搜索配置
+### 2. 扩展yirage搜索配置
 
 ```cpp
-// 在 mirage/include/mirage/search/config.h 中添加
+// 在 yirage/include/yirage/search/config.h 中添加
 struct YICAGeneratorConfig : public GeneratorConfig {
   // YICA特定配置
   yica::YICAArchConfig yica_arch_config;
@@ -116,11 +116,11 @@ struct YICAGeneratorConfig : public GeneratorConfig {
 ### 3. YICA性能评估器
 
 ```cpp
-// mirage/src/search/yica_evaluator.cc
-#include "mirage/search/yica_objective.h"
+// yirage/src/search/yica_evaluator.cc
+#include "yirage/search/yica_objective.h"
 #include <cmath>
 
-namespace mirage {
+namespace yirage {
 namespace search {
 namespace yica {
 
@@ -225,14 +225,14 @@ float YICAObjectiveFunction::estimateEnergyConsumption(const kernel::Graph& grap
   return total_energy / 1e9; // 转换为mJ
 }
 
-}}} // namespace mirage::search::yica
+}}} // namespace yirage::search::yica
 ```
 
-### 4. 集成到Mirage搜索引擎
+### 4. 集成到yirage搜索引擎
 
 ```cpp
-// 修改 mirage/src/search/search.cc
-#include "mirage/search/yica_objective.h"
+// 修改 yirage/src/search/search.cc
+#include "yirage/search/yica_objective.h"
 
 // 在 KernelGraphGenerator 类中添加
 class KernelGraphGenerator {
@@ -288,10 +288,10 @@ void KernelGraphGenerator::generate_next_operator(/*参数*/) {
 ### 5. Python接口扩展
 
 ```python
-# mirage/python/mirage/yica_optimizer.py
+# yirage/python/yirage/yica_optimizer.py
 class YICAOptimizer:
     """
-    YICA架构专用的Mirage优化器
+    YICA架构专用的yirage优化器
     """
     
     def __init__(self, 
@@ -313,9 +313,9 @@ class YICAOptimizer:
         yica_config = self._create_yica_config(config)
         
         # 调用C++层的YICA搜索
-        from . import _cython_mirage
+        from . import _cython_yirage
         
-        optimized_graphs = _cython_mirage.yica_search(
+        optimized_graphs = _cython_yirage.yica_search(
             graph.cygraph,
             yica_config.to_dict(),
             search_budget
@@ -369,7 +369,7 @@ class Graph:
 ### 6. 使用示例
 
 ```python
-import mirage as mi
+import yirage as mi
 
 # 创建计算图
 graph = mi.new_kernel_graph()
@@ -415,9 +415,9 @@ print(f"优化后的性能提升: {optimized_graph.performance_improvement}")
 
 ## 预期效果
 
-通过在Mirage中增加YICA目标函数支持，预期实现：
+通过在yirage中增加YICA目标函数支持，预期实现：
 
 1. **精确的YICA性能建模**: 考虑存算一体架构的特殊性
 2. **多目标优化**: 同时优化延迟、内存效率、能耗和吞吐量
-3. **无缝集成**: 在现有Mirage框架基础上最小化修改
+3. **无缝集成**: 在现有yirage框架基础上最小化修改
 4. **显著性能提升**: 相比通用GPU优化，在YICA上实现2-3x性能提升

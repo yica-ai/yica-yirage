@@ -1,92 +1,109 @@
-# YICA/YiRage 文档中心
+# YICA/YiRage Documentation
 
-欢迎来到YICA (YICA Intelligence Computing Architecture) 和 YiRage (超优化引擎) 的文档中心。
+Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (AI Kernel Super Optimizer) documentation center.
 
-## 📚 文档导航
+## 🚀 Quick Start
 
-### 🚀 快速入门
-- [设计理念](getting-started/design-philosophy.md) - YICA的核心设计原则和理念
-- [快速参考](getting-started/quick-reference.md) - 常用命令和操作指南
+### [Getting Started Guide](getting-started/README.md)
+Essential information to get started with YICA/YiRage:
+- [Design Philosophy](getting-started/design-philosophy.md) - Core design principles and concepts
+- [Quick Reference](getting-started/quick-reference.md) - Common commands and operations
 
-### 🏗️ 架构设计
-- [YICA架构](architecture/yica-architecture.md) - YICA硬件架构详细设计
-- [YiRage架构](architecture/yirage-architecture.md) - 超优化引擎架构
-- [模块化架构](architecture/modular-architecture.md) - 系统模块化设计
-- [实现总结](architecture/implementation-summary.md) - 架构实现概览
-- [Mirage集成计划](architecture/mirage-integration-plan.md) - 与Mirage的集成设计
-- [Mirage扩展](architecture/mirage-extension.md) - Mirage功能扩展
-- [Mirage更新](architecture/mirage-updates.md) - Mirage版本更新
+## 🏗️ Architecture
 
-### 🔧 开发指南
-- [性能测试](development/performance-testing.md) - 性能测试方法和工具
+### [Architecture Overview](architecture/README.md) 
+Detailed architectural design documentation:
+- [YiRage Architecture](architecture/yirage-architecture.md) - AI kernel super optimizer architecture
+- [Modular Architecture](architecture/modular-architecture.md) - System modular design
+- [Implementation Summary](architecture/implementation-summary.md) - Architecture implementation overview
+- [YiRage Integration Plan](architecture/yirage-integration-plan.md) - System integration design
+- [YiRage Extension](architecture/yirage-extension.md) - Feature extension design
+- [YiRage Updates](architecture/yirage-updates.md) - Version update documentation
 
-### 🚀 部署运维
-- [Docker部署](deployment/docker-deployment.md) - 使用Docker部署YICA环境
-- [QEMU设置](deployment/qemu-setup.md) - QEMU虚拟化环境配置
-- [部署报告](deployment/deployment-report.md) - 部署实施报告
+## 📖 User Guide
 
-### 📖 API文档
-- [分析器API](api/analyzer.md) - YICA分析器API参考
+### [Usage Documentation](USAGE.md)
+Comprehensive usage guide and tutorials:
+- [Tutorials](tutorials/README.md) - Step-by-step tutorials and examples
 
-### 🔧 生产级设计
-- [构建系统重设计](design/build_system_redesign.md) - 鲁棒的构建系统设计
-- [兼容性层增强](design/compatibility_layer_enhancement.md) - 增强的兼容性解决方案
-- [配置管理系统](design/configuration_management_system.md) - 生产级配置管理
-- [部署打包策略](design/deployment_packaging_strategy.md) - 专业的部署和打包方案
-- [错误处理日志系统](design/error_handling_logging_system.md) - 企业级错误处理
-- [测试框架设计](design/testing_framework_design.md) - 全面的测试框架
+## 🔌 API Reference
 
-### 📈 项目管理
-- [后端集成](project-management/backend-integration.md) - YICA后端集成设计
-- [实现分析](project-management/implementation-analysis.md) - C++内核实现分析
-- [项目路线图](project-management/roadmap.md) - 下阶段发展路线
-- [执行计划](project-management/execution-plan.md) - 任务执行计划
+### [API Documentation](api/README.md)
+Complete API reference and examples:
+- [Analyzer API](api/analyzer.md) - YICA analyzer API reference
 
-### 📖 教程
-*即将添加详细的使用教程...*
+## 🛠️ Development
 
-## 🎯 项目概述
+### [Development Guide](development/README.md)
+Development environment and contribution guidelines
+
+### Production Design
+Enterprise-grade system design documentation:
+- [Build System Redesign](design/build_system_redesign.md) - Robust build system design
+- [Compatibility Layer Enhancement](design/compatibility_layer_enhancement.md) - Enhanced compatibility solutions
+- [Configuration Management System](design/configuration_management_system.md) - Production-grade configuration management
+- [Deployment Packaging Strategy](design/deployment_packaging_strategy.md) - Professional deployment and packaging
+- [Error Handling Logging System](design/error_handling_logging_system.md) - Enterprise-level error handling
+- [Testing Framework Design](design/testing_framework_design.md) - Comprehensive testing framework
+
+## 🚀 Deployment
+
+### [Deployment Guide](deployment/README.md)
+Deployment and operations documentation:
+- [Docker Deployment](deployment/docker-deployment.md) - Deploy YICA environment using Docker
+- [Deployment Report](deployment/deployment-report.md) - Deployment implementation report
+
+## 📈 Project Management
+
+### [Project Management](project-management/README.md)
+Project planning, analysis, and management documentation:
+- [Backend Integration](project-management/backend-integration.md) - YICA backend integration design
+- [Implementation Analysis](project-management/implementation-analysis.md) - C++ kernel implementation analysis
+- [Roadmap](project-management/roadmap.md) - Development roadmap and milestones
+- [Execution Plan](project-management/execution-plan.md) - Task execution planning
+
+## 🎯 Project Overview
 
 ### YICA (YICA Intelligence Computing Architecture)
-YICA是一种革命性的存算一体(CIM)架构，专为AI计算优化设计。它通过将计算单元直接集成到内存中，大大减少了数据移动，提供了卓越的性能和能效。
+YICA is a revolutionary Compute-in-Memory (CIM) architecture designed specifically for AI computing optimization. By integrating computing units directly into memory, it significantly reduces data movement and provides exceptional performance and energy efficiency.
 
-### YiRage (超优化引擎)  
-YiRage是一个高性能的AI算子优化引擎，支持多种后端(CUDA、Triton、YICA)，能够自动搜索和优化AI模型的计算图，实现显著的性能提升。
+### YiRage (AI Kernel Super Optimizer)  
+YiRage is a high-performance AI operator optimization engine that supports multiple backends (CUDA, Triton, YICA). It can automatically search and optimize computation graphs of AI models, achieving significant performance improvements.
 
-## 🚀 核心特性
+## 🚀 Key Features
 
-- **存算一体架构**: 512个CIM阵列的高度并行计算
-- **三级内存层次**: 寄存器文件、SPM、DRAM的优化内存管理
-- **YIS指令集**: 专为CIM架构设计的指令集
-- **多后端支持**: 无缝切换CUDA、Triton、YICA后端
-- **自动优化**: 智能搜索最优计算图
-- **高性能**: 相比传统方案2-3倍性能提升
+- **Compute-in-Memory Architecture**: 512 CIM arrays for highly parallel computing
+- **Three-tier Memory Hierarchy**: Optimized memory management with register files, SPM, and DRAM
+- **YIS Instruction Set**: Custom instruction set designed specifically for CIM architecture
+- **Multi-backend Support**: Seamless switching between CUDA, Triton, and YICA backends
+- **Automatic Optimization**: Intelligent search for optimal computation graphs
+- **High Performance**: 2-3x performance improvement compared to traditional solutions
 
-## 📊 性能表现
+## 📊 Performance Metrics
 
-| 算子类型 | vs PyTorch | vs CUDA | vs Triton |
-|----------|-----------|---------|-----------|
-| 矩阵乘法 | 3.0x | 2.2x | - |
-| 注意力机制 | 2.8x | 1.9x | 1.5x |
-| 端到端推理 | 2.5x | 1.7x | - |
+| Operator Type | vs PyTorch | vs CUDA | vs Triton |
+|---------------|------------|---------|-----------|
+| Matrix Multiplication | 3.0x | 2.2x | - |
+| Attention Mechanism | 2.8x | 1.9x | 1.5x |
+| End-to-End Inference | 2.5x | 1.7x | - |
 
-## 🔗 相关链接
+## 🔗 Related Links
 
-- [项目源代码](../yirage/) - YiRage核心源代码
-- [示例代码](../yirage/demo/) - 使用示例和演示
-- [测试套件](../tests/) - 完整的测试用例
+- **Source Code** - YiRage core source code (located at `../yirage/`)
+- **Examples** - Usage examples and demonstrations (located at `../yirage/demo/`)
+- **Test Suite** - Complete test cases (located at `../tests/`)
 
-## 📞 获取帮助
+## 📞 Getting Help
 
-如果您在使用过程中遇到问题，请：
+If you encounter issues while using the system, please:
 
-1. 查阅相关文档
-2. 检查[常见问题](getting-started/quick-reference.md)
-3. 查看[错误处理指南](design/error_handling_logging_system.md)
-4. 提交Issue或联系维护团队
+1. Consult the relevant documentation
+2. Check [FAQ](getting-started/quick-reference.md)
+3. View [Error Handling Guide](design/error_handling_logging_system.md)
+4. Submit an Issue or contact the maintenance team
 
 ---
 
-**文档版本**: v2.0  
-**最后更新**: 2024年12月  
-**维护团队**: YICA开发团队
+**Documentation Version**: v2.0  
+**Last Updated**: December 2024  
+**Maintenance Team**: YICA Development Team

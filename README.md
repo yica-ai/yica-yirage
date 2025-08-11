@@ -209,9 +209,3 @@ If you use YICA-YiRage in your research, please cite:
 - **Issues**: [GitHub Issues](https://github.com/yica-ai/yica-yirage/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yica-ai/yica-yirage/discussions)
 - **Email**: contact@yica.ai
-
----
-
-**Maintained by**: YICA Development Team  
-**Latest Version**: v1.0.1  
-**Last Updated**: December 2024

@@ -1,153 +1,190 @@
-# 教程指南
+# Tutorials and Learning Resources
 
-本目录将包含YICA/YiRage的详细教程和使用指南。
+This directory contains comprehensive tutorials, examples, and learning resources for YICA/YiRage.
 
-## 📖 计划中的教程
+## 📚 Tutorial Overview
 
-### 🚀 快速入门教程
-- **[5分钟上手指南]** - 最快速度体验YICA/YiRage
-- **[环境搭建教程]** - 详细的开发环境配置
-- **[第一个优化示例]** - 从零开始的优化示例
+### Getting Started Tutorials
+- **Installation Tutorial** - Step-by-step installation guide
+- **First Optimization** - Your first model optimization
+- **Understanding Results** - Interpreting optimization results
 
-### 🏗️ 基础教程
-- **[YICA架构入门]** - 理解存算一体架构
-- **[YiRage使用基础]** - 超优化引擎基本操作
-- **[后端切换指南]** - CUDA、Triton、YICA后端使用
+### Intermediate Tutorials
+- **Multi-Backend Optimization** - Comparing different backends
+- **Custom Operators** - Creating and optimizing custom operators
+- **Performance Tuning** - Advanced performance optimization techniques
 
-### 🔧 高级教程
-- **[自定义算子开发]** - 开发自己的优化算子
-- **[性能调优技巧]** - 深度性能优化方法
-- **[多后端对比分析]** - 不同后端的选择策略
+### Advanced Tutorials
+- **[Performance Benchmarks](performance-benchmarks.md)** - Comprehensive performance analysis and benchmarking
+- **[Real-World Examples](real-world-examples.md)** - Source code based practical examples and implementations
+- **Backend Development** - Creating custom optimization backends
+- **Integration Patterns** - Integrating YiRage with existing workflows
+- **Production Deployment** - Deploying optimized models in production
 
-### 📊 实战案例
-- **[LLaMA模型优化]** - 大语言模型推理优化
-- **[注意力机制优化]** - Transformer注意力优化
-- **[计算图优化]** - 复杂计算图的优化策略
+## 🎯 Learning Paths
 
-### 🛠️ 开发教程
-- **[C++扩展开发]** - 开发C++性能扩展
-- **[Python绑定开发]** - 创建Python接口绑定
-- **[插件系统开发]** - 开发自定义插件
-
-### 🚀 部署教程
-- **[Docker部署指南]** - 容器化部署详解
-- **[QEMU环境搭建]** - 虚拟化环境配置
-- **[生产环境部署]** - 生产级部署方案
-
-## 🎯 教程特色
-
-### 交互式学习
-- **代码示例**: 每个教程都包含可运行的代码
-- **逐步说明**: 详细的步骤说明和解释
-- **常见问题**: 预期问题和解决方案
-- **练习作业**: 巩固学习效果的练习
-
-### 多层次内容
-- **初学者友好**: 零基础也能理解
-- **进阶内容**: 满足高级用户需求
-- **实战导向**: 解决真实业务问题
-- **最佳实践**: 分享经验和技巧
-
-### 多媒体支持
-- **图文结合**: 清晰的图表和截图
-- **视频教程**: 复杂操作的视频演示
-- **在线演示**: 可交互的在线示例
-- **下载资源**: 示例代码和数据集
-
-## 📚 学习路径
-
-### 新手路径
+### Beginner Path
 ```
-1. 快速入门 → 2. 环境搭建 → 3. 基础概念 → 4. 简单示例
+Installation → First Optimization → Understanding Results → Basic Examples
 ```
 
-### 开发者路径
+### Developer Path
 ```
-1. 架构理解 → 2. API学习 → 3. 高级功能 → 4. 自定义开发
-```
-
-### 运维路径
-```
-1. 部署基础 → 2. 环境配置 → 3. 监控管理 → 4. 故障排除
+Architecture Overview → API Learning → Advanced Features → Custom Development
 ```
 
-### 研究者路径
+### DevOps Path
 ```
-1. 理论基础 → 2. 算法原理 → 3. 性能分析 → 4. 优化研究
+Installation → Container Deployment → Monitoring → Production Best Practices
 ```
 
-## 🔧 教程工具
+### Researcher Path
+```
+Theoretical Foundation → Algorithm Principles → Performance Analysis → Research
+```
 
-### 交互式环境
-- **Jupyter Notebook**: 交互式代码环境
-- **Google Colab**: 云端运行环境
-- **Docker容器**: 标准化环境
-- **在线IDE**: 网页版开发环境
+## 🚀 Quick Start Tutorial
 
-### 示例数据
-- **模型文件**: 预训练模型示例
-- **数据集**: 标准测试数据集
-- **配置文件**: 各种配置示例
-- **脚本工具**: 自动化脚本
+### Step 1: Installation
+```bash
+# Install via pip
+pip install yirage
 
-## 📈 学习成果
+# Or build from source
+git clone https://github.com/your-org/yica-yirage.git
+cd yica-yirage && pip install -e .
+```
 
-### 知识目标
-完成教程后，学习者将能够：
-- 理解YICA存算一体架构原理
-- 熟练使用YiRage超优化引擎
-- 掌握多后端切换和配置
-- 进行基本的性能调优
-- 解决常见问题和故障
+### Step 2: Basic Usage
+```python
+import yirage
+import torch
 
-### 技能目标
-- **基础操作**: 安装、配置、基本使用
-- **高级功能**: 自定义开发、性能优化
-- **问题解决**: 故障诊断、问题修复
-- **最佳实践**: 生产环境应用
+# Create a simple model
+model = torch.nn.Sequential(
+    torch.nn.Linear(784, 256),
+    torch.nn.ReLU(),
+    torch.nn.Linear(256, 10)
+)
 
-## 🔗 相关资源
+# Optimize with YiRage
+optimizer = yirage.Optimizer(backend="yica")
+optimized_model = optimizer.optimize(model)
 
-### 前置知识
-- **Python编程**: 基础Python语法
-- **机器学习**: 基本ML概念
-- **深度学习**: PyTorch/TensorFlow基础
-- **计算机架构**: 基本硬件概念
+print(f"Speedup: {optimized_model.speedup:.2f}x")
+```
 
-### 参考文档
-- [快速入门](../getting-started/) - 基础概念
-- [架构设计](../architecture/) - 系统架构
-- [API文档](../api/) - 编程接口
-- [开发指南](../development/) - 开发环境
+### Step 3: Verify Results
+```python
+test_input = torch.randn(1, 784)
+original_output = model(test_input)
+optimized_output = optimized_model(test_input)
 
-### 外部资源
-- [PyTorch官方教程](https://pytorch.org/tutorials/)
-- [CUDA编程指南](https://docs.nvidia.com/cuda/)
-- [深度学习基础](https://www.deeplearningbook.org/)
-- [计算机体系结构](https://en.wikipedia.org/wiki/Computer_architecture)
+# Verify correctness
+assert torch.allclose(original_output, optimized_output, atol=1e-5)
+```
 
-## 📝 贡献指南
+## 📖 Tutorial Categories
 
-### 教程贡献
-欢迎社区贡献高质量的教程内容：
+### 1. Basic Tutorials
+- **Installation and Setup**: System requirements and installation
+- **First Steps**: Hello world and basic API usage
+- **Configuration**: Basic configuration options
+- **Troubleshooting**: Common issues and solutions
 
-1. **选择主题**: 确定教程主题和目标受众
-2. **编写内容**: 按照模板编写教程内容
-3. **测试验证**: 确保代码可运行、步骤正确
-4. **提交审查**: 提交Pull Request进行审查
+### 2. Core Concepts
+- **Architecture Understanding**: YICA architecture overview
+- **Backend Comparison**: Understanding different backends
+- **Optimization Strategies**: Different optimization approaches
 
-### 质量标准
-- **准确性**: 内容准确、代码可运行
-- **完整性**: 步骤完整、说明详细
-- **易读性**: 语言清晰、结构合理
-- **实用性**: 解决实际问题、有实用价值
+### 3. Practical Examples
+- **Computer Vision**: Image classification and object detection
+- **Natural Language Processing**: Text processing and generation
+- **Large Language Models**: LLM optimization techniques
 
-### 维护更新
-- 定期检查教程的有效性
-- 根据软件更新调整内容
-- 收集用户反馈进行改进
-- 补充常见问题和解答
+### 4. Advanced Topics
+- **Custom Backend Development**: Creating new backends
+- **Performance Analysis**: Detailed profiling and analysis
+- **Production Integration**: Real-world deployment patterns
+
+## 🛠️ Interactive Learning
+
+### Jupyter Notebooks
+```bash
+pip install jupyter
+jupyter notebook tutorials/
+```
+
+### Docker Tutorial Environment
+```bash
+docker run -it --rm -p 8888:8888 yirage/tutorial-environment
+```
+
+## 📊 Example Projects
+
+### Image Classification Optimization
+```python
+import torchvision
+import yirage
+
+model = torchvision.models.efficientnet_b0(pretrained=True)
+optimizer = yirage.Optimizer(backend="yica")
+optimized_model = optimizer.optimize(model)
+
+print(f"Performance improvement: {optimized_model.speedup:.2f}x")
+```
+
+### Natural Language Processing
+```python
+from transformers import AutoModel
+
+model = AutoModel.from_pretrained("bert-base-uncased")
+optimizer = yirage.Optimizer(backend="yica")
+optimized_model = optimizer.optimize(model)
+```
+
+## 🎓 Learning Resources
+
+### Documentation Links
+- [Architecture Overview](../architecture/README.md)
+- [API Reference](../api/README.md)
+- [Development Guide](../development/README.md)
+- [Deployment Guide](../deployment/README.md)
+
+### Community Resources
+- **GitHub Discussions**: Technical Q&A
+- **Discord Server**: Real-time community chat
+- **YouTube Channel**: Video tutorials
+- **Blog**: Technical articles and case studies
+
+## 📋 Progress Tracking
+
+### Beginner Level
+- [ ] Complete installation
+- [ ] Run first optimization
+- [ ] Understand basic concepts
+- [ ] Complete simple project
+
+### Intermediate Level
+- [ ] Multi-backend comparison
+- [ ] Custom operator optimization
+- [ ] Performance analysis
+- [ ] Workflow integration
+
+### Advanced Level
+- [ ] Custom backend development
+- [ ] Production deployment
+- [ ] Performance research
+- [ ] Project contribution
+
+## 📞 Support
+
+### Getting Help
+- **GitHub Issues**: Report tutorial problems
+- **Community Support**: Discord and GitHub Discussions
+- **Documentation**: Comprehensive guides
+- **Examples**: Repository example code
 
 ---
 
-*教程目录正在建设中，将逐步添加高质量的学习内容。欢迎社区贡献和建议！*
+*These tutorials help users master YICA/YiRage at all levels. Check our [GitHub repository](https://github.com/your-org/yica-yirage) for the latest updates.*

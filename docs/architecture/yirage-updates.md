@@ -1,23 +1,23 @@
-好的，让我深入分析Mirage的设计理念和优化策略，看看针对通用GPU和YICA架构的改进空间。
-Read file: mirage/README.md
+好的，让我深入分析yirage的设计理念和优化策略，看看针对通用GPU和YICA架构的改进空间。
+Read file: yirage/README.md
 Ran tool
 Search files...
-Read file: mirage/src/search/search.cc
-Read file: mirage/include/mirage/search/config.h
-Read file: mirage/python/mirage/core.py
-Read file: mirage/python/mirage/__init__.py
-现在基于我对Mirage的深入分析，结合YICA架构的特点，来回答关于Mirage设计对象和优化策略的问题：
+Read file: yirage/src/search/search.cc
+Read file: yirage/include/yirage/search/config.h
+Read file: yirage/python/yirage/core.py
+Read file: yirage/python/yirage/__init__.py
+现在基于我对yirage的深入分析，结合YICA架构的特点，来回答关于yirage设计对象和优化策略的问题：
 
-## 我对Mirage设计理念和优化策略的分析
+## 我对yirage设计理念和优化策略的分析
 
-### 1. **Mirage的核心设计理念分析**
+### 1. **yirage的核心设计理念分析**
 
-**Mirage设计的根本问题：**
+**yirage设计的根本问题：**
 - **通用GPU的层次化优化挑战**：传统GPU优化器（如TVM、Triton）只能在单一层级（算法或调度）进行优化，无法实现跨层级的联合优化
 - **搜索空间的指数级增长**：GPU的Kernel、ThreadBlock、Thread三个层级的联合优化空间过于庞大
 - **缺乏统一的表示和验证机制**：不同层级的优化缺乏统一的表示方法和正确性验证
 
-**Mirage的创新解决方案：**
+**yirage的创新解决方案：**
 ```cpp
 // μGraph: 统一的多层级表示
 class μGraph {
@@ -44,7 +44,7 @@ Problems:
 
 2. **搜索策略过于保守**
 ```python
-# Mirage当前的搜索配置
+# yirage当前的搜索配置
 max_num_kernel_graph_op = 5-7        # 较小的搜索空间
 max_num_threadblock_graph_op = 7-9   # 保守的ThreadBlock算子数量
 search_thread = hardware_concurrency # 简单的并行搜索
@@ -52,7 +52,7 @@ search_thread = hardware_concurrency # 简单的并行搜索
 
 3. **目标函数单一化**
 ```cpp
-// 当前Mirage主要优化延迟
+// 当前yirage主要优化延迟
 bool verify(const kernel::Graph& graph) {
     // 主要关注功能正确性和基本性能
     return correctness_check(graph) && basic_performance_check(graph);
@@ -141,7 +141,7 @@ public:
 
 ### 4. **具体改进建议**
 
-**4.1 扩展Mirage的抽象表示**
+**4.1 扩展yirage的抽象表示**
 ```cpp
 // 为YICA扩展μGraph
 class YICAμGraph : public μGraph {
@@ -166,7 +166,7 @@ public:
         SearchContext& context,
         vector<SerializedSearchContext>& verified) override {
         
-        // 原有的Mirage搜索逻辑
+        // 原有的yirage搜索逻辑
         generate_next_operator(context, verify, verified);
         
         // 增加YICA特定的评估
@@ -183,7 +183,7 @@ public:
 
 **4.3 Python接口增强**
 ```python
-class YICAGraph(mirage.KNGraph):
+class YICAGraph(yirage.KNGraph):
     def superoptimize_for_yica(self, 
                               arch_config: YICAArchConfig,
                               objectives: List[str] = ["latency", "energy"],
@@ -197,7 +197,7 @@ class YICAGraph(mirage.KNGraph):
             max_search_iterations=search_budget
         )
         
-        return mirage.core.yica_superoptimize(self.cygraph, yica_config)
+        return yirage.core.yica_superoptimize(self.cygraph, yica_config)
 ```
 
 ### 5. **预期的改进效果**
@@ -207,4 +207,4 @@ class YICAGraph(mirage.KNGraph):
 3. **内存效率**：通过CIM阵列和SPM的协同优化，减少60-80%的DRAM访问
 4. **自动化程度**：从手工调优转向完全自动化的架构感知优化
 
-**总结：** Mirage的设计虽然在通用GPU上已经很优秀，但结合YICA存算一体架构的特点，通过扩展其多目标优化、架构感知搜索和性能建模能力，可以实现显著的性能突破。这不仅仅是简单的适配，而是充分发挥存算一体架构优势的深度优化。
+**总结：** yirage的设计虽然在通用GPU上已经很优秀，但结合YICA存算一体架构的特点，通过扩展其多目标优化、架构感知搜索和性能建模能力，可以实现显著的性能突破。这不仅仅是简单的适配，而是充分发挥存算一体架构优势的深度优化。

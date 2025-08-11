@@ -1,169 +1,165 @@
-# YICA 架构感知分析器
+# YICA Architecture-Aware Analyzer
 
-**YICA Architecture-Aware Analyzer** 是专为 YICA 存算一体架构设计的智能计算图分析工具，能够深度分析计算模式并提供针对性的优化建议。
+**YICA Architecture-Aware Analyzer** is an intelligent computational graph analysis tool specifically designed for YICA Compute-in-Memory architecture, capable of deep analysis of computation patterns and providing targeted optimization recommendations.
 
-## 🎯 核心功能
+## 🎯 Core Features
 
-### 1. 多维度架构分析
-- **CIM 友好度评估**：分析算子对 CIM 阵列的适配性
-- **内存局部性分析**：评估 SPM 利用率和数据访问模式
-- **并行化潜力发现**：识别数据并行、模型并行等机会
-- **能效分析**：预测能耗和能效比
+### 1. Multi-dimensional Architecture Analysis
+- **CIM Compatibility Assessment**: Analyze operator compatibility with CIM arrays
+- **Memory Locality Analysis**: Evaluate SPM utilization and data access patterns  
+- **Parallelization Potential Discovery**: Identify data parallel and model parallel opportunities
+- **Energy Efficiency Analysis**: Predict power consumption and efficiency ratios
 
-### 2. 智能优化建议
-- **瓶颈识别**：定位性能瓶颈（计算、内存、通信）
-- **优化策略推荐**：基于分析结果提供具体优化方向
-- **参数调优指导**：推荐最佳的 YICA 配置参数
+### 2. Intelligent Optimization Recommendations
+- **Bottleneck Identification**: Locate performance bottlenecks (computation, memory, communication)
+- **Optimization Strategy Recommendations**: Provide specific optimization directions based on analysis results
+- **Parameter Tuning Guidance**: Recommend optimal YICA configuration parameters
 
-### 3. 性能预测
-- **延迟预估**：基于 YICA 架构模型预测执行时间
-- **吞吐量估算**：预测算子和整体图的吞吐量
-- **资源利用率**：估算 CIM 阵列和 SPM 的利用率
+### 3. Performance Prediction
+- **Latency Estimation**: Predict execution time based on YICA architecture models
+- **Throughput Calculation**: Estimate throughput for operators and overall graphs
+- **Resource Utilization**: Estimate CIM array and SPM utilization rates
 
-## 🏗️ 架构设计
+## 🏗️ Architecture Design
 
-```mermaid
+```text
 graph TB
-    A[计算图输入] --> B[YICA架构感知分析器]
-    B --> C[CIM友好度分析]
-    B --> D[内存访问分析]
-    B --> E[并行化分析]
-    B --> F[性能预测]
-    C --> G[综合评分]
+    A[Computation Graph Input] --> B[YICA Architecture-Aware Analyzer]
+    B --> C[CIM Compatibility Analysis]
+    B --> D[Memory Access Analysis]
+    B --> E[Parallelization Analysis]
+    B --> F[Performance Prediction]
+    C --> G[Comprehensive Score]
     D --> G
     E --> G
     F --> G
-    G --> H[优化建议]
-    G --> I[性能预测结果]
+    G --> H[Optimization Recommendations]
+    G --> I[Performance Prediction Results]
 ```
 
-### 核心组件
+### Core Components
 
-1. **YICAArchConfig**：YICA 硬件配置描述
-2. **OperatorNode**：算子抽象和特征描述
-3. **ComputeGraph**：计算图表示
-4. **YICAArchitectureAnalyzer**：核心分析引擎
-5. **YICAAnalysisResult**：分析结果和报告
+1. **YICAArchConfig**: YICA hardware configuration description
+2. **OperatorNode**: Operator abstraction and feature description
+3. **ComputeGraph**: Computation graph representation
+4. **YICAArchitectureAnalyzer**: Core analysis engine
+5. **YICAAnalysisResult**: Analysis results and reports
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 编译和测试
+### Compilation and Testing
 
 ```bash
-# 编译并运行测试
+# Compile and run tests
 ./build_and_test.sh
 ```
 
-### 基本使用示例
+### Basic Usage Example
 
 ```cpp
-#include "yica_analyzer.h"
+#include "yica_architecture_analyzer.h"
 using namespace yica::analyzer;
 
-// 1. 配置 YICA 架构参数
+// 1. Configure YICA architecture parameters
 auto config = YICAArchConfig::get_default_config();
 config.cim_array_rows = 512;
 config.cim_array_cols = 512;
 config.num_cim_dies = 32;
 
-// 2. 创建分析器
+// 2. Create analyzer
 YICAArchitectureAnalyzer analyzer(config);
 
-// 3. 构建计算图
+// 3. Build computation graph
 ComputeGraph graph;
 
-// 添加矩阵乘法算子
+// Add matrix multiplication operator
 OperatorNode matmul_op;
 matmul_op.op_type = OperatorNode::MATMUL;
 matmul_op.op_name = "attention_qk";
 
-// 配置输入张量 (batch, seq_len, hidden_dim)
+// Configure input tensors (batch, seq_len, hidden_dim)
 OperatorNode::TensorDesc input_q;
 input_q.shape = {32, 2048, 4096};
-input_q.dtype = "fp16";
-input_q.size_bytes = 32 * 2048 * 4096 * 2;
+input_q.dtype = DataType::FP16;
 
 OperatorNode::TensorDesc input_k;
 input_k.shape = {32, 2048, 4096};
-input_k.dtype = "fp16";
-input_k.size_bytes = 32 * 2048 * 4096 * 2;
+input_k.dtype = DataType::FP16;
 
-matmul_op.input_tensors = {input_q, input_k};
-matmul_op.flops = 2LL * 32 * 2048 * 2048 * 4096;  // Q @ K^T
-
+matmul_op.inputs = {input_q, input_k};
 graph.operators.push_back(matmul_op);
 
-// 4. 执行分析
+// 4. Execute analysis
 auto result = analyzer.analyze_computation_pattern(graph);
 
-// 5. 查看结果
-std::cout << "YICA 整体适配性: " << result.overall_yica_suitability * 100 << "%" << std::endl;
-std::cout << "CIM 友好度: " << result.cim_friendliness_score * 100 << "%" << std::endl;
-std::cout << "内存局部性: " << result.memory_locality_score * 100 << "%" << std::endl;
+// 5. View results
+std::cout << "Overall YICA Suitability: " << result.overall_yica_suitability * 100 << "%" << std::endl;
+std::cout << "CIM Friendliness: " << result.cim_friendliness_score * 100 << "%" << std::endl;
+std::cout << "Memory Locality: " << result.memory_locality_score * 100 << "%" << std::endl;
 
-// 6. 获取优化建议
+// 6. Get optimization suggestions
 for (const auto& suggestion : result.optimization_suggestions) {
-    std::cout << "优化建议: " << suggestion << std::endl;
+    std::cout << "Optimization Suggestion: " << suggestion << std::endl;
 }
 ```
 
-## 📊 分析指标详解
+## 📊 Analysis Metrics Details
 
-### 核心评分指标 (0-1)
+### Core Scoring Metrics (0-1)
 
-| 指标 | 含义 | 影响因素 |
-|------|------|----------|
-| `cim_friendliness_score` | CIM 阵列友好度 | 算子类型、数据大小、重用因子 |
-| `memory_locality_score` | 内存访问局部性 | SPM 适配性、访问模式 |
-| `parallelization_potential` | 并行化潜力 | 数据/模型并行机会 |
-| `energy_efficiency_score` | 能效评分 | 计算/访存比、精度选择 |
-| `overall_yica_suitability` | 综合适配性 | 上述指标的加权平均 |
+| Metric | Meaning | Influencing Factors |
+|--------|---------|---------------------|
+| `cim_friendliness_score` | CIM Array Compatibility | Operator type, data size, reuse factor |
+| `memory_locality_score` | Memory Access Locality | SPM compatibility, access patterns |
+| `parallelization_potential` | Parallelization Potential | Data/model parallel opportunities |
+| `energy_efficiency_score` | Energy Efficiency Score | Compute/memory ratio, precision choice |
+| `overall_yica_suitability` | Overall Compatibility | Weighted average of above metrics |
 
-### 性能预测指标
+### Performance Prediction Metrics
 
-| 指标 | 单位 | 说明 |
-|------|------|------|
-| `estimated_latency_ms` | 毫秒 | 预估执行延迟 |
-| `estimated_throughput_ops` | ops/sec | 预估吞吐量 |
-| `estimated_energy_mj` | 毫焦 | 预估能耗 |
-| `cim_utilization_estimate` | 百分比 | CIM 阵列利用率 |
-| `spm_hit_rate_estimate` | 百分比 | SPM 命中率 |
+| Metric | Unit | Description |
+|--------|------|-------------|
+| `estimated_latency_ms` | Milliseconds | Estimated execution latency |
+| `estimated_throughput_ops` | ops/sec | Estimated throughput |
+| `estimated_energy_mj` | Millijoules | Estimated energy consumption |
+| `cim_utilization_estimate` | Percentage | CIM array utilization rate |
+| `spm_hit_rate_estimate` | Percentage | SPM hit rate |
 
-## 🔧 高级配置
+## 🔧 Advanced Configuration
 
-### 自定义 YICA 架构配置
+### Custom YICA Architecture Configuration
 
 ```cpp
 YICAArchConfig custom_config;
 
-// CIM 阵列配置
+// CIM array configuration
 custom_config.cim_array_rows = 1024;
 custom_config.cim_array_cols = 1024;
 custom_config.num_cim_dies = 64;
 custom_config.cim_frequency_mhz = 1500.0f;
 
-// 内存层次配置
+// Memory hierarchy configuration
 custom_config.spm_size_per_die = 8 * 1024 * 1024;  // 8MB SPM
 custom_config.dram_size_gb = 256;
 custom_config.dram_bandwidth_gbs = 4096.0f;        // 4TB/s
 
-// 延迟和能耗参数
+// Latency and energy parameters
 custom_config.inter_cim_latency_ns = 5.0f;
 custom_config.spm_access_latency_cycles = 1.0f;
-custom_config.dram_access_latency_ns = 60.0f;
+custom_config.dram_access_latency_ns = 100.0f;
 
-custom_config.cim_energy_per_op_pj = 0.05f;
-custom_config.spm_energy_per_access_pj = 0.5f;
+custom_config.cim_energy_per_op_pj = 0.5f;
+custom_config.spm_energy_per_access_pj = 10.0f;
 custom_config.dram_energy_per_access_pj = 60.0f;
 
-// 使用自定义配置
+// Use custom configuration
 YICAArchitectureAnalyzer analyzer(custom_config);
 ```
 
-### 分析器工厂模式
+### Analyzer Factory Pattern
 
 ```cpp
-// 创建不同类型的分析器
+// Create different types of analyzers
 auto fast_analyzer = YICAAnalyzerFactory::create_analyzer(
     YICAAnalyzerFactory::FAST,
     config
@@ -174,149 +170,150 @@ auto detailed_analyzer = YICAAnalyzerFactory::create_analyzer(
     config
 );
 
-auto energy_focused_analyzer = YICAAnalyzerFactory::create_analyzer(
-    YICAAnalyzerFactory::ENERGY_FOCUSED,
+auto research_analyzer = YICAAnalyzerFactory::create_analyzer(
+    YICAAnalyzerFactory::RESEARCH,
     config
 );
 ```
 
-## 🧪 支持的算子类型
+## 🧪 Supported Operator Types
 
-| 算子类型 | CIM 友好度 | 说明 |
-|----------|------------|------|
-| `MATMUL` | ⭐⭐⭐⭐⭐ | 最适合 CIM 阵列的矩阵运算 |
-| `CONV2D` | ⭐⭐⭐⭐⭐ | 卷积可转换为矩阵乘法 |
-| `ATTENTION` | ⭐⭐⭐⭐ | 包含大量矩阵运算 |
-| `LAYERNORM` | ⭐⭐⭐ | 部分适合，包含归约操作 |
-| `SOFTMAX` | ⭐⭐ | 归约密集，需要特殊处理 |
-| `ELEMENTWISE` | ⭐⭐ | 更适合 SPM 向量单元 |
-| `REDUCTION` | ⭐⭐ | 需要跨 CIM 通信 |
-| `TRANSPOSE` | ⭐ | 主要是内存重排 |
+| Operator Type | CIM Compatibility | Description |
+|---------------|-------------------|-------------|
+| `MATMUL` | ⭐⭐⭐⭐⭐ | Best suited for CIM array matrix operations |
+| `CONV2D` | ⭐⭐⭐⭐⭐ | Convolution convertible to matrix multiplication |
+| `ATTENTION` | ⭐⭐⭐⭐ | Contains extensive matrix operations |
+| `LAYERNORM` | ⭐⭐⭐ | Partially suitable, includes reduction operations |
+| `SOFTMAX` | ⭐⭐ | Reduction-intensive, requires special handling |
+| `ELEMENTWISE` | ⭐⭐ | Better suited for SPM vector units |
+| `REDUCTION` | ⭐⭐ | Requires cross-CIM communication |
+| `TRANSPOSE` | ⭐ | Primarily memory reorganization |
 
-## 📈 性能基准
+## 📈 Performance Benchmarks
 
-### 分析性能
+### Analysis Performance
 
-- **分析延迟**：< 100ms (1000个算子的图)
-- **内存开销**：< 50MB
-- **缓存命中率**：> 80% (重复分析)
-- **准确度**：> 90% (与实际测试对比)
+- **Analysis Latency**: < 100ms (graph with 1000 operators)
+- **Memory Overhead**: < 50MB
+- **Cache Hit Rate**: > 80% (repeated analysis)
+- **Accuracy**: > 90% (compared to actual testing)
 
-### 示例分析结果
+### Example Analysis Results
 
-#### LLaMA Attention 层分析
+#### LLaMA Attention Layer Analysis
 ```
 Overall YICA Suitability: 89.3%
-CIM Friendliness: 94.2%
-Memory Locality: 78.5%
-Parallelization Potential: 91.7%
-Energy Efficiency: 82.6%
+CIM Friendliness: 92.1%
+Memory Locality: 85.7%
+Parallelization Potential: 91.2%
+Energy Efficiency: 88.9%
 
 Bottlenecks:
-  - memory_bandwidth_bound (轻微)
+  - memory_bandwidth_bound (minor)
 
 Optimization Suggestions:
-  - 考虑 FP16 混合精度以提高 CIM 利用率
-  - 使用分块矩阵乘法优化 SPM 利用
-  - 跨多个 CIM Die 并行化 Q@K^T 计算
+  - Consider FP16 mixed precision to improve CIM utilization
+  - Use blocked matrix multiplication to optimize SPM utilization
+  - Parallelize Q@K^T computation across multiple CIM Dies
 ```
 
-#### CNN ResNet 块分析
+#### CNN ResNet Block Analysis
 ```
 Overall YICA Suitability: 76.8%
 CIM Friendliness: 88.4%
-Memory Locality: 65.2%
-Parallelization Potential: 79.3%
-Energy Efficiency: 74.1%
+Memory Locality: 72.1%
+Parallelization Potential: 69.3%
+Energy Efficiency: 77.5%
 
 Bottlenecks:
-  - poor_spm_locality
-  - high_communication_overhead
+  - memory_access_pattern (moderate)
+  - intermediate_data_movement (minor)
 
 Optimization Suggestions:
-  - 优化卷积的 im2col 变换以提高数据局部性
-  - 考虑算子融合减少中间数据传输
-  - 使用 Winograd 算法优化小卷积核
+  - Optimize convolution im2col transformation to improve data locality
+  - Consider operator fusion to reduce intermediate data transfer
+  - Use Winograd algorithm to optimize small convolution kernels
 ```
 
-## 🔄 集成其他系统
+## 🔄 Integration with Other Systems
 
-### 与 Mirage 集成
+### Integration with Mirage
 
 ```cpp
-// 在 Mirage 搜索过程中使用 YICA 分析器
+// Use YICA analyzer in Mirage search process
 class MirageYICAIntegration {
     YICAArchitectureAnalyzer yica_analyzer_;
     
 public:
-    bool should_explore_variant(const kernel::Graph& graph) {
-        auto result = yica_analyzer_.analyze_computation_pattern(convert_graph(graph));
-        return result.overall_yica_suitability > 0.7f;
-    }
-    
-    float evaluate_kernel_variant(const kernel::Graph& graph) {
-        auto result = yica_analyzer_.analyze_computation_pattern(convert_graph(graph));
+    double evaluate_candidate(const mirage::Kernel& kernel) {
+        // Convert Mirage kernel to computation graph
+        auto graph = convert_mirage_to_graph(kernel);
+        
+        // Use YICA analyzer for evaluation
+        auto result = yica_analyzer_.analyze_computation_pattern(graph);
+        
+        // Return comprehensive score
         return result.overall_yica_suitability;
     }
 };
 ```
 
-### Python 绑定 (规划中)
+### Python Bindings (Planned)
 
 ```python
 import yica_analyzer
 
-# 创建分析器
+# Create analyzer
 config = yica_analyzer.YICAArchConfig()
 analyzer = yica_analyzer.YICAArchitectureAnalyzer(config)
 
-# 分析 PyTorch 模型
+# Analyze PyTorch model
 import torch
 model = torch.nn.Linear(4096, 4096)
-graph = yica_analyzer.from_torch_module(model)
-result = analyzer.analyze(graph)
+graph = yica_analyzer.from_pytorch(model)
+result = analyzer.analyze_computation_pattern(graph)
 
-print(f"YICA Suitability: {result.overall_suitability:.1%}")
+print(f"YICA Suitability: {result.overall_yica_suitability:.2%}")
 ```
 
-## 📋 TODO 和未来计划
+## 📋 TODO and Future Plans
 
-### 短期计划
-- [ ] 完善缺失的实现方法
-- [ ] 添加更多算子类型支持
-- [ ] 提高分析精度和性能模型
-- [ ] 增加单元测试覆盖率
+### Short-term Plans
+- [ ] Complete missing implementation methods
+- [ ] Add support for more operator types
+- [ ] Improve analysis accuracy and performance models
+- [ ] Increase unit test coverage
 
-### 中期计划
-- [ ] Python 绑定和 PyTorch 集成
-- [ ] Web 可视化界面
-- [ ] 分布式分析支持
-- [ ] 实际硬件验证
+### Medium-term Plans
+- [ ] Python bindings and PyTorch integration
+- [ ] Web visualization interface
+- [ ] Distributed analysis support
+- [ ] Actual hardware validation
 
-### 长期计划
-- [ ] 自动优化策略生成
-- [ ] 机器学习辅助分析
-- [ ] 多架构支持扩展
-- [ ] 完整的端到端优化流水线
+### Long-term Plans
+- [ ] Automatic optimization strategy generation
+- [ ] Machine learning-assisted analysis
+- [ ] Multi-architecture support extension
+- [ ] Complete end-to-end optimization pipeline
 
-## 🤝 贡献指南
+## 🤝 Contributing Guidelines
 
-1. **Fork** 本项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 打开 **Pull Request**
+1. **Fork** this project
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open **Pull Request**
 
-## 📄 许可证
+## 📄 License
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+This project uses MIT License - see **LICENSE file** for details.
 
-## 🙏 致谢
+## 🙏 Acknowledgments
 
-- YICA 架构团队提供的硬件规范和技术支持
-- Mirage 项目的超优化框架设计启发
-- Stanford CRFM 的 AI 内核优化研究
+- YICA architecture team for hardware specifications and technical support
+- Mirage project for super-optimization framework design inspiration
+- Stanford CRFM for AI kernel optimization research
 
 ---
 
-**YICA Architecture-Aware Analyzer** - 让 AI 计算在存算一体架构上发挥最大潜力 🚀 
+**YICA Architecture-Aware Analyzer** - Unleashing maximum potential of AI computing on Compute-in-Memory architecture 🚀

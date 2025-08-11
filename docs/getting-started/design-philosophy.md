@@ -1,144 +1,164 @@
-# YICA 转换优化代码工具 - 设计理念
+# YICA Code Transformation and Optimization Tool - Design Philosophy
 
-## 核心理念
+## Core Philosophy
 
-**YICA是一个转换优化代码的工具**，它的设计理念基于以下核心原则：
+**YICA is a code transformation and optimization tool** based on the following core principles:
 
-### 1. 自包含性 (Self-Contained)
-- **包含所有必要的支持文件**：工具内部生成所有需要的代码和配置
-- **不依赖外部复杂源文件**：避免引用可能缺失的外部依赖
-- **一键构建**：用户只需运行构建命令，无需额外配置
+### 1. Self-Contained Architecture
 
-### 2. 环境无关性 (Environment Agnostic)
-- **可在任何环境编译**：无论是否有GPU、CUDA、OpenMP等
-- **硬件不匹配也能工作**：即使目标硬件不存在，仍能生成代码
-- **跨平台兼容**：macOS、Linux、Windows等都能正常工作
+- **Contains all necessary support files**: The tool internally generates all required code and configurations
+- **No dependency on external complex source files**: Avoids references to potentially missing external dependencies
+- **One-click build**: Users only need to run the build command without additional configuration
 
-### 3. 后端分离的真正目的
-**后端分离主要是为了减少编译时间，而不是创建编译障碍**
+### 2. Environment Agnostic Design
 
-#### ✅ 正确理解
-- 开发者可以选择只编译需要的后端，节省时间
-- 在没有GPU的机器上，可以跳过GPU后端编译
-- 快速迭代开发时，只编译正在开发的后端
+- **Compiles in any environment**: Works regardless of GPU, CUDA, OpenMP availability
+- **Works even with hardware mismatches**: Can generate code even when target hardware is absent
+- **Cross-platform compatibility**: Works on macOS, Linux, Windows, and other platforms
 
-#### ❌ 错误理解  
-- 认为没有对应硬件就不能编译
-- 强制要求硬件环境匹配
-- 创建复杂的依赖检查
+### 3. The True Purpose of Backend Separation
 
-## 实现体现
+**Backend separation is primarily to reduce compilation time, not to create compilation barriers**
 
-### 1. 自包含的核心引擎
+#### ✅ Correct Understanding
+- Developers can choose to compile only needed backends, saving time
+- On machines without GPUs, GPU backend compilation can be skipped
+- During rapid iterative development, only the backend being developed needs compilation
+
+#### ❌ Incorrect Understanding  
+- Thinking that corresponding hardware is required for compilation
+- Forcing hardware environment matching requirements
+- Creating complex dependency checks
+
+## Implementation Examples
+
+### 1. Self-Contained Core Engine
 ```cpp
-// 所有转换逻辑都内置在工具中
+// All transformation logic is built into the tool
 class OptimizerCore {
-    // 不依赖外部源文件
-    // 所有算法都自包含
+    // No dependency on external source files
+    // All algorithms are self-contained
 };
 ```
 
-### 2. 智能后端检测
+### 2. Intelligent Backend Detection
 ```cpp
-// 即使硬件不匹配，也返回true
-// 因为这是转换工具，应该能生成任何后端的代码
+// Returns true even if hardware doesn't match
+// Because this is a transformation tool that should generate code for any backend
 static bool is_backend_available(const std::string& backend) {
-    return true;  // 转换工具应该总是能生成目标代码
+    return true;  // Transformation tools should always generate target code
 }
 ```
 
-### 3. 优雅的依赖降级
+### 3. Graceful Dependency Degradation
 ```cmake
-# OpenMP可选，不影响编译
+# OpenMP is optional and doesn't affect compilation
 find_package(OpenMP QUIET)
 if(OpenMP_CXX_FOUND)
-    message(STATUS "OpenMP可用 - 支持并行优化")
+    message(STATUS "OpenMP available - supports parallel optimization")
 else()
-    message(STATUS "OpenMP不可用 - 使用串行优化 (仍然可以编译)")
+    message(STATUS "OpenMP unavailable - using serial optimization (still compiles)")
 endif()
 ```
 
-### 4. 灵活的构建选项
+### 4. Flexible Build Options
 ```bash
-# 完整功能 - 所有后端
+# Full functionality - all backends
 cmake -DBUILD_ALL_BACKENDS=ON
 
-# 快速开发 - 只构建CPU后端
+# Fast development - only build CPU backend
 cmake -DBUILD_CPU_BACKEND=ON -DBUILD_GPU_BACKEND=OFF -DBUILD_YICA_BACKEND=OFF
 
-# 即使没有CUDA，GPU后端仍然可以编译（生成模拟代码）
+# Even without CUDA, GPU backend can still compile (generates simulation code)
 ```
 
-## 使用场景对比
+## Usage Scenario Comparison
 
-### 传统错误做法
+### Traditional Incorrect Approach
 ```bash
-# ❌ 检查硬件，硬件不匹配就拒绝编译
+# ❌ Check hardware, refuse compilation if hardware doesn't match
 if ! nvidia-smi; then
-    echo "错误：没有GPU，无法构建GPU后端"
+    echo "Error: No GPU, cannot build GPU backend"
     exit 1
 fi
 ```
 
-### YICA正确做法  
+### YICA Correct Approach  
 ```bash
-# ✅ 总是可以编译，根据环境生成最佳代码
-cmake -DBUILD_GPU_BACKEND=ON  # 即使没有GPU也能编译
-make  # 生成GPU代码转换器（可能是模拟版本）
-./yica_optimizer --backend gpu input.c  # 总是能生成GPU代码
+# ✅ Always compiles, generates optimal code based on environment
+cmake -DBUILD_GPU_BACKEND=ON  # Compiles even without GPU
+make  # Generates GPU code transformer (possibly simulation version)
+./yica_optimizer --backend gpu input.c  # Always generates GPU code
 ```
 
-## 实际效果
+## Practical Results
 
-### 1. 编译时间对比
-- **完整构建**：所有后端 (~2-3秒)
-- **单后端构建**：仅CPU后端 (~1秒) - **节省约50%时间**
-- **核心引擎**：无后端 (~0.5秒) - **节省约75%时间**
+### 1. Compilation Time Comparison
+- **Full build**: All backends (~2-3 seconds)
+- **Single backend build**: CPU backend only (~1 second) - **Saves ~50% time**
+- **Core engine**: No backends (~0.5 seconds) - **Saves ~75% time**
 
-### 2. 环境兼容性
-- **macOS无OpenMP**：✅ 自动降级到串行模式
-- **Linux无CUDA**：✅ GPU后端生成模拟代码  
-- **容器环境**：✅ 完全自包含，无外部依赖
+### 2. Environment Compatibility
+- **macOS without OpenMP**: ✅ Automatically degrades to serial mode
+- **Linux without CUDA**: ✅ GPU backend generates simulation code  
+- **Container environment**: ✅ Completely self-contained, no external dependencies
 
-### 3. 用户体验
+### 3. User Experience
 ```bash
-# 开发者A：只关心CPU优化
+# Developer A: Only cares about CPU optimization
 cmake -DBUILD_CPU_BACKEND=ON -DBUILD_GPU_BACKEND=OFF
-# 快速编译，专注CPU开发
+# Fast compilation, focused on CPU development
 
-# 开发者B：需要完整功能
+# Developer B: Needs full functionality
 cmake -DBUILD_ALL_BACKENDS=ON  
-# 完整功能，所有后端都可用
+# Full functionality, all backends available
 
-# 用户C：部署环境没有GPU
+# User C: Deployment environment without GPU
 ./yica_optimizer --backend gpu code.c
-# 仍然能生成GPU代码，用于后续部署
+# Still generates GPU code for subsequent deployment
 ```
 
-## 设计优势
+## Design Advantages
 
-### 1. 开发效率
-- ✅ 快速迭代：只编译需要的部分
-- ✅ 并行开发：不同后端可独立开发
-- ✅ 环境友好：任何环境都能开发
+### 1. Development Efficiency
+- ✅ Rapid iteration: Only compile needed parts
+- ✅ Parallel development: Different backends can be developed independently
+- ✅ Environment friendly: Can develop in any environment
 
-### 2. 用户友好
-- ✅ 零配置：下载即可使用
-- ✅ 智能降级：自动适应环境
-- ✅ 清晰反馈：明确告知当前状态
+### 2. User Friendly
+- ✅ Zero configuration: Download and use immediately
+- ✅ Intelligent degradation: Automatically adapts to environment
+- ✅ Clear feedback: Clearly indicates current status
 
-### 3. 维护简单
-- ✅ 自包含：减少外部依赖维护
-- ✅ 模块化：后端独立，便于维护
-- ✅ 测试友好：每个部分都可独立测试
+### 3. Simple Maintenance
+- ✅ Self-contained: Reduces external dependency maintenance
+- ✅ Modular: Backends are independent, easy to maintain
+- ✅ Test friendly: Each part can be tested independently
 
-## 总结
+## Architecture Benefits
 
-**YICA的设计理念是：作为转换优化代码的工具，应该能在任何环境下编译和运行，生成任何目标后端的优化代码。后端分离的目的是提高开发效率，而不是创建使用障碍。**
+### Performance Optimization
+- **Multi-level Optimization**: Algorithm, operator, kernel, and instruction level optimization
+- **Architecture Awareness**: Deep integration with YICA CIM architecture characteristics
+- **Intelligent Search**: Multi-objective optimization balancing latency, energy, and memory
 
-这种设计确保了：
-1. **开发者**可以快速迭代，专注于特定后端
-2. **用户**可以在任何环境下使用工具
-3. **工具本身**具有最大的兼容性和可用性
+### Flexibility and Portability
+- **Backend Agnostic**: Works across CUDA, Triton, YICA, and other backends
+- **Hardware Independent**: Generates optimized code regardless of target hardware availability
+- **Environment Adaptive**: Automatically adjusts to different deployment environments
 
-这正是一个优秀的转换优化工具应该具备的特质。 
+### Developer Experience
+- **Simple Interface**: Easy-to-use Python and C++ APIs
+- **Rich Documentation**: Comprehensive guides and examples
+- **Debugging Support**: Built-in profiling and analysis tools
+
+## Summary
+
+**YICA's design philosophy is: As a code transformation and optimization tool, it should be able to compile and run in any environment, generating optimized code for any target backend. Backend separation is intended to improve development efficiency, not create usage barriers.**
+
+This design ensures:
+1. **Developers** can iterate quickly, focusing on specific backends
+2. **Users** can use the tool in any environment
+3. **The tool itself** has maximum compatibility and usability
+
+This is exactly what an excellent transformation optimization tool should possess.

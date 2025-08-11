@@ -46,19 +46,19 @@
 
 **当前状态**: YIS指令生成完整，缺少实际执行引擎  
 **剩余工作**:
-```cpp
-// 核心实现
+```text
+Core Implementation
 yirage/src/yica/engine/
-├── yis_instruction_engine.cc        // 指令执行引擎
-├── cim_array_simulator.cc          // CIM阵列模拟器  
-├── spm_manager.cc                  // SPM内存管理
-├── dram_interface.cc               // DRAM接口
-└── performance_profiler.cc         // 性能分析器
+├── yis_instruction_engine.cc        // Instruction execution engine
+├── cim_array_simulator.cc          // CIM array simulator  
+├── spm_manager.cc                  // SPM memory management
+├── dram_interface.cc               // DRAM interface
+└── performance_profiler.cc         // Performance profiler
 
-// 集成点
-- 与所有7个YICA算子集成
-- 实现真正的YIS指令执行
-- 性能监控和调优
+Integration Points
+- Integration with all 7 YICA operators
+- Real YIS instruction execution implementation
+- Performance monitoring and tuning
 ```
 
 **预期收益**:
@@ -95,18 +95,18 @@ yirage/src/yica/engine/
 ### 2.1 全面性能基准测试
 
 **目标**: 建立工业标准基准测试套件
-```python
-# 基准测试覆盖
+```text
+Benchmark Coverage
 benchmark/
-├── yica_vs_pytorch.py          # 与PyTorch对比
-├── yica_vs_cuda.py            # 与CUDA对比  
-├── yica_vs_triton.py          # 与Triton对比
-├── yica_end_to_end.py         # 端到端模型测试
-├── yica_scalability.py        # 可扩展性测试
-└── yica_memory_efficiency.py  # 内存效率测试
+├── yica_vs_pytorch.py          # Comparison with PyTorch
+├── yica_vs_cuda.py            # Comparison with CUDA  
+├── yica_vs_triton.py          # Comparison with Triton
+├── yica_end_to_end.py         # End-to-end model testing
+├── yica_scalability.py        # Scalability testing
+└── yica_memory_efficiency.py  # Memory efficiency testing
 
-# 性能目标
-- Matrix Multiplication: 5.0x vs PyTorch (当前3.0x)
+Performance Targets
+- Matrix Multiplication: 5.0x vs PyTorch (current 3.0x)
 - Attention Mechanism: 4.0x vs FlashAttention  
 - End-to-End Inference: 3.5x vs TorchScript
 - Memory Efficiency: 50% reduction vs baseline
@@ -245,39 +245,39 @@ spec:
 ### 5.1 下一代YICA架构
 
 **目标**: 探索未来技术方向
-```cpp
-// 研究方向
-1. 量子-经典混合计算
-2. 神经形态计算集成
-3. 边缘计算优化
-4. 联邦学习支持
-5. 自适应硬件配置
+```text
+Research Directions
+1. Quantum-classical hybrid computing
+2. Neuromorphic computing integration
+3. Edge computing optimization
+4. Federated learning support
+5. Adaptive hardware configuration
 
-// 原型开发
+Prototype Development
 yirage/research/
-├── quantum_yica/        # 量子YICA原型
-├── neuromorphic/        # 神经形态集成
-├── edge_yica/          # 边缘YICA
-├── federated_learning/  # 联邦学习
-└── adaptive_hardware/   # 自适应硬件
+├── quantum_yica/        # Quantum YICA prototype
+├── neuromorphic/        # Neuromorphic integration
+├── edge_yica/          # Edge YICA
+├── federated_learning/  # Federated learning
+└── adaptive_hardware/   # Adaptive hardware
 ```
 
 ### 5.2 AI编译器集成
 
 **目标**: 与主流AI编译器深度集成
-```python
-# 编译器集成
-├── tvm_yica/           # TVM + YICA后端
-├── xla_yica/           # XLA + YICA优化
-├── mlir_yica/          # MLIR + YICA方言
-├── torch_fx_yica/      # TorchFX + YICA变换
-└── onnx_yica/          # ONNX + YICA运行时
+```text
+Compiler Integration
+├── tvm_yica/           # TVM + YICA backend
+├── xla_yica/           # XLA + YICA optimization
+├── mlir_yica/          # MLIR + YICA dialect
+├── torch_fx_yica/      # TorchFX + YICA transformation
+└── onnx_yica/          # ONNX + YICA runtime
 
-# 自动调优
-- 基于强化学习的自动调优
-- 遗传算法优化搜索
-- 贝叶斯优化超参数
-- 多目标优化 (性能+功耗+精度)
+Auto-tuning
+- Reinforcement learning-based auto-tuning
+- Genetic algorithm optimization search
+- Bayesian optimization hyperparameters
+- Multi-objective optimization (performance+power+accuracy)
 ```
 
 ---
