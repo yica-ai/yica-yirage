@@ -1,28 +1,14 @@
-YICA/YiRage Documentation
+YICA-YiRage Documentation
 =========================
 
-Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (AI Kernel Super Optimizer) documentation.
+Welcome to YICA-YiRage: AI Computing Optimization Framework for In-Memory Computing Architecture.
 
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
 
    getting-started/README
-   getting-started/design-philosophy
    getting-started/quick-reference
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Architecture
-
-   architecture/README
-   architecture/yirage-architecture
-   architecture/yica-architecture-detailed
-   architecture/modular-architecture
-   architecture/implementation-summary
-   architecture/yirage-integration-plan
-   architecture/yirage-extension
-   architecture/yirage-updates
 
 .. toctree::
    :maxdepth: 2
@@ -45,29 +31,6 @@ Welcome to the YICA (YICA Intelligence Computing Architecture) and YiRage (AI Ke
    :caption: Development
 
    development/README
-   design/build_system_redesign
-   design/compatibility_layer_enhancement
-   design/configuration_management_system
-   design/deployment_packaging_strategy
-   design/error_handling_logging_system
-   design/testing_framework_design
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Deployment
-
-   deployment/README
-   deployment/docker-deployment
-   deployment/deployment-report
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Project Management
-
-   project-management/README
-   project-management/backend-integration
-   project-management/implementation-analysis
-   project-management/execution-plan
 
 Index and Tables
 ================
@@ -76,82 +39,70 @@ Index and Tables
 * :ref:`modindex`
 * :ref:`search`
 
-Project Overview
-================
+What is YICA-YiRage?
+====================
 
-YICA (YICA Intelligence Computing Architecture)
------------------------------------------------
+**YICA-YiRage** is an AI computing optimization framework specifically designed for in-memory computing architectures. It extends the YiRage superoptimization engine with YICA (Yet another In-memory Computing Architecture) support, providing automated GPU kernel generation and optimization for deep learning workloads on specialized hardware.
 
-YICA is a revolutionary Compute-in-Memory (CIM) architecture designed specifically for AI computing optimization. By integrating computing units directly into memory, it significantly reduces data movement and provides exceptional performance and energy efficiency.
+Key Features
+============
 
-Key Features:
+* **🚀 Automated Kernel Generation**: Automatically generates optimized GPU kernels without manual CUDA/Triton programming
+* **🧠 In-Memory Computing Support**: Specialized optimizations for in-memory computing architectures 
+* **⚡ Superoptimization**: Multi-level optimization techniques for maximum performance
+* **🔄 PyTorch Integration**: Seamless integration with existing PyTorch workflows
+* **🎯 Production Ready**: Comprehensive testing and validation framework
+* **📊 Performance Monitoring**: Built-in profiling and performance analysis tools
 
-* **Compute-in-Memory Architecture**: 512 CIM arrays providing high parallel computing capability
-* **Three-tier Memory Hierarchy**: Register file, SPM (Scratchpad Memory), and DRAM for optimized memory management
-* **YIS Instruction Set**: Custom instruction set designed specifically for CIM architecture
-* **Multi-backend Support**: Seamless switching between CUDA, Triton, and YICA backends
-* **Automatic Optimization**: Intelligent search for optimal computation graphs
-* **High Performance**: 2-3x performance improvement compared to traditional solutions
+Quick Start
+===========
 
-YiRage (AI Kernel Super Optimizer)
-----------------------------------
+.. code-block:: python
 
-YiRage is a next-generation AI kernel optimizer that combines YICA architecture awareness with intelligent optimization strategies. It serves as a code transformation and optimization tool designed to maximize performance across different hardware backends.
+   import yirage as yr
 
-Core Capabilities:
+   # Create a kernel graph
+   graph = yr.new_kernel_graph()
 
-* **Architecture-Aware Optimization**: Deep integration with YICA CIM architecture characteristics
-* **Multi-objective Search**: Balances latency, energy efficiency, and memory utilization
-* **Automatic Code Generation**: Transforms high-level models into optimized kernels
-* **Cross-platform Support**: Works across different hardware environments
-* **Hierarchical Optimization**: Multi-level optimization from algorithm to instruction level
+   # Define input tensors
+   X = graph.new_input(dims=(1024, 512), dtype=yr.float16)
+   W = graph.new_input(dims=(512, 256), dtype=yr.float16)
 
-Performance Metrics
-===================
+   # Add operations
+   Y = graph.rms_norm(X, normalized_shape=(512,))
+   Z = graph.matmul(Y, W)
 
-.. list-table:: Performance Comparison Table
-   :widths: 25 25 25 25
-   :header-rows: 1
+   # Mark outputs
+   graph.mark_output(Z)
 
-   * - Operator Type
-     - vs PyTorch
-     - vs CUDA
-     - vs Triton
-   * - Matrix Multiplication
-     - 3.0x
-     - 2.2x
-     - -
-   * - Attention Mechanism
-     - 2.8x
-     - 1.9x
-     - 1.5x
-   * - End-to-End Inference
-     - 2.5x
-     - 1.7x
-     - -
+   # Generate optimized kernel
+   kernel = graph.superoptimize()
 
-Related Links
-=============
+   # Use in PyTorch
+   import torch
+   x = torch.randn(1024, 512, dtype=torch.float16, device='cuda')
+   w = torch.randn(512, 256, dtype=torch.float16, device='cuda')
+   output = kernel(inputs=[x, w])
 
-* `Source Code <../yirage/>`_ - YiRage core source code
-* `Examples <../yirage/demo/>`_ - Usage examples and demonstrations
-* `Test Suite <../tests/>`_ - Complete test cases
+Installation
+============
+
+.. code-block:: bash
+
+   # From PyPI (Recommended)
+   pip install yica-yirage
+
+   # From Source
+   git clone --recursive https://github.com/yica-ai/yica-yirage.git
+   cd yica-yirage
+   pip install -e . -v
 
 Getting Help
 ============
 
-If you encounter issues while using the system, please:
+If you encounter issues:
 
-1. Consult the relevant documentation
-2. Check :doc:`FAQ <getting-started/quick-reference>`
-3. View :doc:`Error Handling Guide <design/error_handling_logging_system>`
-4. Submit an Issue or contact the maintenance team
-
-.. raw:: html
-
-   <div class="admonition note">
-   <p class="admonition-title">Documentation Version</p>
-   <p><strong>Version</strong>: v1.0.4<br>
-   <strong>Last Updated</strong>: August 2025<br>
-   <strong>Maintenance Team</strong>: YICA Development Team</p>
-   </div>
+1. Check the :doc:`User Guide <USAGE>`
+2. Browse :doc:`API Reference <api/README>`
+3. View :doc:`Quick Reference <getting-started/quick-reference>`
+4. Submit an Issue on `GitHub <https://github.com/yica-ai/yica-yirage/issues>`_
