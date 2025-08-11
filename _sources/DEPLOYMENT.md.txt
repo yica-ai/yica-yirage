@@ -1,0 +1,335 @@
+# YICA/YiRage Documentation Deployment Guide
+
+This document describes how to build, test, and deploy documentation for the YICA/YiRage project.
+
+## 📋 Prerequisites
+
+### System Requirements
+- **Python**: 3.8 or higher
+- **Operating System**: Linux, macOS, Windows
+- **Memory**: At least 2GB RAM
+- **Disk Space**: At least 500MB available space
+
+### Required Software
+- Python 3.8+
+- pip (Python package manager)
+- Git (version control)
+- Optional: LaTeX (for PDF generation)
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/YZ-optimzier-bin.git
+cd YZ-optimzier-bin
+```
+
+### 2. Navigate to Documentation Directory
+```bash
+cd docs
+```
+
+### 3. Use Build Script (Recommended)
+```bash
+# Full build process
+./build_docs.sh
+
+# Or step by step
+./build_docs.sh --install  # Install dependencies
+./build_docs.sh --build    # Build documentation
+./build_docs.sh --serve    # Local preview
+```
+
+### 4. Use Makefile
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Build documentation
+make build
+
+# Local preview
+make serve
+
+# Clean build
+make clean
+```
+
+## 🔧 Detailed Build Steps
+
+### Step 1: Environment Preparation
+```bash
+# Check Python version
+python3 --version
+
+# Create virtual environment (optional but recommended)
+python3 -m venv docs_env
+source docs_env/bin/activate  # Linux/macOS
+# or
+docs_env\Scripts\activate     # Windows
+```
+
+### Step 2: Install Dependencies
+```bash
+# Install Sphinx and related extensions
+pip install -r requirements.txt
+
+# Verify installation
+sphinx-build --version
+```
+
+### Step 3: Build Documentation
+```bash
+# Clean previous build
+make clean
+
+# Build HTML documentation
+make build
+
+# Build PDF documentation (requires LaTeX)
+make build-pdf
+```
+
+### Step 4: Test Documentation
+```bash
+# Run documentation tests
+make test
+
+# Check links
+make linkcheck
+```
+
+## 🌐 Deployment Options
+
+### Option 1: Read the Docs (Recommended)
+
+#### Automatic Deployment
+1. **Connect GitHub Repository**
+   - Register an account on [Read the Docs](https://readthedocs.org/)
+   - Import your GitHub repository
+   - Project name: `yica-yirage`
+
+2. **Configure Build**
+   - Build command: `cd docs && make build`
+   - Python version: 3.9
+   - Configuration file: `.readthedocs.yml`
+
+3. **Set Environment Variables**
+   ```bash
+   # Add to Read the Docs project settings
+   RTD_TOKEN=your_rtd_token_here
+   ```
+
+#### Manual Deployment
+```bash
+# Install Read the Docs CLI
+pip install rtd-cli
+
+# Login
+rtd login
+
+# Deploy
+rtd deploy yica-yirage
+```
+
+### Option 2: GitHub Pages
+
+#### Automatic Deployment (via GitHub Actions)
+1. **Push code to main branch**
+2. **GitHub Actions will automatically build and deploy**
+3. **Access**: `https://your-username.github.io/YZ-optimzier-bin/`
+
+#### Manual Deployment
+```bash
+# Build documentation
+cd docs && make build
+
+# Push to gh-pages branch
+git checkout -b gh-pages
+git add _build/html/
+git commit -m "Deploy documentation"
+git push origin gh-pages
+```
+
+### Option 3: Self-Hosting
+
+#### Using Nginx
+```bash
+# Build documentation
+cd docs && make build
+
+# Configure Nginx
+sudo cp -r _build/html/* /var/www/html/yica-docs/
+
+# Nginx configuration example
+server {
+    listen 80;
+    server_name docs.yourdomain.com;
+    root /var/www/html/yica-docs;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+```
+
+#### Using Apache
+```bash
+# Build documentation
+cd docs && make build
+
+# Deploy to Apache directory
+sudo cp -r _build/html/* /var/www/html/yica-docs/
+
+# Create .htaccess file
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [L]
+```
+
+## 🔍 Testing and Validation
+
+### Local Testing
+```bash
+# Start local server
+cd docs
+make serve
+
+# Access http://localhost:8000
+```
+
+### Link Checking
+```bash
+# Check all links
+make linkcheck
+
+# Check specific file
+sphinx-build -b linkcheck . _build/linkcheck
+```
+
+### Syntax Checking
+```bash
+# Check RST files
+rstcheck *.rst
+
+# Check Markdown files
+markdownlint *.md
+```
+
+## 🐛 Common Issues
+
+### Issue 1: Build Failure
+**Error**: `ModuleNotFoundError: No module named 'sphinx'`
+
+**Solution**:
+```bash
+pip install sphinx
+# or
+pip install -r requirements.txt
+```
+
+### Issue 2: Theme Problem
+**Error**: `sphinx_rtd_theme not found`
+
+**Solution**:
+```bash
+pip install sphinx_rtd_theme
+```
+
+### Issue 3: Character Encoding Issues
+**Error**: Characters display as garbled text
+
+**Solution**:
+1. Ensure files use UTF-8 encoding
+2. Set correct language in `conf.py`
+3. Check font support
+
+### Issue 4: PDF Build Failure
+**Error**: LaTeX-related errors
+
+**Solution**:
+```bash
+# Ubuntu/Debian
+sudo apt-get install texlive-latex-recommended texlive-fonts-recommended
+
+# macOS
+brew install --cask mactex
+
+# Windows
+# Download and install MiKTeX
+```
+
+## 📊 Performance Optimization
+
+### Build Optimization
+```bash
+# Parallel build
+make -j$(nproc) build
+
+# Incremental build
+sphinx-build -b html . _build/html -j auto
+```
+
+### Cache Optimization
+```bash
+# Use pip cache
+pip install --cache-dir ~/.cache/pip -r requirements.txt
+
+# Use ccache (if supported)
+export CCACHE_DIR=~/.ccache
+```
+
+## 🔐 Security Considerations
+
+### Environment Variables
+```bash
+# Don't hardcode sensitive information in code
+export RTD_TOKEN="your_token_here"
+export GITHUB_TOKEN="your_github_token_here"
+```
+
+### Access Control
+- Restrict documentation access permissions
+- Use HTTPS
+- Regularly update dependencies
+
+## 📈 Monitoring and Maintenance
+
+### Build Monitoring
+```bash
+# Monitor build time
+time make build
+
+# Check build size
+du -sh _build/html/
+```
+
+### Regular Maintenance
+- Update dependency packages monthly
+- Check and fix security vulnerabilities
+- Update documentation content
+- Clean old build files
+
+## 📞 Getting Help
+
+If you encounter issues, please:
+
+1. **Check logs**: Review build output and error messages
+2. **Consult documentation**: Refer to Sphinx official documentation
+3. **Search issues**: Look for similar issues in GitHub Issues
+4. **Submit Issue**: Create a new GitHub Issue
+5. **Contact maintenance team**: Send email or Slack message
+
+## 🔗 Related Links
+
+- [Sphinx Official Documentation](https://www.sphinx-doc.org/)
+- [Read the Docs Documentation](https://docs.readthedocs.io/)
+- [GitHub Pages Documentation](https://pages.github.com/)
+- [Project GitHub Repository](https://github.com/your-username/YZ-optimzier-bin)
+
+---
+
+**Last Updated**: December 2024  
+**Maintenance Team**: YICA Development Team

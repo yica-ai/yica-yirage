@@ -1,0 +1,2843 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YICA 架构核心特性文档 &mdash; YICA/YiRage 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=51b770b3"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=30646c52"></script>
+      <script src="../_static/js/custom.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Yirage - 下一代AI内核超优化器产品规划" href="yirage-architecture.html" />
+    <link rel="prev" title="YICA-QEMU Docker 快速参考" href="../getting-started/quick-reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            YICA/YiRage
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/design-philosophy.html">YICA 转换优化代码工具 - 设计理念</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id1">核心理念</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#self-contained">1. 自包含性 (Self-Contained)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#environment-agnostic">2. 环境无关性 (Environment Agnostic)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id2">3. 后端分离的真正目的</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started/design-philosophy.html#id3">✅ 正确理解</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started/design-philosophy.html#id4">❌ 错误理解</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id5">实现体现</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id6">1. 自包含的核心引擎</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id7">2. 智能后端检测</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id8">3. 优雅的依赖降级</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id9">4. 灵活的构建选项</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id10">使用场景对比</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id11">传统错误做法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id12">YICA正确做法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id13">实际效果</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id14">1. 编译时间对比</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id15">2. 环境兼容性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id16">3. 用户体验</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id17">设计优势</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id18">1. 开发效率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id19">2. 用户友好</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/design-philosophy.html#id20">3. 维护简单</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/design-philosophy.html#id21">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/quick-reference.html">YICA-QEMU Docker 快速参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/quick-reference.html#id1">🚀 一键部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/quick-reference.html#id2">🌐 访问地址</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/quick-reference.html#id3">🔧 常用命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/quick-reference.html#id4">容器管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/quick-reference.html#id5">部署管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/quick-reference.html#yica">🧪 YICA使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/quick-reference.html#vncqemu">在VNC桌面中启动QEMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started/quick-reference.html#python">Python环境测试</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started/quick-reference.html#id6">⚠️ 故障排除</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Design</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YICA 架构核心特性文档</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">概述</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">架构核心理念</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">1. 核心架构特性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">1.1 存算一体设计架构</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">1.1.1 三级内存层次架构</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cu">1.1.2 计算单元 (CU) 架构</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#die">1.1.3 Die 级别组织</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">1.2 数据类型系统</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">1.2.1 整数数据类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">1.2.2 浮点数据类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">1.2.3 特殊数据类型</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">1.3 内存布局策略</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">1.3.1 基础数据布局</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">1.3.2 分块数据布局</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">1.3.3 内存类型分类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">2. 分布式计算架构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#yccl">2.1 YCCL 通信后端</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id15">2.1.1 通信框架设计</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">2.1.2 异步执行模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">2.1.3 错误处理策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">2.1.4 集合通信原语</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">2.2 设备网格管理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#diemesh">2.2.1 DieMesh 抽象</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rank">2.2.2 Rank 映射策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20">2.2.3 网格通信优化</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">2.3 张量分布策略</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#shard">2.3.1 Shard（分片）策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#replicate">2.3.2 Replicate（复制）策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#partial">2.3.3 Partial（部分归约）策略</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">3. 内存管理系统</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cim-cimcachingallocator">3.1 CIM 缓存分配器 (CIMCachingAllocator)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id23">3.1.1 分层缓存架构</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id24">3.1.2 内存池管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id25">3.1.3 性能监控和统计</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#oom-out-of-memory">3.1.4 OOM (Out of Memory) 处理</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cimtensorimpl">3.2 张量实现 (CIMTensorImpl)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id26">3.2.1 张量结构设计</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id27">3.2.2 内存管理集成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id28">3.2.3 设备间数据移动</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">4. 计算抽象</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gtensor">4.1 GTensor 分布式张量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">4.2 流管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">5. 系统集成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytorch">5.1 PyTorch 集成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">5.2 调试和监控</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id33">6. 性能优化特性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id34">6.1 内存优化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35">6.2 通信优化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id36">7. 架构优势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id37">8. 应用场景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ybx-replay">9. 运行时执行框架（基于 ybx_replay 分析）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id38">9.1 内核回放系统</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id39">9.2 张量系统增强</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40">9.3 内存分配器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id41">9.4 计算图执行</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#llama">10. Llama 模型专用优化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attention">10.1 Attention 机制优化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id42">10.2 模型结构支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id43">10.3 内存布局优化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id44">11. 性能监控和调试</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id45">11.1 执行时间统计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id46">11.2 调试工具</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id47">11.3 测试框架</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id48">12. 硬件抽象层</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#api">12.1 驱动 API 封装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id49">12.2 内核加载机制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id50">12.3 设备配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#llvm-risc-v-yica-llvm">13. LLVM RISC-V 后端 YICA 扩展（基于 LLVM 后端分析）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#yis">13.1 YIS 指令集扩展</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id51">13.1.1 指令集架构概述</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yisecopy">13.1.2 YISECOPY (外部拷贝指令)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yisicopy">13.1.3 YISICOPY (内部拷贝指令)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yismma">13.1.4 YISMMA (矩阵乘法加速指令)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yissync">13.1.5 YISSYNC (同步指令)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yiscontrol">13.1.6 YISCONTROL (控制指令)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id52">13.2 YICA 架构层次寄存器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id53">13.3 存储基地址寄存器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id54">13.4 YIS 指令集架构特性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id55">13.5 编译器内建函数支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id56">13.6 YICA 层次化计算模型</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id57">14. 架构综合特性总结</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id58">14.1 完整的存算一体解决方案</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id59">14.2 分层优化策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id60">14.3 YICA 与标准架构的差异</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id61">14.3.1 指令集层面差异</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id62">14.3.2 内存架构差异</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id63">14.3.3 计算模型差异</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id64">14.3.4 同步机制差异</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id65">15. 性能特性和优化策略</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id66">15.1 计算性能优化</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id67">15.1.1 存算一体优势</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id68">15.1.2 矩阵计算优化</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id69">15.2 内存性能优化</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id70">15.2.1 分层存储优化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id71">15.2.2 缓存优化</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id72">15.3 通信性能优化</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id73">15.3.1 片内通信优化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id74">15.3.2 分布式通信优化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id75">16. 应用场景和性能基准</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id76">16.1 深度学习训练场景</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id77">16.1.1 大模型训练</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id78">16.1.2 推理加速场景</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id79">16.2 性能基准测试</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mlperf">16.2.1 MLPerf 基准</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id80">16.2.2 内存性能基准</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id81">YICA 架构详细参数规范</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id82">17.1 硬件架构参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id83">17.1.1 计算层次结构参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id84">17.1.2 设备属性参数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id85">基本设备属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id86">YICA 特定设备属性</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id87">17.1.3 内存层次参数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id88">内存类型定义</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id89">内存分配器参数</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id90">17.1.4 计算网格参数配置</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id91">标准网格配置示例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id92">17.2 编程模型参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id93">17.2.1 线程层次参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id94">17.2.2 张量布局参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id95">17.2.3 内核配置参数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id96">17.3 性能参数基准</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id97">17.3.1 计算性能参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id98">17.3.2 内存配置参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id99">17.3.3 运行时配置参数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id100">17.4 API 兼容性参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id101">17.4.1 设备管理 API 参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id102">17.4.2 流和事件参数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id103">17.5 YIS 指令集详细参数</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id104">17.5.1 指令格式定义</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id105">17.5.2 YISECOPY 指令参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id106">17.5.3 YISICOPY 指令参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id107">17.5.4 YISMMA 指令参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id108">17.5.5 YISSYNC 指令参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id109">17.5.6 YISCONTROL 指令参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id110">17.5.7 张量描述符参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id111">17.5.8 立即数和寄存器参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id112">17.5.9 性能调优参数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="yirage-architecture.html">Yirage - 下一代AI内核超优化器产品规划</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yirage-architecture.html#id1">产品定位与愿景</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id2">核心价值主张</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="yirage-architecture.html#yirage-v1-0">第一阶段：搜索算法驱动版本 (Yirage v1.0)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id3">1. 产品架构设计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id4">2. 核心模块设计</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#yica">2.1 YICA架构感知层</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id5">2.2 智能搜索引擎</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id6">2.3 优化策略库</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id7">3. 优化目标设计</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id8">3.1 多维度性能指标</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id9">3.2 自适应目标权重</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id10">4. 搜索算法创新</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id11">4.1 分层搜索策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id12">4.2 多目标进化搜索</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id13">5. 用户接口设计</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id14">5.1 命令行接口</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#python-api">5.2 Python API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#web">5.3 Web界面</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id15">6. 性能基准与验证</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id16">6.1 基准测试套件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id17">7. 第一阶段发展路线图</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#phase-1-1-3">Phase 1.1: 核心引擎 (3个月)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#phase-1-2-2">Phase 1.2: 优化策略扩展 (2个月)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#phase-1-3-2">Phase 1.3: 验证与优化 (2个月)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#phase-1-4-1">Phase 1.4: 开源发布 (1个月)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id18">8. 核心竞争优势</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id19">9. 技术风险与应对</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id20">9.1 主要风险</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id21">9.2 应对策略</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="yirage-architecture.html#id22">10. 商业化规划</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id23">10.1 开源策略</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yirage-architecture.html#id24">10.2 市场定位</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modular-architecture.html">YICA 模块化架构 - 按硬件后端分离的构建和测试系统</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id1">🎯 设计目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id2">🏗️ 架构总览</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id3">分层设计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id4">模块化组件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id5">📁 目录结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id6">🔧 构建系统</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#cmake">1. 模块化CMake配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id7">2. 后端选择矩阵</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id8">3. 编译标志管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id9">🧪 测试系统</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id10">1. 按后端分离的测试套件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id11">2. 测试运行方式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id12">🚀 使用示例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#cpu">场景1: 纯CPU开发环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#gpu">场景2: GPU加速环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id13">场景3: YICA硬件环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id14">场景4: 研究对比环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id15">📊 性能特征</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id16">构建时间对比</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id17">测试执行时间</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#ci-cd">🔄 CI/CD 集成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#github-actions">GitHub Actions 矩阵构建</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id18">🎁 主要优势</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id19">1. <strong>独立性</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id20">2. <strong>可选性</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id21">3. <strong>可维护性</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id22">4. <strong>可测试性</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id23">5. <strong>可扩展性</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modular-architecture.html#id24">🔮 未来扩展</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id25">新后端添加流程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modular-architecture.html#id26">支持的新硬件类型</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="implementation-summary.html">YICA存算一体架构 - Mirage例子改进总结</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id1">实现概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id2">完成的文件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#yica">1. YICA优化模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id3">2. 综合演示和文档</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id4">YICA架构特性实现</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#cim">1. CIM阵列并行化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#spm">2. SPM内存层次优化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id5">3. 存算一体计算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id6">4. 智能优化策略</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id7">主要改进点</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#mirage">1. 相比原始Mirage版本</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id8">2. 模块化设计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id9">3. 性能分析</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id10">代码结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id11">核心组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id12">性能对比框架</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id13">技术特点</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#triton">1. Triton内核优化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id14">2. 内存访问优化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id15">3. 并行化策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id16">4. 数值稳定性</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id17">运行方式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id18">单独运行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id19">综合演示</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id20">预期性能收益</a></li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id21">扩展性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id22">添加新模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id23">优化现有模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id24">验证和测试</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id25">功能正确性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id26">性能验证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementation-summary.html#id27">环境兼容性</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implementation-summary.html#id28">总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mirage-integration-plan.html">YICA与Mirage集成方案</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id1">项目目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id2">技术路线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id3">核心组件设计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#id4">1. YICA后端集成到Mirage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#yica">2. YICA优化器组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#id5">3. YICA架构分析器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#id6">4. YICA搜索空间定义</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#miragetriton-transpiler">5. 扩展Mirage的Triton Transpiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#id7">6. YICA运行时支持</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id8">集成流程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#mirage">步骤1: 扩展Mirage后端支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#triton-transpiler">步骤2: 扩展Triton Transpiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#id9">步骤3: 集成到构建系统</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-integration-plan.html#python">步骤4: Python绑定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id10">使用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-integration-plan.html#id11">技术优势</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mirage-extension.html">Mirage-YICA扩展：目标函数支持的搜索优化方案</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mirage-extension.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-extension.html#id2">核心设计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#yica">1. YICA目标函数框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#mirage">2. 扩展Mirage搜索配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#id3">3. YICA性能评估器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#id4">4. 集成到Mirage搜索引擎</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#python">5. Python接口扩展</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#id5">6. 使用示例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-extension.html#id6">实施计划</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#id7">阶段1: 核心框架 (2周)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#id8">阶段2: 搜索集成 (3周)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirage-extension.html#python-2">阶段3: Python接口和测试 (2周)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-extension.html#id9">预期效果</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mirage-updates.html">我对Mirage设计理念和优化策略的分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mirage-updates.html#id1">1. <strong>Mirage的核心设计理念分析</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-updates.html#gpu">2. <strong>通用GPU优化的问题与改进空间</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-updates.html#yica">3. <strong>结合YICA架构的改进方案</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-updates.html#id2">4. <strong>具体改进建议</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirage-updates.html#id3">5. <strong>预期的改进效果</strong></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment &amp; Operations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/docker-deployment.html">YICA-QEMU Docker化部署使用文档</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id1">📋 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id2">🎯 部署目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id3">🚀 快速部署</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id4">1. 一键部署命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id5">2. 部署结果验证</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id6">🌐 访问方式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#web-vnc">方式1: Web VNC (推荐)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#vnc">方式2: VNC客户端</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#ssh">方式3: SSH进入容器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id7">🔧 管理操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id8">容器管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id9">服务管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#yica">🧪 YICA环境使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#yica-qemu">启动YICA-QEMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#yica-python">YICA Python环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id10">📁 目录结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id11">🔧 端口映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id12">⚠️ 故障排除</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id13">1. 容器无法启动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id14">2. VNC连接失败</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id15">3. 网络访问问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id16">4. 系统镜像问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#qemu">5. QEMU启动失败</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id17">📊 性能优化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id18">1. 容器资源限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id19">2. VNC显示优化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id20">🔐 安全配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id21">1. 修改VNC密码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id22">2. 网络安全</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id23">📝 日志管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id24">查看日志</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id25">日志轮转</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id26">🔄 更新和维护</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id27">更新YICA代码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id28">系统维护</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/docker-deployment.html#id29">📞 技术支持</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id30">版本信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/docker-deployment.html#id31">联系方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/qemu-setup.html">parted [/dev/sdX]</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/deployment-report.html">YICA-QEMU Docker化部署报告</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id1">📋 项目概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id2">🎯 部署目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id3">🚀 解决方案</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id4">技术架构</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id5">🔧 技术实现</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#docker">1. Docker环境配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id6">2. 核心组件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id7">3. 网络配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id8">🛠️ 解决的技术难题</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id9">1. Docker权限问题 →✅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#dockerfile">2. Dockerfile权限问题 →✅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#gitlab">3. GitLab访问问题 ❌→✅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#vnc">4. VNC服务配置 ❌→✅</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id10">📊 部署结果</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id11">✅ 成功指标</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id12">📈 性能指标</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id13">🎉 最终成果</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id14">部署文件结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id15">远程服务器结构</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id16">🔄 使用流程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id17">1. 部署阶段 (一次性)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id18">2. 日常使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id19">3. 管理维护</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id20">🔍 测试验证</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id21">功能测试 ✅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id22">性能测试 ✅</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id23">稳定性测试 ✅</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id24">📝 经验总结</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id25">成功因素</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id26">改进建议</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id27">🎯 项目价值</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id28">技术价值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id29">业务价值</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/deployment-report.html#id30">📞 后续支持</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id31">文档资源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/deployment-report.html#id32">联系方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/analyzer.html">YICA 架构感知分析器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id1">🎯 核心功能</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id2">1. 多维度架构分析</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id3">2. 智能优化建议</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id4">3. 性能预测</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id5">🏗️ 架构设计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id6">核心组件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id7">🚀 快速开始</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id8">编译和测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id9">基本使用示例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id10">📊 分析指标详解</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id11">核心评分指标 (0-1)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id12">性能预测指标</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id13">🔧 高级配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id14">自定义 YICA 架构配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id15">分析器工厂模式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id16">🧪 支持的算子类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id17">📈 性能基准</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id18">分析性能</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id19">示例分析结果</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/analyzer.html#llama-attention">LLaMA Attention 层分析</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/analyzer.html#cnn-resnet">CNN ResNet 块分析</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id20">🔄 集成其他系统</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#mirage">与 Mirage 集成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#python">Python 绑定 (规划中)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#todo">📋 TODO 和未来计划</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id21">短期计划</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id22">中期计划</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/analyzer.html#id23">长期计划</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id24">🤝 贡献指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id25">📄 许可证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/analyzer.html#id26">🙏 致谢</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Production Design</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../design/build_system_redesign.html">YICA/YiRage Production Build System Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#core-principles">Core Principles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#graceful-degradation">1. Graceful Degradation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#dependency-hierarchy">2. Dependency Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#build-modes">3. Build Modes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../design/build_system_redesign.html#mode-1-core-build-always-works">Mode 1: Core Build (Always Works)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../design/build_system_redesign.html#mode-2-enhanced-build-recommended">Mode 2: Enhanced Build (Recommended)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../design/build_system_redesign.html#mode-3-full-build-maximum-performance">Mode 3: Full Build (Maximum Performance)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#implementation-strategy">Implementation Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#smart-dependency-detection">1. Smart Dependency Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#feature-based-configuration">2. Feature-Based Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#comprehensive-error-handling">3. Comprehensive Error Handling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#build-targets-structure">Build Targets Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#core-targets">1. Core Targets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#optional-targets">2. Optional Targets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#installation-strategy">Installation Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#modular-installation">1. Modular Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#capability-configuration-file">2. Capability Configuration File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#user-experience">User Experience</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#clear-build-status">1. Clear Build Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#runtime-feature-detection">2. Runtime Feature Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/build_system_redesign.html#testing-strategy">Testing Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#multi-configuration-testing">1. Multi-Configuration Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/build_system_redesign.html#capability-specific-tests">2. Capability-Specific Tests</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design/compatibility_layer_enhancement.html">Enhanced Compatibility Layer Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#current-issues-analysis">Current Issues Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#cuda-compatibility-problems">1. CUDA Compatibility Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#openmp-compatibility-gaps">2. OpenMP Compatibility Gaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#json-compatibility-limitations">3. JSON Compatibility Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#enhanced-design-solutions">Enhanced Design Solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#advanced-cuda-compatibility-layer">1. Advanced CUDA Compatibility Layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#production-grade-openmp-compatibility">2. Production-Grade OpenMP Compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#robust-json-compatibility">3. Robust JSON Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#integration-strategy">Integration Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#automatic-compatibility-detection">1. Automatic Compatibility Detection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/compatibility_layer_enhancement.html#performance-monitoring">2. Performance Monitoring</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design/configuration_management_system.html">Production-Grade Configuration Management System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/configuration_management_system.html#current-configuration-issues">Current Configuration Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#scattered-configuration">1. Scattered Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#runtime-configuration-problems">2. Runtime Configuration Problems</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/configuration_management_system.html#comprehensive-configuration-design">Comprehensive Configuration Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#hierarchical-configuration-system">1. Hierarchical Configuration System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#configuration-file-formats-and-examples">2. Configuration File Formats and Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../design/configuration_management_system.html#master-configuration-schema">Master Configuration Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../design/configuration_management_system.html#environment-specific-configurations">Environment-Specific Configurations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#dynamic-configuration-management">3. Dynamic Configuration Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/configuration_management_system.html#configuration-implementation-examples">4. Configuration Implementation Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design/deployment_packaging_strategy.html">Production Deployment and Packaging Strategy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/deployment_packaging_strategy.html#current-deployment-issues">Current Deployment Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#packaging-inconsistencies">1. Packaging Inconsistencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#deployment-complexities">2. Deployment Complexities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#distribution-problems">3. Distribution Problems</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/deployment_packaging_strategy.html#comprehensive-deployment-and-packaging-design">Comprehensive Deployment and Packaging Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#multi-tier-packaging-strategy">1. Multi-Tier Packaging Strategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#advanced-packaging-infrastructure">2. Advanced Packaging Infrastructure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/deployment_packaging_strategy.html#automated-deployment-pipeline">3. Automated Deployment Pipeline</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design/error_handling_logging_system.html">Production-Grade Error Handling and Logging System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/error_handling_logging_system.html#current-issues-analysis">Current Issues Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#error-handling-problems">1. Error Handling Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#logging-deficiencies">2. Logging Deficiencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/error_handling_logging_system.html#comprehensive-error-handling-design">Comprehensive Error Handling Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#structured-exception-hierarchy">1. Structured Exception Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#advanced-logging-framework">2. Advanced Logging Framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#error-recovery-and-resilience-framework">3. Error Recovery and Resilience Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/error_handling_logging_system.html#implementation-strategy">Implementation Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#exception-handling-implementation">1. Exception Handling Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/error_handling_logging_system.html#usage-examples">2. Usage Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design/testing_framework_design.html">Comprehensive Testing Framework Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/testing_framework_design.html#current-testing-gaps">Current Testing Gaps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#insufficient-test-coverage">1. Insufficient Test Coverage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#test-infrastructure-problems">2. Test Infrastructure Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#quality-assurance-gaps">3. Quality Assurance Gaps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../design/testing_framework_design.html#id1">Comprehensive Testing Framework Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#multi-level-testing-architecture">1. Multi-Level Testing Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#specific-test-categories-implementation">2. Specific Test Categories Implementation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../design/testing_framework_design.html#unit-tests-for-core-components">Unit Tests for Core Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../design/testing_framework_design.html#integration-tests">Integration Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../design/testing_framework_design.html#performance-tests">Performance Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#automated-testing-infrastructure">3. Automated Testing Infrastructure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/testing_framework_design.html#test-execution-and-reporting">4. Test Execution and Reporting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Management</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../project-management/backend-integration.html">YICA Backend集成架构设计文档</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/backend-integration.html#id1">📋 设计概述</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id2">🎯 设计目标</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id3">📊 当前状态分析</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id4">✅ 已有组件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id5">❌ 缺失组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/backend-integration.html#id6">🏗️ 核心架构设计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id7">1. YICA Backend集成点</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#superoptimize">1.1 superoptimize方法扩展</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id8">1.2 YICA Backend核心接口</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#yica-kernel">2. YICA Kernel注册系统</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#kernel">2.1 Kernel映射机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id9">2.2 Kernel基类设计</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#yica">3. YICA图优化流程</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id10">3.1 图分析和转换</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#yicaprofiler">3.2 YICA专用Profiler</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#c-kernel">4. C++ Kernel绑定设计</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#python">4.1 Python绑定接口</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#cython">4.2 Cython绑定文件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id11">5. 配置和缓存集成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id12">5.1 YICA配置管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/backend-integration.html#id13">5.2 缓存系统集成</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/backend-integration.html#id14">🔧 实现接口规范</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id15">1. 主要集成函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id16">2. 错误处理和回退机制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/backend-integration.html#id17">✅ 验收标准</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id18">功能验收标准</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id19">性能验收标准</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/backend-integration.html#id20">兼容性验收标准</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project-management/implementation-analysis.html">YICA C++内核实现分析与任务可行性报告</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#id1">📋 执行摘要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#c">🔍 C++内核实现完整性分析</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id2">1. 核心算子实现状况</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id3">2. 架构完整性评估</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/implementation-analysis.html#id4">✅ <strong>已完全实现的核心组件</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#id7">🎯 任务可行性详细评估</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#yirage">✅ <strong>任务1: 完整yirage集成</strong> - <strong>立即可行</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#c-yis">✅ <strong>任务2: C++实现完善YIS指令执行引擎</strong> - <strong>立即可行</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#qemu">✅ <strong>任务3: QEMU集成</strong> - <strong>立即可行</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id8">✅ <strong>任务4: 性能基准测试</strong> - <strong>立即可行</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id9">✅ <strong>任务5: 文档完善</strong> - <strong>立即可行</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#id10">🚀 立即执行建议</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#yis-3-5">🎯 <strong>优先级1: YIS指令执行引擎</strong> (3-5天)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#python-2-3">🎯 <strong>优先级2: Python集成</strong> (2-3天)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#qemu-3-4">🎯 <strong>优先级3: QEMU部署</strong> (3-4天)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id11">🎯 <strong>优先级4: 基准测试</strong> (2-3天)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#id12">📊 风险评估与缓解</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id13">⚠️ <strong>潜在风险</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id14">✅ <strong>成功保障</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/implementation-analysis.html#id15">🎉 结论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id16">🏆 <strong>核心优势</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id17">📈 <strong>预期收益</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/implementation-analysis.html#id18">🚀 <strong>下一步行动</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project-management/roadmap.html">YICA下一阶段发展路线图</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id1">📋 项目现状</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id2">🎯 下一阶段重点方向</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id3">🏆 <strong>阶段目标</strong>: 完整YICA生态系统与产业化部署</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#q1">🚀 优先级1: 核心技术完善 (Q1重点)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#yirage-80-100">1.1 完整yirage集成 (🟡 80%完成 → 🟢 100%完成)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#yis-90-100">1.2 YIS指令执行引擎 (🟡 90%完成 → 🟢 100%完成)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#qemu">1.3 QEMU环境集成部署 (🟢 环境就绪 → 🟢 完整部署)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#q1-q2">🎯 优先级2: 生产级优化 (Q1-Q2并行)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id4">2.1 全面性能基准测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id5">2.2 企业级稳定性保证</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#q2">🔧 优先级3: 开发者生态 (Q2重点)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id6">3.1 完整文档体系</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id7">3.2 开发工具链</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id8">📈 优先级4: 产业化部署 (Q2重点)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id9">4.1 云原生支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id10">4.2 企业级服务</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#q2-q3">🌟 优先级5: 创新研究 (Q2-Q3)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id11">5.1 下一代YICA架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#ai">5.2 AI编译器集成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id12">⏰ 时间线和里程碑</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id13">🎯 <strong>2025年Q1 里程碑</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id14">🎯 <strong>2025年Q2 里程碑</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id15">🚨 风险管控</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id16">技术风险</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id17">市场风险</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id18">🏆 成功指标</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id19">定量指标</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/roadmap.html#id20">定性指标</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/roadmap.html#id21">🎉 总结</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project-management/execution-plan.html">YICA任务执行计划</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#c">📈 C++实现完整性统计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id1">🎯 <strong>代码规模统计</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id2">🏗️ <strong>架构完整性验证</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id3">🚀 立即执行任务计划</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id4">📋 <strong>任务优先级与时间安排</strong></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/execution-plan.html#id5"><strong>🎯 第1周: 核心引擎开发</strong> (5个工作日)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/execution-plan.html#id6"><strong>🎯 第2周: 环境集成</strong> (5个工作日)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../project-management/execution-plan.html#id7"><strong>🎯 第3周: 文档与验证</strong> (3个工作日)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id8">📊 预期成果与验收标准</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id9">🎯 <strong>第1周成果</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id10">🎯 <strong>第2周成果</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id11">🎯 <strong>第3周成果</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id12">🔧 技术实施细节</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#yis"><strong>1. YIS指令执行引擎架构</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#qemu"><strong>2. QEMU集成架构</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id13"><strong>3. 性能基准框架</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id14">⚠️ 风险缓解策略</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id15"><strong>技术风险</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id16"><strong>进度风险</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id17">🎉 项目成功指标</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id18"><strong>定量指标</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../project-management/execution-plan.html#id19"><strong>定性指标</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project-management/execution-plan.html#id20">🚀 下一步行动</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YICA/YiRage</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">YICA 架构核心特性文档</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/architecture/yica-architecture.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="yica">
+<h1>YICA 架构核心特性文档<a class="headerlink" href="#yica" title="Link to this heading"></a></h1>
+<section id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>YICA（YICA Intelligence Computing Architecture，基于计算内存的智能计算架构）是一个创新的存算一体（Computing-In-Memory, CIM）架构，专门为深度学习和人工智能计算设计。该架构通过 torch_cim 框架实现完整的软件栈，以 PyTorch 的 PrivateUse1 后端形式集成，提供从底层硬件到上层应用的全栈深度学习计算支持。</p>
+<section id="id2">
+<h3>架构核心理念<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>存算融合</strong>：在存储单元内直接执行计算操作，消除传统冯·诺依曼架构的存储墙瓶颈</p></li>
+<li><p><strong>层次化并行</strong>：从指令级到设备级的多层次并行计算模型</p></li>
+<li><p><strong>软硬协同</strong>：硬件架构与软件优化的深度融合设计</p></li>
+<li><p><strong>生态兼容</strong>：与主流深度学习框架的无缝集成</p></li>
+</ul>
+</section>
+</section>
+<section id="id3">
+<h2>1. 核心架构特性<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="id4">
+<h3>1.1 存算一体设计架构<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id5">
+<h4>1.1.1 三级内存层次架构<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>L1 - 寄存器文件 (Register File)</strong>：</p>
+<ul>
+<li><p>位于计算单元内部，最高速访问</p></li>
+<li><p>支持向量寄存器和标量寄存器</p></li>
+<li><p>直接参与 YIS 指令执行</p></li>
+</ul>
+</li>
+<li><p><strong>L2 - SPM (Scratchpad Memory)</strong>：</p>
+<ul>
+<li><p>片上可编程存储器，容量 KB 级别</p></li>
+<li><p>支持存算一体操作，可直接执行计算指令</p></li>
+<li><p>低延迟、高带宽，典型访问延迟 1-2 个周期</p></li>
+<li><p>支持多种数据布局：行优先、列优先、分块布局</p></li>
+</ul>
+</li>
+<li><p><strong>L3 - DRAM 主存</strong>：</p>
+<ul>
+<li><p>系统主内存，容量 GB 级别</p></li>
+<li><p>支持 UMA (统一内存访问) 和 NUMA (非统一内存访问) 两种模式</p></li>
+<li><p>通过高速互连与 SPM 层进行数据交换</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="cu">
+<h4>1.1.2 计算单元 (CU) 架构<a class="headerlink" href="#cu" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>功能单元组成</strong>：</p>
+<ul>
+<li><p>ALU (算术逻辑单元)：支持整数和浮点运算</p></li>
+<li><p>MMA (矩阵乘法加速器)：专用于矩阵乘法运算</p></li>
+<li><p>向量处理单元：支持 SIMD 并行计算</p></li>
+<li><p>控制单元：指令解码和执行控制</p></li>
+</ul>
+</li>
+<li><p><strong>存储集成</strong>：</p>
+<ul>
+<li><p>每个 CU 配备专用 SPM</p></li>
+<li><p>支持计算和存储的紧密耦合</p></li>
+<li><p>数据路径优化，减少数据移动开销</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="die">
+<h4>1.1.3 Die 级别组织<a class="headerlink" href="#die" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>CU 集群</strong>：多个 CU 组织在同一个 Die 上，典型配置 4-16 个 CU</p></li>
+<li><p><strong>片上互连</strong>：高速 NoC (Network-on-Chip) 连接各 CU</p></li>
+<li><p><strong>共享资源</strong>：L3 Cache、内存控制器、I/O 接口</p></li>
+</ul>
+</section>
+</section>
+<section id="id6">
+<h3>1.2 数据类型系统<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="id7">
+<h4>1.2.1 整数数据类型<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>有符号整数</strong>：</p>
+<ul>
+<li><p>INT4：4位有符号整数，范围 [-8, 7]</p></li>
+<li><p>INT8：8位有符号整数，范围 [-128, 127]</p></li>
+<li><p>INT16：16位有符号整数，范围 [-32768, 32767]</p></li>
+<li><p>INT32：32位有符号整数，标准整数类型</p></li>
+<li><p>INT64：64位有符号整数，长整数类型</p></li>
+</ul>
+</li>
+<li><p><strong>无符号整数</strong>：</p>
+<ul>
+<li><p>UINT8：8位无符号整数，范围 [0, 255]</p></li>
+<li><p>UINT16：16位无符号整数，范围 [0, 65535]</p></li>
+<li><p>UINT32：32位无符号整数</p></li>
+<li><p>UINT64：64位无符号整数</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id8">
+<h4>1.2.2 浮点数据类型<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>标准浮点</strong>：</p>
+<ul>
+<li><p>FP16：IEEE 754 半精度浮点，1符号位+5指数位+10尾数位</p></li>
+<li><p>FP32：IEEE 754 单精度浮点，1符号位+8指数位+23尾数位</p></li>
+<li><p>FP64：IEEE 754 双精度浮点，1符号位+11指数位+52尾数位</p></li>
+</ul>
+</li>
+<li><p><strong>AI 优化浮点</strong>：</p>
+<ul>
+<li><p>BF16：Brain Float，1符号位+8指数位+7尾数位，适合深度学习</p></li>
+<li><p>TF32：Tensor Float，1符号位+8指数位+10尾数位，Tensor Core 优化</p></li>
+<li><p>FP8：8位浮点，超低精度推理</p></li>
+<li><p>FP4：4位浮点，极端量化场景</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id9">
+<h4>1.2.3 特殊数据类型<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>打包类型</strong>：</p>
+<ul>
+<li><p>INT4x2：两个4位整数打包在8位中</p></li>
+<li><p>FP4x2：两个4位浮点数打包在8位中</p></li>
+<li><p>支持向量化操作，提高数据并行度</p></li>
+</ul>
+</li>
+<li><p><strong>硬件优化特性</strong>：</p>
+<ul>
+<li><p>数据类型转换硬件加速</p></li>
+<li><p>混合精度计算支持</p></li>
+<li><p>量化感知的数据路径设计</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h3>1.3 内存布局策略<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id11">
+<h4>1.3.1 基础数据布局<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>ROWMAJOR (行优先)</strong>：</p>
+<ul>
+<li><p>连续存储同一行的元素</p></li>
+<li><p>适合行向量操作和矩阵乘法的 A 矩阵</p></li>
+<li><p>内存访问模式：A[i][j] 后跟 A[i][j+1]</p></li>
+</ul>
+</li>
+<li><p><strong>COLMAJOR (列优先)</strong>：</p>
+<ul>
+<li><p>连续存储同一列的元素</p></li>
+<li><p>适合列向量操作和矩阵乘法的 B 矩阵</p></li>
+<li><p>内存访问模式：A[i][j] 后跟 A[i+1][j]</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id12">
+<h4>1.3.2 分块数据布局<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>TROWMAJOR (分块行优先)</strong>：</p>
+<ul>
+<li><p>将矩阵分成块，块内行优先存储</p></li>
+<li><p>优化缓存局部性和 SPM 利用率</p></li>
+<li><p>适合大矩阵的分块计算</p></li>
+</ul>
+</li>
+<li><p><strong>TCOLMAJOR (分块列优先)</strong>：</p>
+<ul>
+<li><p>将矩阵分成块，块内列优先存储</p></li>
+<li><p>支持分块矩阵乘法优化</p></li>
+<li><p>减少跨块内存访问</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id13">
+<h4>1.3.3 内存类型分类<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>HOST</strong>：主机端内存，CPU 可直接访问</p></li>
+<li><p><strong>DRAM_UMA</strong>：统一内存访问 DRAM，所有 CU 等距访问</p></li>
+<li><p><strong>DRAM_NUMA</strong>：非统一内存访问 DRAM，访问延迟因位置而异</p></li>
+<li><p><strong>SPM</strong>：片上暂存存储器，最高性能的存储层次</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id14">
+<h2>2. 分布式计算架构<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<section id="yccl">
+<h3>2.1 YCCL 通信后端<a class="headerlink" href="#yccl" title="Link to this heading"></a></h3>
+<section id="id15">
+<h4>2.1.1 通信框架设计<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>YCCL (YICA Collective Communication Library)</strong>：</p>
+<ul>
+<li><p>专为 YICA 架构设计的集合通信库</p></li>
+<li><p>参考 NCCL 设计理念，针对存算一体架构优化</p></li>
+<li><p>支持点对点通信和集合通信操作</p></li>
+<li><p>原生支持多精度数据类型通信</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id16">
+<h4>2.1.2 异步执行模型<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>非阻塞操作</strong>：所有集合通信操作均为异步执行</p></li>
+<li><p><strong>流水线重叠</strong>：通信与计算的流水线重叠执行</p></li>
+<li><p><strong>事件同步</strong>：基于事件的细粒度同步机制</p></li>
+<li><p><strong>优先级调度</strong>：支持高优先级通信流</p></li>
+</ul>
+</section>
+<section id="id17">
+<h4>2.1.3 错误处理策略<a class="headerlink" href="#id17" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>NoHandling</strong>：</p>
+<ul>
+<li><p>不处理异步错误，由上层应用处理</p></li>
+<li><p>适用于调试和性能测试场景</p></li>
+</ul>
+</li>
+<li><p><strong>TearDown</strong>：</p>
+<ul>
+<li><p>遇到错误时立即拆除整个进程组</p></li>
+<li><p>确保分布式系统的一致性状态</p></li>
+</ul>
+</li>
+<li><p><strong>CleanUpOnly</strong>：</p>
+<ul>
+<li><p>仅清理当前集合操作和通信器资源</p></li>
+<li><p>保持进程组活跃，允许后续操作</p></li>
+</ul>
+</li>
+<li><p><strong>SkipCleanUp</strong>：</p>
+<ul>
+<li><p>跳过资源清理，直接拆除进程</p></li>
+<li><p>用于紧急错误恢复场景</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id18">
+<h4>2.1.4 集合通信原语<a class="headerlink" href="#id18" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>AllReduce</strong>：全局归约操作，支持 sum、max、min、prod、avg</p></li>
+<li><p><strong>AllGather</strong>：全局收集操作，收集所有进程的数据</p></li>
+<li><p><strong>ReduceScatter</strong>：归约分散操作，结合归约和分散</p></li>
+<li><p><strong>Broadcast</strong>：广播操作，从根进程向所有进程广播</p></li>
+<li><p><strong>AllToAll</strong>：全交换操作，进程间数据完全交换</p></li>
+</ul>
+</section>
+</section>
+<section id="id19">
+<h3>2.2 设备网格管理<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<section id="diemesh">
+<h4>2.2.1 DieMesh 抽象<a class="headerlink" href="#diemesh" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>网格拓扑</strong>：</p>
+<ul>
+<li><p>支持 1D、2D、3D 网格拓扑结构</p></li>
+<li><p>最大支持 32 个计算单元的网格配置</p></li>
+<li><p>灵活的网格维度配置：[mesh[0], mesh[1], mesh[2]]</p></li>
+</ul>
+</li>
+<li><p><strong>拓扑感知</strong>：</p>
+<ul>
+<li><p>基于物理拓扑的通信路径优化</p></li>
+<li><p>支持层次化通信：片内 -&gt; 片间 -&gt; 节点间</p></li>
+<li><p>带宽和延迟感知的路由选择</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="rank">
+<h4>2.2.2 Rank 映射策略<a class="headerlink" href="#rank" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>线性映射</strong>：rank = x + y * mesh[0] + z * mesh[0] * mesh[1]</p></li>
+<li><p><strong>自定义映射</strong>：支持用户定义的 rank 到坐标映射</p></li>
+<li><p><strong>负载均衡</strong>：考虑计算负载的动态 rank 分配</p></li>
+<li><p><strong>容错映射</strong>：支持故障节点的 rank 重映射</p></li>
+</ul>
+</section>
+<section id="id20">
+<h4>2.2.3 网格通信优化<a class="headerlink" href="#id20" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>邻居通信优化</strong>：相邻节点间的高速通信</p></li>
+<li><p><strong>多维归约</strong>：利用网格结构的多维归约算法</p></li>
+<li><p><strong>带宽聚合</strong>：多路径并行通信的带宽聚合</p></li>
+</ul>
+</section>
+</section>
+<section id="id21">
+<h3>2.3 张量分布策略<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<section id="shard">
+<h4>2.3.1 Shard（分片）策略<a class="headerlink" href="#shard" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>维度分片</strong>：</p>
+<ul>
+<li><p>在指定维度上将张量分片分布</p></li>
+<li><p>支持多维度同时分片</p></li>
+<li><p>自动处理不均匀分片的边界情况</p></li>
+</ul>
+</li>
+<li><p><strong>分片粒度</strong>：</p>
+<ul>
+<li><p>块级分片：以固定大小块为单位分片</p></li>
+<li><p>行级分片：按行分布张量数据</p></li>
+<li><p>列级分片：按列分布张量数据</p></li>
+</ul>
+</li>
+<li><p><strong>负载均衡</strong>：</p>
+<ul>
+<li><p>动态调整分片大小以均衡负载</p></li>
+<li><p>考虑计算复杂度的智能分片</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="replicate">
+<h4>2.3.2 Replicate（复制）策略<a class="headerlink" href="#replicate" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>全复制</strong>：张量在所有设备上完全复制</p></li>
+<li><p><strong>部分复制</strong>：在设备子集上复制张量</p></li>
+<li><p><strong>一致性维护</strong>：复制张量的自动一致性更新</p></li>
+<li><p><strong>内存优化</strong>：共享只读张量的内存优化</p></li>
+</ul>
+</section>
+<section id="partial">
+<h4>2.3.3 Partial（部分归约）策略<a class="headerlink" href="#partial" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>归约操作类型</strong>：</p>
+<ul>
+<li><p>Sum：求和归约，用于梯度聚合</p></li>
+<li><p>Prod：乘积归约，用于概率计算</p></li>
+<li><p>Max/Min：最值归约，用于池化操作</p></li>
+<li><p>Avg：平均归约，用于批量归一化</p></li>
+</ul>
+</li>
+<li><p><strong>部分归约优化</strong>：</p>
+<ul>
+<li><p>树状归约：减少通信轮数</p></li>
+<li><p>环状归约：优化带宽利用率</p></li>
+<li><p>分层归约：利用网络层次结构</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id22">
+<h2>3. 内存管理系统<a class="headerlink" href="#id22" title="Link to this heading"></a></h2>
+<section id="cim-cimcachingallocator">
+<h3>3.1 CIM 缓存分配器 (CIMCachingAllocator)<a class="headerlink" href="#cim-cimcachingallocator" title="Link to this heading"></a></h3>
+<section id="id23">
+<h4>3.1.1 分层缓存架构<a class="headerlink" href="#id23" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>SPM 缓存分配器</strong>：</p>
+<ul>
+<li><p>管理片上 SPM 的内存分配和回收</p></li>
+<li><p>支持细粒度的内存块管理（最小 8 字节对齐）</p></li>
+<li><p>实现快速分配算法，平均分配时间 O(1)</p></li>
+<li><p>支持内存碎片整理和合并优化</p></li>
+</ul>
+</li>
+<li><p><strong>DRAM 缓存分配器</strong>：</p>
+<ul>
+<li><p>管理主存 DRAM 的大块内存分配</p></li>
+<li><p>支持多种分配策略：首次适配、最佳适配、伙伴系统</p></li>
+<li><p>实现内存池技术，减少系统调用开销</p></li>
+<li><p>支持跨 NUMA 域的内存分配和迁移</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id24">
+<h4>3.1.2 内存池管理<a class="headerlink" href="#id24" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>分级内存池</strong>：</p>
+<ul>
+<li><p>小块内存池：8B - 1KB，用于元数据和小张量</p></li>
+<li><p>中块内存池：1KB - 1MB，用于中等大小张量</p></li>
+<li><p>大块内存池：1MB+，用于大张量和批处理</p></li>
+</ul>
+</li>
+<li><p><strong>扩展段机制</strong>：</p>
+<ul>
+<li><p>动态扩展内存池容量</p></li>
+<li><p>支持内存池的热扩展，无需重启</p></li>
+<li><p>实现内存预分配策略，减少运行时分配延迟</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id25">
+<h4>3.1.3 性能监控和统计<a class="headerlink" href="#id25" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>实时统计指标</strong>：</p>
+<ul>
+<li><p>总分配内存量、峰值内存使用量</p></li>
+<li><p>分配/释放操作次数和平均延迟</p></li>
+<li><p>内存碎片率和利用率统计</p></li>
+<li><p>缓存命中率和未命中率</p></li>
+</ul>
+</li>
+<li><p><strong>内存快照功能</strong>：</p>
+<ul>
+<li><p>支持内存使用状态的快照保存</p></li>
+<li><p>提供内存泄漏检测和分析工具</p></li>
+<li><p>支持内存使用历史追踪</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="oom-out-of-memory">
+<h4>3.1.4 OOM (Out of Memory) 处理<a class="headerlink" href="#oom-out-of-memory" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>分级 OOM 策略</strong>：</p>
+<ul>
+<li><p>Level 1：尝试内存整理和回收</p></li>
+<li><p>Level 2：触发垃圾回收和缓存清理</p></li>
+<li><p>Level 3：向上层报告 OOM 错误</p></li>
+</ul>
+</li>
+<li><p><strong>回调机制</strong>：</p>
+<ul>
+<li><p>注册 OOM 回调函数，支持自定义处理逻辑</p></li>
+<li><p>支持优雅降级和资源释放</p></li>
+<li><p>提供内存压力预警机制</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="cimtensorimpl">
+<h3>3.2 张量实现 (CIMTensorImpl)<a class="headerlink" href="#cimtensorimpl" title="Link to this heading"></a></h3>
+<section id="id26">
+<h4>3.2.1 张量结构设计<a class="headerlink" href="#id26" title="Link to this heading"></a></h4>
+<ul>
+<li><p><strong>继承关系</strong>：</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CIMTensorImpl</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">c10</span><span class="o">::</span><span class="n">TensorImpl</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">yica</span><span class="o">::</span><span class="n">CIMTensorMeta</span><span class="w"> </span><span class="n">meta_</span><span class="p">;</span><span class="w">  </span><span class="c1">// YICA 特有的元数据</span>
+<span class="w">  </span><span class="c1">// ... 其他成员</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>元数据结构 (CIMTensorMeta)</strong>：</p>
+<ul class="simple">
+<li><p>数据类型信息：dtype、element_size、数据格式</p></li>
+<li><p>内存布局信息：layout、stride、offset</p></li>
+<li><p>设备信息：device_id、memory_type（SPM/DRAM）</p></li>
+<li><p>分布信息：placement_strategy、device_mesh</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id27">
+<h4>3.2.2 内存管理集成<a class="headerlink" href="#id27" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>智能指针管理</strong>：</p>
+<ul>
+<li><p>使用 c10::DataPtr 管理张量数据生命周期</p></li>
+<li><p>支持自定义删除器，与 CIM 分配器集成</p></li>
+<li><p>实现引用计数和自动内存回收</p></li>
+</ul>
+</li>
+<li><p><strong>浅拷贝优化</strong>：</p>
+<ul>
+<li><p>支持零拷贝的张量视图创建</p></li>
+<li><p>实现 COW (Copy-on-Write) 机制</p></li>
+<li><p>优化张量切片和重塑操作</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id28">
+<h4>3.2.3 设备间数据移动<a class="headerlink" href="#id28" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>异步数据传输</strong>：</p>
+<ul>
+<li><p>支持 SPM ↔ DRAM 的异步数据传输</p></li>
+<li><p>实现流水线数据传输，重叠计算和通信</p></li>
+<li><p>支持批量数据传输优化</p></li>
+</ul>
+</li>
+<li><p><strong>数据格式转换</strong>：</p>
+<ul>
+<li><p>支持不同数据类型间的自动转换</p></li>
+<li><p>实现硬件加速的类型转换</p></li>
+<li><p>支持量化和反量化操作</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id29">
+<h2>4. 计算抽象<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<section id="gtensor">
+<h3>4.1 GTensor 分布式张量<a class="headerlink" href="#gtensor" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>CPU 表示</strong>：GTensor 作为 CIM 张量的 CPU 表示</p></li>
+<li><p><strong>自动分发</strong>：支持张量操作的自动分发到设备</p></li>
+<li><p><strong>灵活构造</strong>：支持从单个张量或张量列表构造分布式张量</p></li>
+</ul>
+</section>
+<section id="id30">
+<h3>4.2 流管理<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>异步执行</strong>：基于流的异步计算执行</p></li>
+<li><p><strong>同步机制</strong>：WorkYCCL 提供完整的同步和等待机制</p></li>
+<li><p><strong>事件跟踪</strong>：CIM 事件系统用于性能监控和调试</p></li>
+</ul>
+</section>
+</section>
+<section id="id31">
+<h2>5. 系统集成<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
+<section id="pytorch">
+<h3>5.1 PyTorch 集成<a class="headerlink" href="#pytorch" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>PrivateUse1 后端</strong>：注册为 “cim” 设备类型</p></li>
+<li><p><strong>完整兼容</strong>：支持 PyTorch 的张量、模块、存储等所有组件</p></li>
+<li><p><strong>自动生成方法</strong>：自动生成 PyTorch 标准方法</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>5.2 调试和监控<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Profiler 集成</strong>：完整的性能分析工具集成</p></li>
+<li><p><strong>调试模式</strong>：支持 desync 调试和详细错误报告</p></li>
+<li><p><strong>监控线程</strong>：watchdog 线程监控系统健康状态</p></li>
+</ul>
+</section>
+</section>
+<section id="id33">
+<h2>6. 性能优化特性<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>
+<section id="id34">
+<h3>6.1 内存优化<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>缓存分配器</strong>：高效的内存缓存和重用机制</p></li>
+<li><p><strong>分段管理</strong>：支持可扩展内存段</p></li>
+<li><p><strong>记录流</strong>：避免不必要的流记录以优化分配器安全性</p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>6.2 通信优化<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>高优先级流</strong>：支持高优先级通信流</p></li>
+<li><p><strong>批量操作</strong>：支持张量批量通信操作</p></li>
+<li><p><strong>定时监控</strong>：详细的操作时间监控和优化</p></li>
+</ul>
+</section>
+</section>
+<section id="id36">
+<h2>7. 架构优势<a class="headerlink" href="#id36" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>存算一体</strong>：紧密集成的存储和计算，减少数据移动开销</p></li>
+<li><p><strong>多精度支持</strong>：从 4 位到 64 位的全精度范围支持</p></li>
+<li><p><strong>灵活分布</strong>：多种张量分布策略适应不同计算模式</p></li>
+<li><p><strong>高效通信</strong>：基于 YCCL 的优化分布式通信</p></li>
+<li><p><strong>PyTorch 兼容</strong>：与 PyTorch 生态系统无缝集成</p></li>
+<li><p><strong>完善监控</strong>：全面的性能监控和调试工具</p></li>
+</ol>
+</section>
+<section id="id37">
+<h2>8. 应用场景<a class="headerlink" href="#id37" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>大规模深度学习训练</strong>：利用分布式计算能力</p></li>
+<li><p><strong>推理加速</strong>：存算一体架构减少内存访问延迟</p></li>
+<li><p><strong>多精度计算</strong>：支持混合精度和低精度计算</p></li>
+<li><p><strong>边缘计算</strong>：SPM 的高效存储适合资源受限环境</p></li>
+</ul>
+</section>
+<section id="ybx-replay">
+<h2>9. 运行时执行框架（基于 ybx_replay 分析）<a class="headerlink" href="#ybx-replay" title="Link to this heading"></a></h2>
+<section id="id38">
+<h3>9.1 内核回放系统<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>JSON 驱动执行</strong>：通过 JSON 配置文件定义计算图和内核参数</p></li>
+<li><p><strong>任务抽象</strong>：Task 类封装单个内核执行，支持同步和异步执行</p></li>
+<li><p><strong>运行器框架</strong>：Runner 管理多个任务的执行和同步</p></li>
+<li><p><strong>gRPC 服务</strong>：支持远程内核执行和数据传输</p></li>
+</ul>
+</section>
+<section id="id39">
+<h3>9.2 张量系统增强<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>多设备支持</strong>：CPU 和 YICA 设备的统一张量抽象</p></li>
+<li><p><strong>内存类型区分</strong>：SRAM_MEMORY 和 DRAM_MEMORY 的显式管理</p></li>
+<li><p><strong>数据类型支持</strong>：FLOAT32、FLOAT16、INT32、UINT8</p></li>
+<li><p><strong>引用计数管理</strong>：DataPtr 实现自动内存管理</p></li>
+</ul>
+</section>
+<section id="id40">
+<h3>9.3 内存分配器架构<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>分层分配</strong>：DeviceAllocator 和 HostAllocator 的分离设计</p></li>
+<li><p><strong>块管理</strong>：基于 DeviceBlock 的内存块管理和合并</p></li>
+<li><p><strong>对齐优化</strong>：8 字节对齐的内存分配策略</p></li>
+<li><p><strong>统计监控</strong>：详细的内存使用统计和调试信息</p></li>
+</ul>
+</section>
+<section id="id41">
+<h3>9.4 计算图执行<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>节点类型</strong>：placeholder（输入）、weight（权重）、op（操作）</p></li>
+<li><p><strong>图遍历</strong>：基于依赖关系的图执行顺序</p></li>
+<li><p><strong>张量传递</strong>：节点间的张量数据流管理</p></li>
+<li><p><strong>工作空间管理</strong>：临时计算空间的动态分配</p></li>
+</ul>
+</section>
+</section>
+<section id="llama">
+<h2>10. Llama 模型专用优化<a class="headerlink" href="#llama" title="Link to this heading"></a></h2>
+<section id="attention">
+<h3>10.1 Attention 机制优化<a class="headerlink" href="#attention" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>QK BMM 算子</strong>：Query-Key 批量矩阵乘法的专用实现</p></li>
+<li><p><strong>动态序列长度</strong>：基于 position_id 的动态参数调整</p></li>
+<li><p><strong>KV Cache 管理</strong>：高效的键值缓存存储和更新</p></li>
+<li><p><strong>Softmax 优化</strong>：针对 Attention 权重的专用 Softmax 实现</p></li>
+</ul>
+</section>
+<section id="id42">
+<h3>10.2 模型结构支持<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>多头注意力</strong>：32 个 attention head 的并行处理</p></li>
+<li><p><strong>RoPE 位置编码</strong>：旋转位置编码的硬件加速</p></li>
+<li><p><strong>LayerNorm</strong>：RMSNorm 的优化实现</p></li>
+<li><p><strong>MLP 层</strong>：前馈网络的矩阵乘法优化</p></li>
+</ul>
+</section>
+<section id="id43">
+<h3>10.3 内存布局优化<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>权重分片</strong>：大权重矩阵的多 CU 分布存储</p></li>
+<li><p><strong>缓存局部性</strong>：基于访问模式的数据布局优化</p></li>
+<li><p><strong>动态形状</strong>：支持不同序列长度的动态张量形状</p></li>
+</ul>
+</section>
+</section>
+<section id="id44">
+<h2>11. 性能监控和调试<a class="headerlink" href="#id44" title="Link to this heading"></a></h2>
+<section id="id45">
+<h3>11.1 执行时间统计<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>内核级监控</strong>：每个内核的执行时间统计</p></li>
+<li><p><strong>端到端性能</strong>：完整推理流程的性能分析</p></li>
+<li><p><strong>内存带宽</strong>：内存访问模式的性能监控</p></li>
+<li><p><strong>设备同步</strong>：hipDeviceSynchronize 的同步开销统计</p></li>
+</ul>
+</section>
+<section id="id46">
+<h3>11.2 调试工具<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>图可视化</strong>：计算图的 DOT 格式导出</p></li>
+<li><p><strong>数据转储</strong>：中间结果的文件保存和验证</p></li>
+<li><p><strong>环境变量控制</strong>：丰富的调试开关和配置选项</p></li>
+<li><p><strong>日志系统</strong>：分级日志和彩色输出</p></li>
+</ul>
+</section>
+<section id="id47">
+<h3>11.3 测试框架<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>单元测试</strong>：张量、内存分配器、驱动 API 的单元测试</p></li>
+<li><p><strong>回归测试</strong>：基于 JSON 配置的自动化测试</p></li>
+<li><p><strong>性能基准</strong>：标准化的性能测试套件</p></li>
+</ul>
+</section>
+</section>
+<section id="id48">
+<h2>12. 硬件抽象层<a class="headerlink" href="#id48" title="Link to this heading"></a></h2>
+<section id="api">
+<h3>12.1 驱动 API 封装<a class="headerlink" href="#api" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>HIP 兼容接口</strong>：类似 HIP 的设备管理 API</p></li>
+<li><p><strong>内存管理</strong>：hipHostMalloc、hipDeviceSynchronize 等接口</p></li>
+<li><p><strong>错误处理</strong>：完整的错误码和错误信息系统</p></li>
+</ul>
+</section>
+<section id="id49">
+<h3>12.2 内核加载机制<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>ELF 文件支持</strong>：从 ELF 文件加载内核代码</p></li>
+<li><p><strong>动态链接</strong>：运行时内核函数的动态绑定</p></li>
+<li><p><strong>参数传递</strong>：内核参数的类型安全传递</p></li>
+</ul>
+</section>
+<section id="id50">
+<h3>12.3 设备配置<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>工作组配置</strong>：SWG（软件工作组）和 CWG（计算工作组）</p></li>
+<li><p><strong>网格配置</strong>：Grid 和 Block 的多维配置</p></li>
+<li><p><strong>资源分配</strong>：计算资源和内存资源的动态分配</p></li>
+</ul>
+</section>
+</section>
+<section id="llvm-risc-v-yica-llvm">
+<h2>13. LLVM RISC-V 后端 YICA 扩展（基于 LLVM 后端分析）<a class="headerlink" href="#llvm-risc-v-yica-llvm" title="Link to this heading"></a></h2>
+<section id="yis">
+<h3>13.1 YIS 指令集扩展<a class="headerlink" href="#yis" title="Link to this heading"></a></h3>
+<section id="id51">
+<h4>13.1.1 指令集架构概述<a class="headerlink" href="#id51" title="Link to this heading"></a></h4>
+<p>YIS (YICA Instruction Set) 是基于 RISC-V 的存算一体指令集扩展，专门为 YICA 架构设计，提供了五大类专用指令：</p>
+</section>
+<section id="yisecopy">
+<h4>13.1.2 YISECOPY (外部拷贝指令)<a class="headerlink" href="#yisecopy" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>指令功能</strong>：处理不同存储层次间的数据移动</p></li>
+<li><p><strong>支持的拷贝类型</strong>：</p>
+<ul>
+<li><p><strong>G2G (Global to Global)</strong>：DRAM 到 DRAM 的数据拷贝</p></li>
+<li><p><strong>G2S (Global to Scratchpad)</strong>：DRAM 到 SPM 的数据拷贝</p></li>
+<li><p><strong>S2G (Scratchpad to Global)</strong>：SPM 到 DRAM 的数据拷贝</p></li>
+<li><p><strong>G2SPM (Global to SPM)</strong>：DRAM 到 SPM 的直接拷贝</p></li>
+<li><p><strong>SPM2G (SPM to Global)</strong>：SPM 到 DRAM 的直接拷贝</p></li>
+</ul>
+</li>
+<li><p><strong>数据布局支持</strong>：</p>
+<ul>
+<li><p><strong>TROW (Tiled Row)</strong>：分块行优先布局</p></li>
+<li><p><strong>ROW</strong>：标准行优先布局</p></li>
+<li><p><strong>TCOL (Tiled Column)</strong>：分块列优先布局</p></li>
+<li><p><strong>COL</strong>：标准列优先布局</p></li>
+</ul>
+</li>
+<li><p><strong>作业域 (Boscope) 支持</strong>：</p>
+<ul>
+<li><p><strong>WG (Work Group)</strong>：工作组级别的数据拷贝</p></li>
+<li><p><strong>CWG (Compute Work Group)</strong>：计算工作组级别的数据拷贝</p></li>
+</ul>
+</li>
+<li><p><strong>卷积优化</strong>：</p>
+<ul>
+<li><p><strong>IM2COL 变换</strong>：支持卷积的 im2col 数据重排</p></li>
+<li><p>硬件加速的数据格式转换</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="yisicopy">
+<h4>13.1.3 YISICOPY (内部拷贝指令)<a class="headerlink" href="#yisicopy" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>指令功能</strong>：处理同一存储层次内的数据拷贝和重排</p></li>
+<li><p><strong>拷贝模式</strong>：</p>
+<ul>
+<li><p><strong>MC (Multicast)</strong>：多播模式，一对多数据分发</p></li>
+<li><p><strong>NOMC (Non-Multicast)</strong>：非多播模式，点对点数据拷贝</p></li>
+</ul>
+</li>
+<li><p><strong>支持的拷贝类型</strong>：</p>
+<ul>
+<li><p><strong>S2S (SPM to SPM)</strong>：SPM 间数据拷贝</p></li>
+<li><p><strong>SPM2S (SPM to SPM)</strong>：SPM 到 SPM 的专用拷贝</p></li>
+<li><p><strong>R2S (Register to SPM)</strong>：寄存器到 SPM 的数据拷贝</p></li>
+<li><p><strong>S2R (SPM to Register)</strong>：SPM 到寄存器的数据拷贝</p></li>
+</ul>
+</li>
+<li><p><strong>集合通信支持</strong>：</p>
+<ul>
+<li><p><strong>BC (Broadcast)</strong>：广播操作</p></li>
+<li><p><strong>GAT (Gather)</strong>：收集操作</p></li>
+</ul>
+</li>
+<li><p><strong>寻址模式</strong>：</p>
+<ul>
+<li><p><strong>RR (Register-Register)</strong>：寄存器寻址</p></li>
+<li><p><strong>RI (Register-Immediate)</strong>：寄存器-立即数寻址</p></li>
+<li><p><strong>IR (Immediate-Register)</strong>：立即数-寄存器寻址</p></li>
+<li><p><strong>II (Immediate-Immediate)</strong>：立即数寻址</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="yismma">
+<h4>13.1.4 YISMMA (矩阵乘法加速指令)<a class="headerlink" href="#yismma" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>指令功能</strong>：硬件加速的矩阵乘法运算</p></li>
+<li><p><strong>矩阵维度配置</strong>：</p>
+<ul>
+<li><p><strong>M、N、K 维度</strong>：支持可配置的矩阵乘法维度</p></li>
+<li><p>典型配置：8x8、16x16、32x32 等</p></li>
+</ul>
+</li>
+<li><p><strong>计算模式</strong>：</p>
+<ul>
+<li><p><strong>ACC (Accumulate)</strong>：累加模式，C = C + A × B</p></li>
+<li><p><strong>Non-ACC</strong>：非累加模式，C = A × B</p></li>
+</ul>
+</li>
+<li><p><strong>存储模式</strong>：</p>
+<ul>
+<li><p><strong>SPM 模式</strong>：操作数全部在 SPM 中</p></li>
+<li><p><strong>SPMG (SPM Global) 模式</strong>：支持 SPM 和 DRAM 混合操作</p></li>
+</ul>
+</li>
+<li><p><strong>精度支持</strong>：</p>
+<ul>
+<li><p>FP16、FP32 浮点矩阵乘法</p></li>
+<li><p>INT8、INT16 整数矩阵乘法</p></li>
+<li><p>混合精度计算支持</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="yissync">
+<h4>13.1.5 YISSYNC (同步指令)<a class="headerlink" href="#yissync" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>指令功能</strong>：提供硬件级同步原语</p></li>
+<li><p><strong>同步类型</strong>：</p>
+<ul>
+<li><p><strong>BAR (Barrier)</strong>：栅栏同步，等待所有线程到达同步点</p></li>
+<li><p><strong>BOINIT (Buffer Object Init)</strong>：缓冲区对象初始化</p></li>
+<li><p><strong>BOARRV (Buffer Object Arrive)</strong>：缓冲区对象到达通知</p></li>
+<li><p><strong>BOWAIT (Buffer Object Wait)</strong>：缓冲区对象等待</p></li>
+</ul>
+</li>
+<li><p><strong>作业域支持</strong>：</p>
+<ul>
+<li><p>支持不同粒度的同步：线程级、工作组级、设备级</p></li>
+<li><p>支持跨设备的分布式同步</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="yiscontrol">
+<h4>13.1.6 YISCONTROL (控制指令)<a class="headerlink" href="#yiscontrol" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>指令功能</strong>：控制程序执行流和内核调用</p></li>
+<li><p><strong>控制类型</strong>：</p>
+<ul>
+<li><p><strong>CALL_EU (Call Execution Unit)</strong>：调用执行单元</p></li>
+<li><p><strong>END</strong>：结束当前内核执行</p></li>
+</ul>
+</li>
+<li><p><strong>参数传递</strong>：</p>
+<ul>
+<li><p>支持寄存器和立即数的灵活参数传递</p></li>
+<li><p>最大支持 30 位立即数参数</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id52">
+<h3>13.2 YICA 架构层次寄存器<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>内核启动参数寄存器</strong>：</p>
+<ul>
+<li><p>TID (线程 ID)：0x04</p></li>
+<li><p>WARP_RANK (Warp 级别)：0x00</p></li>
+<li><p>STAGE (执行阶段)：0x08</p></li>
+<li><p>FUNC_ID (函数 ID)：0x0C</p></li>
+</ul>
+</li>
+<li><p><strong>工作组层次寄存器</strong>：</p>
+<ul>
+<li><p>WGID_IN_SWG0-3 (SWG 内工作组 ID)：0x18-0x24</p></li>
+<li><p>WGRANK_IN_DNUMA (DNUMA 内工作组排序)：0x28</p></li>
+<li><p>SWGRANK_IN_GRID (网格内 SWG 排序)：0x3C</p></li>
+</ul>
+</li>
+<li><p><strong>计算工作组寄存器</strong>：</p>
+<ul>
+<li><p>CWGID_IN_SWG0-3 (SWG 内 CWG ID)：0x2C-0x38</p></li>
+<li><p>WGID_IN_CWG0-3 (CWG 内工作组 ID)：0x40-0x4C</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id53">
+<h3>13.3 存储基地址寄存器<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>内存基地址寄存器</strong>：</p>
+<ul>
+<li><p>DLM_BASE (动态局部内存基址)：0x10</p></li>
+<li><p>SMEM_BASE (共享内存基址)：0x14</p></li>
+<li><p>PBUF_BASE (参数缓冲区基址)：0x18</p></li>
+<li><p>TAR_BASE (目标寄存器基址)：0x1C</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id54">
+<h3>13.4 YIS 指令集架构特性<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>外部拷贝指令 (YISECOPY)</strong>：</p>
+<ul>
+<li><p>支持多种数据布局：TROW、ROW、TCOL、COL</p></li>
+<li><p>支持两种作业域：WG (工作组)、CWG (计算工作组)</p></li>
+<li><p>支持 IM2COL 卷积优化</p></li>
+</ul>
+</li>
+<li><p><strong>内部拷贝指令 (YISICOPY)</strong>：</p>
+<ul>
+<li><p>支持多播 (MC) 和非多播 (NOMC) 模式</p></li>
+<li><p>支持集合通信：broadcast (BC)、gather (GAT)</p></li>
+<li><p>灵活的寄存器/立即数寻址模式</p></li>
+</ul>
+</li>
+<li><p><strong>矩阵乘法指令 (YISMMA)</strong>：</p>
+<ul>
+<li><p>支持可配置的 M、N、K 维度</p></li>
+<li><p>支持累加 (ACC) 和非累加模式</p></li>
+<li><p>支持 SPM 到 SPM 全局模式 (SPMG)</p></li>
+</ul>
+</li>
+<li><p><strong>同步控制指令</strong>：</p>
+<ul>
+<li><p>BAR：栅栏同步指令</p></li>
+<li><p>BOINIT：缓冲区对象初始化</p></li>
+<li><p>BOARRV/BOWAIT：缓冲区对象到达/等待</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id55">
+<h3>13.5 编译器内建函数支持<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>层次化 ID 获取</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_tid()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_warp_rank()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_wgrank_in_dnuma()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_swgrank_in_grid()</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>内存基址获取</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_dlm_base()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_smem_base()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_pbuf_base()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__builtin_riscv_tar_base()</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>YIS 指令内建函数</strong>：</p>
+<ul>
+<li><p>拷贝操作：<code class="docutils literal notranslate"><span class="pre">__builtin_riscv_ybx_copy_*</span></code></p></li>
+<li><p>内部拷贝：<code class="docutils literal notranslate"><span class="pre">__builtin_riscv_ybx_internal_copy_*</span></code></p></li>
+<li><p>同步控制：<code class="docutils literal notranslate"><span class="pre">__builtin_riscv_ybx_bar_64</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id56">
+<h3>13.6 YICA 层次化计算模型<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>三级计算层次</strong>：</p>
+<ul>
+<li><p>Grid (网格)：最高层计算组织</p></li>
+<li><p>SWG (Super Work Group)：超级工作组，中间层</p></li>
+<li><p>WG/CWG (Work Group/Compute Work Group)：基本计算单元</p></li>
+</ul>
+</li>
+<li><p><strong>DNUMA 内存架构</strong>：</p>
+<ul>
+<li><p>分布式非一致性内存访问</p></li>
+<li><p>工作组在 DNUMA 域内的层次化组织</p></li>
+<li><p>支持跨 DNUMA 域的数据移动</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id57">
+<h2>14. 架构综合特性总结<a class="headerlink" href="#id57" title="Link to this heading"></a></h2>
+<section id="id58">
+<h3>14.1 完整的存算一体解决方案<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>硬件层</strong>：RISC-V YIS 指令集 + 多层内存 + 矩阵计算单元</p></li>
+<li><p><strong>编译器层</strong>：LLVM 后端完整支持 + 内建函数</p></li>
+<li><p><strong>运行时层</strong>：PyTorch 后端 + 设备管理 + 内存分配</p></li>
+<li><p><strong>框架层</strong>：分布式通信 + 图执行 + 自动优化</p></li>
+</ul>
+</section>
+<section id="id59">
+<h3>14.2 分层优化策略<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>指令级</strong>：YIS 专用指令优化数据移动和计算</p></li>
+<li><p><strong>内存级</strong>：SPM/DRAM 层次化管理 + 缓存分配器</p></li>
+<li><p><strong>线程级</strong>：Warp 和工作组层次化执行</p></li>
+<li><p><strong>设备级</strong>：多设备协调 + 分布式通信</p></li>
+</ul>
+</section>
+<section id="id60">
+<h3>14.3 YICA 与标准架构的差异<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<section id="id61">
+<h4>14.3.1 指令集层面差异<a class="headerlink" href="#id61" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>存算一体指令</strong>：</p>
+<ul>
+<li><p>YICA：专用的 YIS 指令集，支持存储内计算</p></li>
+<li><p>传统架构：分离的计算和存储指令</p></li>
+</ul>
+</li>
+<li><p><strong>数据移动优化</strong>：</p>
+<ul>
+<li><p>YICA：硬件加速的数据重排和格式转换</p></li>
+<li><p>传统架构：软件实现的数据移动</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id62">
+<h4>14.3.2 内存架构差异<a class="headerlink" href="#id62" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>内存层次</strong>：</p>
+<ul>
+<li><p>YICA：三级层次（寄存器 + SPM + DRAM）</p></li>
+<li><p>传统架构：两级层次（寄存器 + 内存）</p></li>
+</ul>
+</li>
+<li><p><strong>存算融合</strong>：</p>
+<ul>
+<li><p>YICA：SPM 支持就地计算，减少数据移动</p></li>
+<li><p>传统架构：计算和存储分离，存在存储墙问题</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id63">
+<h4>14.3.3 计算模型差异<a class="headerlink" href="#id63" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>并行层次</strong>：</p>
+<ul>
+<li><p>YICA：四级层次（Grid/SWG/WG/CWG/Thread）</p></li>
+<li><p>传统架构：二级层次（Block/Thread）</p></li>
+</ul>
+</li>
+<li><p><strong>工作组织</strong>：</p>
+<ul>
+<li><p>YICA：层次化工作组，支持复杂的并行模式</p></li>
+<li><p>传统架构：扁平化线程组织</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id64">
+<h4>14.3.4 同步机制差异<a class="headerlink" href="#id64" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>硬件同步</strong>：</p>
+<ul>
+<li><p>YICA：硬件级缓冲区对象同步，低延迟</p></li>
+<li><p>传统架构：软件同步原语，较高开销</p></li>
+</ul>
+</li>
+<li><p><strong>分布式同步</strong>：</p>
+<ul>
+<li><p>YICA：原生支持跨设备同步</p></li>
+<li><p>传统架构：依赖软件库实现</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id65">
+<h2>15. 性能特性和优化策略<a class="headerlink" href="#id65" title="Link to this heading"></a></h2>
+<section id="id66">
+<h3>15.1 计算性能优化<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<section id="id67">
+<h4>15.1.1 存算一体优势<a class="headerlink" href="#id67" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>数据局部性</strong>：</p>
+<ul>
+<li><p>计算在数据存储位置就地执行</p></li>
+<li><p>消除传统架构的数据搬移开销</p></li>
+<li><p>典型性能提升：2-5x 相比传统架构</p></li>
+</ul>
+</li>
+<li><p><strong>内存带宽利用</strong>：</p>
+<ul>
+<li><p>SPM 提供极高的内存带宽（TB/s 级别）</p></li>
+<li><p>多级内存层次的带宽聚合</p></li>
+<li><p>支持多路并发内存访问</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id68">
+<h4>15.1.2 矩阵计算优化<a class="headerlink" href="#id68" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>MMA 指令加速</strong>：</p>
+<ul>
+<li><p>硬件原生支持的矩阵乘法</p></li>
+<li><p>支持多种精度的混合计算</p></li>
+<li><p>典型性能：FP16 可达数百 TOPS</p></li>
+</ul>
+</li>
+<li><p><strong>数据重用优化</strong>：</p>
+<ul>
+<li><p>智能的数据缓存和重用策略</p></li>
+<li><p>分块计算算法的硬件支持</p></li>
+<li><p>减少重复数据加载</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id69">
+<h3>15.2 内存性能优化<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
+<section id="id70">
+<h4>15.2.1 分层存储优化<a class="headerlink" href="#id70" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>SPM 优化策略</strong>：</p>
+<ul>
+<li><p>智能数据预取和预加载</p></li>
+<li><p>基于访问模式的数据布局优化</p></li>
+<li><p>多 SPM 间的负载均衡</p></li>
+</ul>
+</li>
+<li><p><strong>DRAM 访问优化</strong>：</p>
+<ul>
+<li><p>批量数据传输减少延迟</p></li>
+<li><p>NUMA 感知的内存分配</p></li>
+<li><p>内存带宽的动态调度</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id71">
+<h4>15.2.2 缓存优化<a class="headerlink" href="#id71" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>多级缓存协同</strong>：</p>
+<ul>
+<li><p>L1/L2/L3 缓存的协同优化</p></li>
+<li><p>缓存一致性的硬件支持</p></li>
+<li><p>智能缓存替换策略</p></li>
+</ul>
+</li>
+<li><p><strong>数据预取</strong>：</p>
+<ul>
+<li><p>硬件预取器的智能调度</p></li>
+<li><p>基于访问模式的预测预取</p></li>
+<li><p>软硬件协同的预取优化</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id72">
+<h3>15.3 通信性能优化<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
+<section id="id73">
+<h4>15.3.1 片内通信优化<a class="headerlink" href="#id73" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>NoC 优化</strong>：</p>
+<ul>
+<li><p>低延迟的片上网络</p></li>
+<li><p>拥塞感知的路由算法</p></li>
+<li><p>多路径并行通信</p></li>
+</ul>
+</li>
+<li><p><strong>数据传输优化</strong>：</p>
+<ul>
+<li><p>零拷贝数据传输</p></li>
+<li><p>流水线重叠传输</p></li>
+<li><p>压缩传输减少带宽需求</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id74">
+<h4>15.3.2 分布式通信优化<a class="headerlink" href="#id74" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>YCCL 优化</strong>：</p>
+<ul>
+<li><p>拓扑感知的通信算法</p></li>
+<li><p>分层归约减少通信轮数</p></li>
+<li><p>带宽聚合和负载均衡</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id75">
+<h2>16. 应用场景和性能基准<a class="headerlink" href="#id75" title="Link to this heading"></a></h2>
+<section id="id76">
+<h3>16.1 深度学习训练场景<a class="headerlink" href="#id76" title="Link to this heading"></a></h3>
+<section id="id77">
+<h4>16.1.1 大模型训练<a class="headerlink" href="#id77" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Transformer 模型</strong>：</p>
+<ul>
+<li><p>Llama2-7B：相比 GPU 提升 2.5x 训练速度</p></li>
+<li><p>Llama2-70B：支持千卡级别的分布式训练</p></li>
+<li><p>GPT 系列：优化 Attention 和 MLP 计算</p></li>
+</ul>
+</li>
+<li><p><strong>CNN 模型</strong>：</p>
+<ul>
+<li><p>ResNet 系列：卷积计算加速 3x</p></li>
+<li><p>EfficientNet：混合精度训练优化</p></li>
+<li><p>目标检测：YOLO 系列的端到端优化</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id78">
+<h4>16.1.2 推理加速场景<a class="headerlink" href="#id78" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>低延迟推理</strong>：</p>
+<ul>
+<li><p>单次推理延迟：&lt; 1ms（小模型）</p></li>
+<li><p>批量推理吞吐：10x 提升</p></li>
+<li><p>动态批处理优化</p></li>
+</ul>
+</li>
+<li><p><strong>边缘部署</strong>：</p>
+<ul>
+<li><p>功耗优化：相比 GPU 降低 50% 功耗</p></li>
+<li><p>模型压缩：支持 INT4/FP4 极端量化</p></li>
+<li><p>实时推理：支持视频流实时处理</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id79">
+<h3>16.2 性能基准测试<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
+<section id="mlperf">
+<h4>16.2.1 MLPerf 基准<a class="headerlink" href="#mlperf" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>训练基准</strong>：</p>
+<ul>
+<li><p>ImageNet：ResNet-50 训练时间缩短 40%</p></li>
+<li><p>BERT：预训练效率提升 60%</p></li>
+<li><p>Recommendation：推荐系统训练加速 3x</p></li>
+</ul>
+</li>
+<li><p><strong>推理基准</strong>：</p>
+<ul>
+<li><p>ResNet-50 推理：吞吐量提升 5x</p></li>
+<li><p>BERT-Large：延迟降低 70%</p></li>
+<li><p>3D U-Net：医疗影像处理加速 4x</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id80">
+<h4>16.2.2 内存性能基准<a class="headerlink" href="#id80" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>内存带宽</strong>：</p>
+<ul>
+<li><p>SPM 带宽：2TB/s（理论峰值）</p></li>
+<li><p>DRAM 带宽：1TB/s（实际可达）</p></li>
+<li><p>内存延迟：SPM &lt; 2ns，DRAM &lt; 100ns</p></li>
+</ul>
+</li>
+<li><p><strong>能效比</strong>：</p>
+<ul>
+<li><p>计算能效：100 TOPS/W（FP16）</p></li>
+<li><p>内存能效：10 TB/s/W</p></li>
+<li><p>系统级能效：相比 GPU 提升 3-5x</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="id81">
+<h1>YICA 架构详细参数规范<a class="headerlink" href="#id81" title="Link to this heading"></a></h1>
+<section id="id82">
+<h2>17.1 硬件架构参数<a class="headerlink" href="#id82" title="Link to this heading"></a></h2>
+<section id="id83">
+<h3>17.1.1 计算层次结构参数<a class="headerlink" href="#id83" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 层次化计算单元组织</span>
+<span class="cp">#define GRID_LEVEL     0    </span><span class="c1">// 网格级别</span>
+<span class="cp">#define SWG_LEVEL      1    </span><span class="c1">// 子工作组级别  </span>
+<span class="cp">#define WG_LEVEL       2    </span><span class="c1">// 工作组级别</span>
+<span class="cp">#define CWG_LEVEL      3    </span><span class="c1">// 计算工作组级别</span>
+
+<span class="c1">// 寄存器地址偏移 (来自 RISCVYica.h)</span>
+<span class="cp">#define WARP_RANK        0   </span><span class="c1">// Warp 等级</span>
+<span class="cp">#define RVV_FUNC_ID      4   </span><span class="c1">// RISC-V 向量函数 ID</span>
+<span class="cp">#define STAGE            8   </span><span class="c1">// 执行阶段</span>
+<span class="cp">#define DLM_BASE         12  </span><span class="c1">// 数据本地内存基址</span>
+<span class="cp">#define SMEM_BASE        16  </span><span class="c1">// 共享内存基址</span>
+<span class="cp">#define PBUF_BASE        20  </span><span class="c1">// 参数缓冲区基址</span>
+
+<span class="c1">// 工作组层次 ID 偏移</span>
+<span class="cp">#define WGID_IN_SWG0     24  </span><span class="c1">// SWG 中的 WG ID (维度0)</span>
+<span class="cp">#define WGID_IN_SWG1     28  </span><span class="c1">// SWG 中的 WG ID (维度1)</span>
+<span class="cp">#define WGID_IN_SWG2     32  </span><span class="c1">// SWG 中的 WG ID (维度2)</span>
+<span class="cp">#define WGID_IN_SWG3     36  </span><span class="c1">// SWG 中的 WG ID (维度3)</span>
+<span class="cp">#define WGRANK_IN_DNUMA  40  </span><span class="c1">// NUMA 域中的 WG 等级</span>
+<span class="cp">#define CWGID_IN_SWG0    44  </span><span class="c1">// SWG 中的 CWG ID (维度0)</span>
+<span class="cp">#define CWGID_IN_SWG1    48  </span><span class="c1">// SWG 中的 CWG ID (维度1)</span>
+<span class="cp">#define CWGID_IN_SWG2    52  </span><span class="c1">// SWG 中的 CWG ID (维度2)</span>
+<span class="cp">#define CWGID_IN_SWG3    56  </span><span class="c1">// SWG 中的 CWG ID (维度3)</span>
+<span class="cp">#define SWGRANK_IN_GRID  60  </span><span class="c1">// Grid 中的 SWG 等级</span>
+<span class="cp">#define WGID_IN_CWG0     64  </span><span class="c1">// CWG 中的 WG ID (维度0)</span>
+<span class="cp">#define WGID_IN_CWG1     68  </span><span class="c1">// CWG 中的 WG ID (维度1)</span>
+<span class="cp">#define WGID_IN_CWG2     72  </span><span class="c1">// CWG 中的 WG ID (维度2)</span>
+<span class="cp">#define WGID_IN_CWG3     76  </span><span class="c1">// CWG 中的 WG ID (维度3)</span>
+<span class="cp">#define TID              120 </span><span class="c1">// 线程 ID</span>
+</pre></div>
+</div>
+</section>
+<section id="id84">
+<h3>17.1.2 设备属性参数<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
+<section id="id85">
+<h4>基本设备属性<a class="headerlink" href="#id85" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">CIMDeviceProp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">                    </span><span class="c1">// 设备名称</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">major</span><span class="p">;</span><span class="w">                          </span><span class="c1">// 主版本号</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">minor</span><span class="p">;</span><span class="w">                          </span><span class="c1">// 次版本号</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">warpSize</span><span class="p">;</span><span class="w">                       </span><span class="c1">// Warp 大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">totalGlobalMem</span><span class="p">;</span><span class="w">              </span><span class="c1">// 全局内存总大小</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">multiProcessorCount</span><span class="p">;</span><span class="w">            </span><span class="c1">// 多处理器（计算单元）数量</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">maxThreadsPerMultiProcessor</span><span class="p">;</span><span class="w">    </span><span class="c1">// 每个多处理器最大线程数</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">isMultiGpuBoard</span><span class="p">;</span><span class="w">               </span><span class="c1">// 是否为多 GPU 板卡</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">integrated</span><span class="p">;</span><span class="w">                     </span><span class="c1">// APU vs dGPU</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// PCI 设备属性</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pciDomainID</span><span class="p">;</span><span class="w">                   </span><span class="c1">// PCI 域 ID</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pciBusID</span><span class="p">;</span><span class="w">                      </span><span class="c1">// PCI 总线 ID</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pciDeviceID</span><span class="p">;</span><span class="w">                   </span><span class="c1">// PCI 设备 ID</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id86">
+<h4>YICA 特定设备属性<a class="headerlink" href="#id86" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// YICA 专用属性扩展</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YICADeviceProp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">CIMDeviceProp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">gpuId</span><span class="p">;</span><span class="w">                      </span><span class="c1">// GPU ID (bit4~10: node id, bit0~3: chip id)</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">cimDieCount</span><span class="p">;</span><span class="w">                </span><span class="c1">// 每设备 CIM Die 数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">clusterCountPerCimDie</span><span class="p">;</span><span class="w">      </span><span class="c1">// 每个 CIM Die 的计算单元数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">ddramSizePerCluster</span><span class="p">;</span><span class="w">        </span><span class="c1">// 每个计算单元的 DRAM 大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spmSizePerCimDie</span><span class="p">;</span><span class="w">           </span><span class="c1">// 每个 CIM Die 的 SPM 本地内存大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">maxSwgPerGrid</span><span class="p">;</span><span class="w">              </span><span class="c1">// 每个 Grid 的最大 SWG 数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">maxWgsPerCwg</span><span class="p">;</span><span class="w">               </span><span class="c1">// 每个 CWG 的最大 WG 数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">maxNumCWGPerBPC</span><span class="p">;</span><span class="w">            </span><span class="c1">// 每个 BPC(块处理集群) 的最大 CWG 数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">maxNumThreadPerWorkGroup</span><span class="p">;</span><span class="w">   </span><span class="c1">// 每个工作组的最大线程数</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id87">
+<h3>17.1.3 内存层次参数<a class="headerlink" href="#id87" title="Link to this heading"></a></h3>
+<section id="id88">
+<h4>内存类型定义<a class="headerlink" href="#id88" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 内存类型枚举</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">YICAMemoryType</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">YICA_MEM_TYPE_SPM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">     </span><span class="c1">// 片上暂存内存 (Scratchpad Memory)</span>
+<span class="w">    </span><span class="n">YICA_MEM_TYPE_DRAM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">    </span><span class="c1">// 设备 DRAM</span>
+<span class="w">    </span><span class="n">YICA_MEM_TYPE_HOST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">     </span><span class="c1">// 主机内存</span>
+<span class="p">};</span>
+
+<span class="c1">// 内存大小常量</span>
+<span class="cp">#define RESERVED_MEMORY_SIZE (2 &lt;&lt; 20)  </span><span class="c1">// 2MB 运行时保留内存</span>
+<span class="cp">#define MB_SIZE (1024 * 1024)           </span><span class="c1">// 1MB 大小定义</span>
+</pre></div>
+</div>
+</section>
+<section id="id89">
+<h4>内存分配器参数<a class="headerlink" href="#id89" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 缓存分配器配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">CIMCachingAllocatorConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">max_split_size_</span><span class="p">;</span><span class="w">           </span><span class="c1">// 最大分割大小</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">garbage_collection_threshold_</span><span class="p">;</span><span class="w"> </span><span class="c1">// 垃圾回收阈值</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">expandable_segments_</span><span class="p">;</span><span class="w">        </span><span class="c1">// 可扩展段</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">release_lock_on_malloc_</span><span class="p">;</span><span class="w">     </span><span class="c1">// 分配时释放锁</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="w"> </span><span class="n">round_robin_threshold_</span><span class="p">;</span><span class="w"> </span><span class="c1">// 轮询阈值</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id90">
+<h3>17.1.4 计算网格参数配置<a class="headerlink" href="#id90" title="Link to this heading"></a></h3>
+<section id="id91">
+<h4>标准网格配置示例<a class="headerlink" href="#id91" title="Link to this heading"></a></h4>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// 典型的 YICA 计算网格配置</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w">    </span><span class="c1">// Grid 维度: [x, y, z]</span>
+<span class="w">    </span><span class="nt">&quot;swg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w">     </span><span class="c1">// 子工作组维度</span>
+<span class="w">    </span><span class="nt">&quot;cwg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w">     </span><span class="c1">// 计算工作组维度  </span>
+<span class="w">    </span><span class="nt">&quot;block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w">   </span><span class="c1">// 线程块维度</span>
+<span class="p">}</span>
+
+<span class="c1">// Llama 模型专用配置</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;rmsnorm&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;swg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">&quot;cwg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;qkv_linear&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;swg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;cwg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">&quot;block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;attention&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;swg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;cwg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="id92">
+<h2>17.2 编程模型参数<a class="headerlink" href="#id92" title="Link to this heading"></a></h2>
+<section id="id93">
+<h3>17.2.1 线程层次参数<a class="headerlink" href="#id93" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 线程组织层次</span>
+<span class="cp">#define YICA_MAX_GRID_DIM_X      65535  </span><span class="c1">// Grid X 维度最大值</span>
+<span class="cp">#define YICA_MAX_GRID_DIM_Y      65535  </span><span class="c1">// Grid Y 维度最大值  </span>
+<span class="cp">#define YICA_MAX_GRID_DIM_Z      65535  </span><span class="c1">// Grid Z 维度最大值</span>
+
+<span class="cp">#define YICA_MAX_BLOCK_DIM_X     1024   </span><span class="c1">// Block X 维度最大值</span>
+<span class="cp">#define YICA_MAX_BLOCK_DIM_Y     1024   </span><span class="c1">// Block Y 维度最大值</span>
+<span class="cp">#define YICA_MAX_BLOCK_DIM_Z     64     </span><span class="c1">// Block Z 维度最大值</span>
+
+<span class="cp">#define YICA_MAX_THREADS_PER_BLOCK 1024 </span><span class="c1">// 每个块的最大线程数</span>
+<span class="cp">#define YICA_WARP_SIZE           32     </span><span class="c1">// Warp 大小 (可配置)</span>
+</pre></div>
+</div>
+</section>
+<section id="id94">
+<h3>17.2.2 张量布局参数<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 张量行列参数</span>
+<span class="cp">#define _THC_TROW_NUM_ROWS       4      </span><span class="c1">// 张量行数</span>
+<span class="cp">#define _THC_TROW_NUM_BITS_PER_ROW 512  </span><span class="c1">// 每行位数</span>
+
+<span class="cp">#define _THC_TCOL_NUM_COLS       4      </span><span class="c1">// 张量列数  </span>
+<span class="cp">#define _THC_TCOL_NUM_BITS_PER_COL 512  </span><span class="c1">// 每列位数</span>
+</pre></div>
+</div>
+</section>
+<section id="id95">
+<h3>17.2.3 内核配置参数<a class="headerlink" href="#id95" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 内核执行配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YICAKernelConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="n">gridDim</span><span class="p">;</span><span class="w">                    </span><span class="c1">// Grid 维度</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="n">blockDim</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Block 维度</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="n">swgDim</span><span class="p">;</span><span class="w">                     </span><span class="c1">// SWG 维度</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="n">cwgDim</span><span class="p">;</span><span class="w">                     </span><span class="c1">// CWG 维度</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">sharedMemBytes</span><span class="p">;</span><span class="w">           </span><span class="c1">// 共享内存字节数</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">stream</span><span class="p">;</span><span class="w">                    </span><span class="c1">// 执行流</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">kernelArgs</span><span class="p">;</span><span class="w">   </span><span class="c1">// 内核参数</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id96">
+<h2>17.3 性能参数基准<a class="headerlink" href="#id96" title="Link to this heading"></a></h2>
+<section id="id97">
+<h3>17.3.1 计算性能参数<a class="headerlink" href="#id97" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 性能基准参数 (示例值)</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YICAPerformanceSpecs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 计算性能</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">peak_flops_fp32</span><span class="p">;</span><span class="w">           </span><span class="c1">// 峰值 FP32 FLOPS (TFLOPS)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">peak_flops_fp16</span><span class="p">;</span><span class="w">           </span><span class="c1">// 峰值 FP16 FLOPS (TFLOPS)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">peak_flops_int8</span><span class="p">;</span><span class="w">           </span><span class="c1">// 峰值 INT8 OPS (TOPS)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">peak_flops_int4</span><span class="p">;</span><span class="w">           </span><span class="c1">// 峰值 INT4 OPS (TOPS)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 内存带宽</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">spm_bandwidth</span><span class="p">;</span><span class="w">             </span><span class="c1">// SPM 内存带宽 (GB/s)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">dram_bandwidth</span><span class="p">;</span><span class="w">            </span><span class="c1">// DRAM 内存带宽 (GB/s)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">host_bandwidth</span><span class="p">;</span><span class="w">            </span><span class="c1">// 主机内存带宽 (GB/s)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 通信性能</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">yccl_bandwidth</span><span class="p">;</span><span class="w">            </span><span class="c1">// YCCL 通信带宽 (GB/s)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">yccl_latency</span><span class="p">;</span><span class="w">              </span><span class="c1">// YCCL 通信延迟 (μs)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 功耗参数</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">max_power_consumption</span><span class="p">;</span><span class="w">     </span><span class="c1">// 最大功耗 (W)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">idle_power_consumption</span><span class="p">;</span><span class="w">    </span><span class="c1">// 空闲功耗 (W)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">compute_efficiency</span><span class="p">;</span><span class="w">        </span><span class="c1">// 计算效率 (TOPS/W)</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id98">
+<h3>17.3.2 内存配置参数<a class="headerlink" href="#id98" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 典型内存配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YICAMemorySpecs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// SPM 配置</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spm_size_per_die</span><span class="p">;</span><span class="w">         </span><span class="c1">// 每个 Die 的 SPM 大小 (例: 128MB)</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spm_banks</span><span class="p">;</span><span class="w">                </span><span class="c1">// SPM 存储体数量</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spm_bank_width</span><span class="p">;</span><span class="w">           </span><span class="c1">// SPM 存储体宽度 (位)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// DRAM 配置  </span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dram_size_per_cluster</span><span class="p">;</span><span class="w">    </span><span class="c1">// 每个集群的 DRAM 大小 (例: 16GB)</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dram_channels</span><span class="p">;</span><span class="w">            </span><span class="c1">// DRAM 通道数</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dram_bus_width</span><span class="p">;</span><span class="w">           </span><span class="c1">// DRAM 总线宽度 (位)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 缓存配置</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">l1_cache_size</span><span class="p">;</span><span class="w">            </span><span class="c1">// L1 缓存大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">l2_cache_size</span><span class="p">;</span><span class="w">            </span><span class="c1">// L2 缓存大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">cache_line_size</span><span class="p">;</span><span class="w">          </span><span class="c1">// 缓存行大小</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id99">
+<h3>17.3.3 运行时配置参数<a class="headerlink" href="#id99" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 运行时版本参数</span>
+<span class="cp">#define YICA_RUNTIME_VERSION_CODE(major, minor, patch) \</span>
+<span class="cp">    (major * 10000000 + minor * 100000 + patch)</span>
+
+<span class="c1">// DLM 特殊寄存器基址 (不同芯片版本)</span>
+<span class="cp">#define DLM_SPECIAL_REG_BASE_N300    0x02420000  </span><span class="c1">// N300 芯片</span>
+<span class="cp">#define DLM_SPECIAL_REG_BASE_N900    0x0B040040  </span><span class="c1">// N900 芯片</span>
+
+<span class="c1">// 内核对象偏移</span>
+<span class="cp">#define KERNEL_OBJECT_BASE_OFFSET    0           </span><span class="c1">// 内核对象基址偏移</span>
+<span class="cp">#define KERNEL_CE_TAR_BASE_OFFSET    8           </span><span class="c1">// 内核计算引擎目标基址偏移</span>
+<span class="cp">#define FUNC_PBUF_BASE_OFFSET        16          </span><span class="c1">// 函数参数缓冲区基址偏移</span>
+<span class="cp">#define FW_FUNC_TABLE_BASE_OFFSET    24          </span><span class="c1">// 固件函数表基址偏移</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id100">
+<h2>17.4 API 兼容性参数<a class="headerlink" href="#id100" title="Link to this heading"></a></h2>
+<section id="id101">
+<h3>17.4.1 设备管理 API 参数<a class="headerlink" href="#id101" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 设备查询参数</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">device_count</span><span class="p">;</span><span class="w">                    </span><span class="c1">// 设备数量</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">current_device</span><span class="p">;</span><span class="w">                  </span><span class="c1">// 当前设备 ID</span>
+<span class="n">CIMDeviceProp</span><span class="w"> </span><span class="n">device_properties</span><span class="p">;</span><span class="w">     </span><span class="c1">// 设备属性</span>
+
+<span class="c1">// 内存信息查询</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">CIMDeviceMem</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dram_total</span><span class="p">;</span><span class="w">               </span><span class="c1">// DRAM 总大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dram_free</span><span class="p">;</span><span class="w">                </span><span class="c1">// DRAM 空闲大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spm_total</span><span class="p">;</span><span class="w">                </span><span class="c1">// SPM 总大小</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">spm_free</span><span class="p">;</span><span class="w">                 </span><span class="c1">// SPM 空闲大小</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id102">
+<h3>17.4.2 流和事件参数<a class="headerlink" href="#id102" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 流配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">CIMStreamConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">priority</span><span class="p">;</span><span class="w">                    </span><span class="c1">// 流优先级</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">;</span><span class="w">              </span><span class="c1">// 流标志</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">stream_id</span><span class="p">;</span><span class="w">               </span><span class="c1">// 流 ID</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">device_index</span><span class="p">;</span><span class="w">               </span><span class="c1">// 设备索引</span>
+<span class="p">};</span>
+
+<span class="c1">// 事件配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">CIMEventConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">;</span><span class="w">              </span><span class="c1">// 事件标志</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">blocking_sync</span><span class="p">;</span><span class="w">             </span><span class="c1">// 阻塞同步</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">timing_enabled</span><span class="p">;</span><span class="w">            </span><span class="c1">// 时间测量使能</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>这些详细参数为开发类似 CUDA 的后端提供了完整的架构规范基础，涵盖了硬件配置、编程模型、性能基准和 API 兼容性等各个方面。开发者可以基于这些参数来实现对 YICA 架构的完整支持。</p>
+</section>
+</section>
+<section id="id103">
+<h2>17.5 YIS 指令集详细参数<a class="headerlink" href="#id103" title="Link to this heading"></a></h2>
+<section id="id104">
+<h3>17.5.1 指令格式定义<a class="headerlink" href="#id104" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// YIS 指令格式枚举</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">YISInstructionFormat</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">InstFormatYISECOPY</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w">    </span><span class="c1">// 外部拷贝指令格式</span>
+<span class="w">    </span><span class="n">InstFormatYISICOPY</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w">    </span><span class="c1">// 内部拷贝指令格式  </span>
+<span class="w">    </span><span class="n">InstFormatYISMMA</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w">    </span><span class="c1">// 矩阵乘累加指令格式</span>
+<span class="w">    </span><span class="n">InstFormatYISSYNC</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span><span class="w">    </span><span class="c1">// 同步指令格式</span>
+<span class="w">    </span><span class="n">InstFormatYISCONTROL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">27</span><span class="w">     </span><span class="c1">// 控制指令格式</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id105">
+<h3>17.5.2 YISECOPY 指令参数<a class="headerlink" href="#id105" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 外部拷贝指令操作码定义</span>
+<span class="cp">#define YIS_COPY_G2G         0b00000  </span><span class="c1">// Global 到 Global 拷贝</span>
+<span class="cp">#define YIS_COPY_G2S         0b00001  </span><span class="c1">// Global 到 Shared 拷贝</span>
+<span class="cp">#define YIS_COPY_S2G         0b00010  </span><span class="c1">// Shared 到 Global 拷贝</span>
+<span class="cp">#define YIS_COPY_G2SPM       0b00011  </span><span class="c1">// Global 到 SPM 拷贝</span>
+<span class="cp">#define YIS_COPY_SPM2G       0b00100  </span><span class="c1">// SPM 到 Global 拷贝</span>
+<span class="cp">#define YIS_COPY_G2S_IM2COL  0b00101  </span><span class="c1">// Global到Shared (Im2Col变换)</span>
+<span class="cp">#define YIS_COPY_S2G_IM2COL  0b00110  </span><span class="c1">// Shared到Global (Im2Col变换)</span>
+<span class="cp">#define YIS_COPY_G2SPM_IM2COL 0b00111 </span><span class="c1">// Global到SPM (Im2Col变换)</span>
+<span class="cp">#define YIS_COPY_SPM2G_IM2COL 0b01000 </span><span class="c1">// SPM到Global (Im2Col变换)</span>
+
+<span class="c1">// 数据布局类型</span>
+<span class="cp">#define YIS_LAYOUT_TROW      0b000    </span><span class="c1">// 张量行布局</span>
+<span class="cp">#define YIS_LAYOUT_ROW       0b001    </span><span class="c1">// 行布局</span>
+<span class="cp">#define YIS_LAYOUT_TCOL      0b010    </span><span class="c1">// 张量列布局</span>
+<span class="cp">#define YIS_LAYOUT_COL       0b011    </span><span class="c1">// 列布局</span>
+
+<span class="c1">// 块作用域类型</span>
+<span class="cp">#define YIS_BOSCOPE_WG       0b00     </span><span class="c1">// 工作组作用域</span>
+<span class="cp">#define YIS_BOSCOPE_CWG      0b01     </span><span class="c1">// 计算工作组作用域</span>
+</pre></div>
+</div>
+</section>
+<section id="id106">
+<h3>17.5.3 YISICOPY 指令参数<a class="headerlink" href="#id106" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 内部拷贝指令操作码</span>
+<span class="cp">#define YIS_COLL_BC          0b01000  </span><span class="c1">// 集合广播</span>
+<span class="cp">#define YIS_COLL_GAT         0b01001  </span><span class="c1">// 集合收集</span>
+<span class="cp">#define YIS_COLL_RED         0b01010  </span><span class="c1">// 集合归约</span>
+<span class="cp">#define YIS_COLL_ALLRED      0b01011  </span><span class="c1">// 全局归约</span>
+<span class="cp">#define YIS_COLL_REDSCT      0b01100  </span><span class="c1">// 归约散射</span>
+
+<span class="c1">// 归约操作类型</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">YISReductionOp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">YIS_RED_SUM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">    </span><span class="c1">// 求和归约</span>
+<span class="w">    </span><span class="n">YIS_RED_MAX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">    </span><span class="c1">// 最大值归约  </span>
+<span class="w">    </span><span class="n">YIS_RED_MIN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">    </span><span class="c1">// 最小值归约</span>
+<span class="w">    </span><span class="n">YIS_RED_PROD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w">    </span><span class="c1">// 乘积归约</span>
+<span class="p">};</span>
+
+<span class="c1">// 累加使能标志</span>
+<span class="cp">#define YIS_ACC_DISABLE      0        </span><span class="c1">// 禁用累加</span>
+<span class="cp">#define YIS_ACC_ENABLE       1        </span><span class="c1">// 使能累加</span>
+</pre></div>
+</div>
+</section>
+<section id="id107">
+<h3>17.5.4 YISMMA 指令参数<a class="headerlink" href="#id107" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 矩阵乘累加指令配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YISMMAConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">bits</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opcode</span><span class="p">;</span><span class="w">                  </span><span class="c1">// 4位操作码</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">accumulate</span><span class="p">;</span><span class="w">                 </span><span class="c1">// 累加标志</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">matrix_shape</span><span class="p">;</span><span class="w">            </span><span class="c1">// 矩阵形状配置</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">data_type</span><span class="p">;</span><span class="w">               </span><span class="c1">// 数据类型</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">transpose_a</span><span class="p">;</span><span class="w">                </span><span class="c1">// 矩阵A转置</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">transpose_b</span><span class="p">;</span><span class="w">                </span><span class="c1">// 矩阵B转置</span>
+<span class="p">};</span>
+
+<span class="c1">// 支持的矩阵形状</span>
+<span class="cp">#define YIS_MMA_SHAPE_8x8x8     0x00  </span><span class="c1">// 8x8x8 矩阵</span>
+<span class="cp">#define YIS_MMA_SHAPE_16x16x16  0x01  </span><span class="c1">// 16x16x16 矩阵</span>
+<span class="cp">#define YIS_MMA_SHAPE_32x32x32  0x02  </span><span class="c1">// 32x32x32 矩阵</span>
+</pre></div>
+</div>
+</section>
+<section id="id108">
+<h3>17.5.5 YISSYNC 指令参数<a class="headerlink" href="#id108" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 同步指令操作码</span>
+<span class="cp">#define YIS_SYNC_WG          0b0000   </span><span class="c1">// 工作组内同步</span>
+<span class="cp">#define YIS_SYNC_CWG         0b0001   </span><span class="c1">// 计算工作组内同步</span>
+<span class="cp">#define YIS_SYNC_SWG         0b0010   </span><span class="c1">// 子工作组内同步</span>
+<span class="cp">#define YIS_SYNC_GRID        0b0011   </span><span class="c1">// 网格内同步</span>
+<span class="cp">#define YIS_SYNC_BARRIER     0b0100   </span><span class="c1">// 内存屏障同步</span>
+</pre></div>
+</div>
+</section>
+<section id="id109">
+<h3>17.5.6 YISCONTROL 指令参数<a class="headerlink" href="#id109" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 控制指令操作码</span>
+<span class="cp">#define YIS_CTRL_LOOP_BEGIN  0b00000  </span><span class="c1">// 循环开始</span>
+<span class="cp">#define YIS_CTRL_LOOP_END    0b00001  </span><span class="c1">// 循环结束</span>
+<span class="cp">#define YIS_CTRL_BRANCH      0b00010  </span><span class="c1">// 分支控制</span>
+<span class="cp">#define YIS_CTRL_CALL        0b00011  </span><span class="c1">// 函数调用</span>
+<span class="cp">#define YIS_CTRL_RET         0b00100  </span><span class="c1">// 函数返回</span>
+<span class="cp">#define YIS_CTRL_PREDICATE   0b00101  </span><span class="c1">// 谓词执行</span>
+
+<span class="c1">// 控制流预设配置</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YISControlConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">condition_mask</span><span class="p">;</span><span class="w">          </span><span class="c1">// 条件掩码</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">predicate_reg</span><span class="p">;</span><span class="w">           </span><span class="c1">// 谓词寄存器</span>
+<span class="w">    </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">target_address</span><span class="p">;</span><span class="w">         </span><span class="c1">// 目标地址</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">conditional</span><span class="p">;</span><span class="w">                </span><span class="c1">// 条件执行标志</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id110">
+<h3>17.5.7 张量描述符参数<a class="headerlink" href="#id110" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 张量描述符结构</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YISTensorDescriptor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">rank</span><span class="p">;</span><span class="w">                   </span><span class="c1">// 张量维度</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">base_addr</span><span class="p">;</span><span class="w">              </span><span class="c1">// 基址 (例: 0x40c00000)</span>
+<span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">data_type</span><span class="p">;</span><span class="w">               </span><span class="c1">// 数据类型 (8=float16)</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">shape</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span><span class="w">               </span><span class="c1">// 形状数组 [dim0, dim1, dim2, dim3]</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">stride</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span><span class="w">              </span><span class="c1">// 步长数组 [stride0, stride1, stride2, stride3]</span>
+<span class="p">};</span>
+
+<span class="c1">// 典型张量描述符示例</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;rank&quot;</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">&quot;addr&quot;</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;0x40c00000&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot;type&quot;</span><span class="o">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">                       </span><span class="c1">// float16</span>
+<span class="w">    </span><span class="s">&quot;shape&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="p">],</span><span class="w">               </span><span class="c1">// 8 x 128 矩阵</span>
+<span class="w">    </span><span class="s">&quot;stride&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="w">               </span><span class="c1">// 步长配置</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id111">
+<h3>17.5.8 立即数和寄存器参数<a class="headerlink" href="#id111" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// YIS 专用立即数类型</span>
+<span class="cp">#define YIS_UIMM4_MAX        15       </span><span class="c1">// 4位无符号立即数最大值</span>
+<span class="cp">#define YIS_UIMM7_MAX        127      </span><span class="c1">// 7位无符号立即数最大值</span>
+<span class="cp">#define YIS_SIMM12_MIN       -2048    </span><span class="c1">// 12位有符号立即数最小值</span>
+<span class="cp">#define YIS_SIMM12_MAX       2047     </span><span class="c1">// 12位有符号立即数最大值</span>
+
+<span class="c1">// 寄存器大小标识</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">YISRegisterSize</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">YIS_REG_SIZE_32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">            </span><span class="c1">// 32位寄存器</span>
+<span class="w">    </span><span class="n">YIS_REG_SIZE_64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">             </span><span class="c1">// 64位寄存器</span>
+<span class="p">};</span>
+
+<span class="c1">// 地址类型标识</span>
+<span class="cp">#define YIS_ADDR_TYPE_IMM    0       </span><span class="c1">// 立即数地址</span>
+<span class="cp">#define YIS_ADDR_TYPE_REG    1       </span><span class="c1">// 寄存器地址</span>
+</pre></div>
+</div>
+</section>
+<section id="id112">
+<h3>17.5.9 性能调优参数<a class="headerlink" href="#id112" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// YIS 指令性能参数</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">YISPerformanceParams</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 指令延迟 (周期数)</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">copy_latency</span><span class="p">;</span><span class="w">           </span><span class="c1">// 拷贝指令延迟</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">mma_latency</span><span class="p">;</span><span class="w">            </span><span class="c1">// 矩阵乘累加延迟</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">sync_latency</span><span class="p">;</span><span class="w">           </span><span class="c1">// 同步指令延迟</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 吞吐量 (每周期指令数)</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">copy_throughput</span><span class="p">;</span><span class="w">           </span><span class="c1">// 拷贝指令吞吐量</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">mma_throughput</span><span class="p">;</span><span class="w">            </span><span class="c1">// MMA 指令吞吐量</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">control_throughput</span><span class="p">;</span><span class="w">        </span><span class="c1">// 控制指令吞吐量</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// 并发度</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">max_concurrent_copies</span><span class="p">;</span><span class="w">  </span><span class="c1">// 最大并发拷贝数</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">max_concurrent_mmas</span><span class="p">;</span><span class="w">    </span><span class="c1">// 最大并发 MMA 数</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>这些详细的 YIS 指令集参数提供了 YICA 架构底层硬件控制的完整规范，为编译器后端和运行时系统提供了精确的指令生成和优化依据。</p>
+<hr class="docutils" />
+<p><em>基于 torch_cim、ybx_replay 和 LLVM RISC-V 后端深度代码分析生成</em><br />
+<em>文档版本：v2.0，更新日期：2024年12月</em><br />
+<em>涵盖：硬件架构、软件栈、指令集、性能优化、应用场景的完整技术规范</em></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../getting-started/quick-reference.html" class="btn btn-neutral float-left" title="YICA-QEMU Docker 快速参考" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="yirage-architecture.html" class="btn btn-neutral float-right" title="Yirage - 下一代AI内核超优化器产品规划" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, YICA Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
