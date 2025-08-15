@@ -194,7 +194,7 @@ YICA/YiRage System
 - [API Documentation](../api/) - Complete API reference
 
 ### External Resources
-- [GitHub Repository](https://github.com/your-org/yica-yirage) - Source code and issues
+- [GitHub Repository](https://github.com/yica-ai/yica-yirage) - Source code and issues
 - [Project Website](https://yica-yirage.org) - Public project information
 - [Community Forum](https://community.yica-yirage.org) - User discussions and support
 

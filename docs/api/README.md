@@ -408,7 +408,7 @@ optimizer = yirage.Optimizer(strategy="my_custom_strategy")
 ### Getting Help with APIs
 1. Check the specific API documentation
 2. Review [usage examples](../USAGE.md)
-3. Search [GitHub issues](https://github.com/your-org/yica-yirage/issues)
+3. Search [GitHub issues](https://github.com/yica-ai/yica-yirage/issues)
 4. Join our [Discord community](https://discord.gg/yica-yirage)
 
 ### Reporting API Issues

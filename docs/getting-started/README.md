@@ -79,7 +79,7 @@ A: The system automatically selects based on the hardware environment, or you ca
 ### Quick Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/yica-yirage.git
+git clone https://github.com/yica-ai/yica-yirage.git
 cd yica-yirage
 
 # Build and install

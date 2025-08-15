@@ -64,7 +64,7 @@ Theoretical Foundation → Algorithm Principles → Performance Analysis → Res
 pip install yirage
 
 # Or build from source
-git clone https://github.com/your-org/yica-yirage.git
+git clone https://github.com/yica-ai/yica-yirage.git
 cd yica-yirage && pip install -e .
 ```
 
@@ -200,4 +200,4 @@ optimized_model = optimizer.optimize(model)
 
 ---
 
-*These tutorials help users master YICA/YiRage at all levels. Check our [GitHub repository](https://github.com/your-org/yica-yirage) for the latest updates.*
+*These tutorials help users master YICA/YiRage at all levels. Check our [GitHub repository](https://github.com/yica-ai/yica-yirage) for the latest updates.*

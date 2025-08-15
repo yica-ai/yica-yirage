@@ -28,7 +28,7 @@ This directory contains development environment setup, contribution guidelines, 
 ### Quick Setup
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/yica-yirage.git
+git clone https://github.com/yica-ai/yica-yirage.git
 cd yica-yirage
 
 # Set up development environment

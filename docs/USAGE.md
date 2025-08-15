@@ -13,7 +13,7 @@ This comprehensive guide covers everything you need to know about using YICA/YiR
 ### Basic Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/yica-yirage.git
+git clone https://github.com/yica-ai/yica-yirage.git
 cd yica-yirage
 
 # Build the project
@@ -424,7 +424,7 @@ print("Recommendations:", performance_report.recommendations)
 
 #### Community Resources
 - **Documentation**: [https://yica-yirage.readthedocs.io/](https://yica-yirage.readthedocs.io/)
-- **GitHub Issues**: [https://github.com/your-org/yica-yirage/issues](https://github.com/your-org/yica-yirage/issues)
+- **GitHub Issues**: [https://github.com/yica-ai/yica-yirage/issues](https://github.com/yica-ai/yica-yirage/issues)
 - **Discord Community**: [https://discord.gg/yica-yirage](https://discord.gg/yica-yirage)
 
 #### Support Channels

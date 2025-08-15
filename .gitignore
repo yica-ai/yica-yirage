@@ -102,3 +102,4 @@ yirage/dist/
 generated_*.py
 test_generated_*.py
 test_triton_*.py
+yirage/build/*

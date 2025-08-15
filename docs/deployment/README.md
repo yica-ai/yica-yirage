@@ -57,7 +57,7 @@ sudo apt update
 sudo apt install -y cmake build-essential python3-dev git
 
 # Clone repository
-git clone https://github.com/your-org/yica-yirage.git
+git clone https://github.com/yica-ai/yica-yirage.git
 cd yica-yirage
 
 # Build and install
@@ -492,4 +492,4 @@ journalctl -u yica-optimizer -f
 
 ---
 
-*For the latest deployment information and updates, check our [GitHub repository](https://github.com/your-org/yica-yirage) and [documentation website](https://yica-yirage.readthedocs.io/).*
+*For the latest deployment information and updates, check our [GitHub repository](https://github.com/yica-ai/yica-yirage) and [documentation website](https://yica-yirage.readthedocs.io/).*
