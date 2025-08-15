@@ -2,6 +2,19 @@
 
 This directory contains comprehensive tutorials, examples, and learning resources for YICA/YiRage.
 
+## 🎯 Executive Presentations & Demos
+
+### For Leadership Review
+- **[Executive Overview](yica-yirage-executive-overview.md)** - Complete executive briefing with business value, ROI analysis, and strategic positioning
+- **[Live Demo Script](yica_working_demo.py)** - Runnable demonstration showing actual YICA-YiRage capabilities
+- **[Technical Demo](yica_live_demo.py)** - Comprehensive technical demonstration with all features
+
+### Quick Demo Command
+```bash
+# Run the working demo to see YICA-YiRage in action
+python docs/tutorials/yica_working_demo.py
+```
+
 ## 📚 Tutorial Overview
 
 ### Getting Started Tutorials

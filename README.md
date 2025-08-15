@@ -44,6 +44,24 @@ pip install -e . -v
 - CMake 3.18.0+
 - Triton 2.0.0+ (Linux only)
 
+## ✨ What's New in v1.0.6
+
+- **🎉 YICA Backend Enabled**: Full YICA (Yet another In-memory Computing Architecture) backend support
+- **🔧 Python Bindings**: Complete Python integration with all YICA modules available
+- **⚡ Optimized Compilation**: Simplified backend implementation for faster builds
+- **🧠 CIM Support**: Compute-in-Memory optimization passes and memory layout optimization
+- **📊 Performance Analysis**: Built-in performance monitoring and bottleneck analysis
+- **🔄 Operator Fusion**: Intelligent operator fusion for CIM architectures
+
+### YICA Feature Availability
+```python
+import yirage
+print(f"YICA Core: {yirage.YICA_CORE_AVAILABLE}")           # ✅ True
+print(f"YICA Advanced: {yirage.YICA_ADVANCED_AVAILABLE}")   # ✅ True  
+print(f"YICA Monitor: {yirage.YICA_MONITOR_AVAILABLE}")     # ✅ True
+print(f"YICA Optimizer: {yirage.YICA_OPTIMIZER_AVAILABLE}") # ✅ True
+```
+
 ## 💻 Quick Start
 
 ### Basic Usage
@@ -73,6 +91,30 @@ import torch
 x = torch.randn(1024, 512, dtype=torch.float16, device='cuda')
 w = torch.randn(512, 256, dtype=torch.float16, device='cuda')
 output = kernel(inputs=[x, w])
+```
+
+### YICA Backend Usage
+
+```python
+from yirage.yica import YICABackend
+from yirage import new_kernel_graph
+
+# Create YICA backend for in-memory computing
+backend = YICABackend()
+print(f"YICA devices available: {backend.device_count()}")
+
+# Create and analyze a computation graph
+graph = new_kernel_graph()
+# ... add operations to graph ...
+
+# Performance analysis with YICA
+analysis = backend.analyze_performance(graph)
+print(f"Compute intensity: {analysis.compute_intensity}")
+print(f"CIM friendliness: {analysis.cim_friendliness_score}")
+
+# Use YICA optimizer
+optimizer = yr.create_yica_optimizer()
+optimized_graph = optimizer.optimize(graph)
 ```
 
 ### Advanced Example: Transformer Layer Optimization

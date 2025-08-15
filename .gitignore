@@ -6,7 +6,7 @@ build-*/
 cmake-build-*/
 CMakeFiles/
 Testing/
-
+yirage/build/
 # Build artifacts
 *.o
 *.a
