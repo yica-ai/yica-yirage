@@ -81,15 +81,14 @@ graph TB
 - **Risk Analysis**: Real-time portfolio assessment
 - **Fraud Detection**: Transaction anomaly detection
 
-### Performance Benchmarks
+### Performance Optimization Potential
 
-| Workload Type | Standard Implementation | YICA-YiRage | Speedup |
-|---------------|------------------------|-------------|---------|
-| Matrix Multiplication | 100ms | 50ms | **2.0x** |
-| Transformer Attention | 200ms | 25ms | **8.0x** |
-| Convolution (ResNet) | 150ms | 60ms | **2.5x** |
-| RMSNorm | 80ms | 20ms | **4.0x** |
-| Element-wise Ops | 40ms | 10ms | **4.0x** |
+YICA-YiRage的优化技术基于以下理论基础：
+- **内存带宽优化**：通过跨层融合减少内存访问
+- **计算密度提升**：通过抽象表达式剪枝找到最优实现
+- **硬件适配**：针对CIM架构的专门优化
+
+*注：具体性能提升数据需要在实际硬件环境中测试获得*
 
 ---
 
@@ -101,22 +100,21 @@ graph TB
 
 ```python
 import yirage
-import torch
 
-# Standard PyTorch model
-model = torch.nn.Sequential(
-    torch.nn.Linear(4096, 2048),
-    torch.nn.RMSNorm(2048),
-    torch.nn.SiLU(),
-    torch.nn.Linear(2048, 1024)
-)
+# 验证YICA组件可用性（已测试）
+print(f"YICA Core: {yirage.YICA_CORE_AVAILABLE}")        # 输出: True
+print(f"YICA Advanced: {yirage.YICA_ADVANCED_AVAILABLE}") # 输出: True
+print(f"YICA Optimizer: {yirage.YICA_OPTIMIZER_AVAILABLE}") # 输出: True
 
-# Automatic optimization - single line!
-optimized_model = yirage.optimize(model, backend="yica")
+# 创建计算图（已测试）
+graph = yirage.new_kernel_graph()
+X = graph.new_input(dims=(32, 512, 768), dtype=yirage.float16)
 
-# Immediate performance gains
-print(f"Speedup: {optimized_model.speedup:.1f}x")
-# Output: Speedup: 3.2x
+# 支持的操作（已验证）
+# - matmul: 矩阵乘法
+# - relu, gelu, silu: 激活函数
+# - rms_norm: 归一化
+# - softmax: Softmax操作
 ```
 
 ### 2. Advanced Operator Fusion
@@ -124,22 +122,23 @@ print(f"Speedup: {optimized_model.speedup:.1f}x")
 **Cross-layer Optimization Beyond Traditional Compilers**
 
 ```python
-# YICA-YiRage automatically identifies and fuses:
-# Linear + RMSNorm + SiLU → Single Optimized Kernel
-# Eliminates 2 intermediate memory operations
-# Reduces memory bandwidth by 60%
-
+# 实际测试的操作融合能力
 graph = yirage.new_kernel_graph()
+
+# 创建输入（已测试）
+batch_size, seq_len, hidden_dim = 8, 512, 768
 x = graph.new_input(dims=(batch_size, seq_len, hidden_dim), dtype=yirage.float16)
-w1 = graph.new_input(dims=(hidden_dim, intermediate_size), dtype=yirage.float16)
 
-# Multi-op fusion happens automatically
-linear_out = graph.matmul(x, w1)
-norm_out = graph.rms_norm(linear_out, normalized_shape=(intermediate_size,))
-activation_out = graph.silu(norm_out)
+# 构建计算链（已验证这些操作可用）
+# 1. MatMul操作
+# 2. RMSNorm归一化  
+# 3. SiLU激活函数
+# YICA后端支持将这些操作进行优化融合
 
-# Single optimized kernel generated
-optimized_kernel = graph.superoptimize(backend="yica")
+# 理论优势：
+# - 减少中间结果的内存读写
+# - 提高计算密度
+# - 优化内存访问模式
 ```
 
 ### 3. In-Memory Computing Architecture Support
@@ -149,18 +148,19 @@ optimized_kernel = graph.superoptimize(backend="yica")
 ```python
 from yirage.yica import YICABackend
 
-# Initialize YICA backend
+# 初始化YICA后端（已测试）
 backend = YICABackend()
-print(f"YICA devices available: {backend.device_count()}")
+print(f"YICA devices available: {backend.device_count()}")  # 输出: 1
 
-# Hardware-specific optimizations
-analysis = backend.analyze_performance(model_graph)
-print(f"CIM friendliness score: {analysis.cim_friendliness_score:.2f}")
-print(f"Memory access efficiency: {analysis.memory_efficiency:.2f}")
-print(f"Compute intensity: {analysis.compute_intensity:.2f}")
+# 后端提供的方法（已验证）
+# - device_count(): 获取设备数量
+# - analyze_performance(): 性能分析
+# - optimize_for_yica(): YICA优化
 
-# Automatic layout optimization
-optimized_graph = backend.optimize_for_yica(model_graph)
+# YICA后端特性：
+# - 支持CIM（Compute-in-Memory）架构
+# - 自动内存布局优化
+# - 跨层融合优化
 ```
 
 ### 4. Production-Ready Integration
@@ -168,26 +168,29 @@ optimized_graph = backend.optimize_for_yica(model_graph)
 **Seamless PyTorch Ecosystem Integration**
 
 ```python
-import torch
 import yirage
-from transformers import AutoModel, AutoTokenizer
 
-# Load any Hugging Face model
-model_name = "meta-llama/Llama-2-7b-hf"
-model = AutoModel.from_pretrained(model_name, torch_dtype=torch.float16)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# 实际可用的API（已测试）
 
-# One-line optimization
-optimizer = yirage.create_yica_optimizer()
-optimized_model = optimizer.optimize(model)
+# 1. 创建性能监控器
+monitor = yirage.create_performance_monitor()
 
-# Production deployment
-optimized_model.save_pretrained("./optimized_llama2_7b")
+# 2. 版本信息获取
+version_info = yirage.get_version_info()
+# 输出包含:
+# - version: 1.0.6
+# - yica_core_available: True
+# - yica_optimizer_available: True
+# - torch_available: True
+# - z3_available: True
 
-# Inference with automatic speedup
-inputs = tokenizer("Hello world", return_tensors="pt")
-with torch.inference_mode():
-    outputs = optimized_model(**inputs)  # 3-5x faster than original
+# 3. 创建优化器（注意：需要完整C++扩展支持）
+# optimizer = yirage.create_yica_optimizer()
+
+# PyTorch集成能力：
+# - 支持PyTorch模型输入
+# - 自动图转换
+# - 优化后模型可直接用于推理
 ```
 
 ---
@@ -216,42 +219,23 @@ with torch.inference_mode():
 
 ## 📊 Technical Validation & Verification
 
-### Formal Verification System
+### Verification Approach
 
-```python
-# YICA-YiRage includes built-in correctness verification
-from yirage.search.verification import FormalVerifier
+YICA-YiRage采用多层次验证策略确保优化正确性：
 
-verifier = FormalVerifier()
-original_graph = create_original_computation()
-optimized_graph = yirage_optimize(original_graph)
+1. **形式化验证**：基于Z3求解器的数学证明
+   - 使用抽象表达式验证等效性
+   - 符号执行确保语义保持
 
-# Mathematical proof of equivalence
-verification_result = verifier.prove_equivalence(
-    original_graph, 
-    optimized_graph
-)
+2. **概率测试**：LAX程序类的统计验证
+   - 随机输入测试
+   - 数值精度验证
+   
+3. **实际测试**：在真实工作负载上验证
+   - 端到端正确性检查
+   - 性能回归测试
 
-assert verification_result.is_equivalent  # Guaranteed correctness
-print(f"Verification confidence: {verification_result.confidence:.4f}")
-```
-
-### Probabilistic Testing Framework
-
-```python
-# Additional statistical validation for complex optimizations
-from yirage.search.verification import ProbabilisticVerifier
-
-prob_verifier = ProbabilisticVerifier(num_tests=10000)
-validation_result = prob_verifier.validate_optimization(
-    original_impl=baseline_kernel,
-    optimized_impl=yica_kernel,
-    input_distribution="random_normal"
-)
-
-print(f"Statistical confidence: {validation_result.p_value:.6f}")
-print(f"Max numerical error: {validation_result.max_error:.2e}")
-```
+*注：验证模块正在持续完善中*
 
 ---
 
@@ -260,32 +244,24 @@ print(f"Max numerical error: {validation_result.max_error:.2e}")
 ### Phase 1: Pilot Deployment (Months 1-2)
 **Investment**: 2 engineers, 1 DevOps
 **Target**: Single high-impact model optimization
-**Expected ROI**: 200-300% (compute cost reduction)
+**Expected Outcome**: 验证优化效果和集成可行性
 
-```python
-# Pilot implementation example
-target_models = [
-    "recommendation_system_embedding",  # 40% of compute cost
-    "real_time_inference_transformer",  # Critical latency path
-]
-
-for model_name in target_models:
-    baseline_perf = benchmark_current_implementation(model_name)
-    yica_optimized = yirage.optimize(load_model(model_name))
-    
-    cost_savings = calculate_cost_reduction(baseline_perf, yica_optimized.performance)
-    print(f"{model_name}: {cost_savings:.0f}% cost reduction")
-```
+实施步骤：
+1. 选择1-2个关键模型进行优化测试
+2. 建立基准性能指标
+3. 应用YICA优化
+4. 测量实际性能提升
+5. 评估ROI
 
 ### Phase 2: Full Integration (Months 3-6)
 **Investment**: Expand to full model pipeline
 **Target**: All production models
-**Expected ROI**: 400-500% (operational efficiency + faster TTM)
+**Expected Outcome**: 规模化部署和性能优化
 
 ### Phase 3: Advanced Features (Months 6-12)
 **Investment**: Custom optimization strategies
 **Target**: Domain-specific optimizations
-**Expected ROI**: 600-800% (competitive differentiation)
+**Expected Outcome**: 建立技术壁垒和竞争优势
 
 ---
 
@@ -297,19 +273,23 @@ for model_name in target_models:
 - **Compliance**: SOC2, GDPR, HIPAA compatible deployment options
 
 ### Monitoring & Observability
+
+YICA-YiRage提供全面的性能监控能力：
+
 ```python
 from yirage.profiling import YICAPerformanceMonitor
 
+# 创建性能监控器（已测试）
 monitor = YICAPerformanceMonitor()
-with monitor.profile_optimization():
-    optimized_model = yirage.optimize(production_model)
 
-# Detailed performance insights
-metrics = monitor.get_metrics()
-print(f"Optimization time: {metrics.optimization_duration:.2f}s")
-print(f"Memory usage reduction: {metrics.memory_savings:.1f}%")
-print(f"Energy efficiency gain: {metrics.energy_savings:.1f}%")
+# 监控功能包括：
+# - 优化过程跟踪
+# - 资源使用监控
+# - 性能指标收集
+# - 异常检测和报警
 ```
+
+*注：完整的性能指标需要在实际优化过程中收集*
 
 ### Deployment Options
 - **On-Premises**: Full control, air-gapped environments
@@ -355,10 +335,10 @@ print(f"Energy efficiency gain: {metrics.energy_savings:.1f}%")
 4. **IP Strategy**: File additional patents on optimization discoveries
 
 ### Success Metrics
-- **Technical**: >3x average speedup across production models
-- **Financial**: >50% reduction in compute costs
-- **Operational**: <2 weeks model optimization cycle time
-- **Strategic**: Market leadership in automatic GPU optimization
+- **Technical**: 优化效果需在实际硬件上测试验证
+- **Financial**: 成本节省取决于具体工作负载
+- **Operational**: 优化周期时间因模型而异
+- **Strategic**: 建立自动优化技术能力
 
 ---
 
